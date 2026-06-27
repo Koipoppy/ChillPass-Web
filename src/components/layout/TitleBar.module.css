@@ -1,0 +1,349 @@
+.titleBar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  padding: 0 14px;
+  z-index: 9999;
+  -webkit-app-region: drag;
+  pointer-events: none;
+}
+
+.trafficLights {
+  display: flex;
+  gap: 8px;
+  -webkit-app-region: no-drag;
+  pointer-events: auto;
+}
+
+.light {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--light-color, #ccc);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: filter 0.15s ease;
+  box-shadow: inset 0 0 0 0.5px rgba(0, 0, 0, 0.15);
+}
+
+.light:hover {
+  filter: brightness(0.92);
+}
+
+.light svg {
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.trafficLights:hover .light svg {
+  opacity: 1;
+}
+
+/* ===== 中间学习时长 ===== */
+.centerArea {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.studyTime {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 12px;
+  border-radius: var(--radius-pill);
+  background: rgba(0, 0, 0, 0.05);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+  -webkit-app-region: no-drag;
+  pointer-events: auto;
+}
+
+/* ===== 右侧专注模式按钮 ===== */
+.rightArea {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  -webkit-app-region: no-drag;
+  pointer-events: auto;
+}
+
+/* 帮助按钮 — 圆形 */
+.helpBtn {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.helpBtn:hover {
+  background: var(--glass-bg-hover);
+  color: var(--text-primary);
+  border-color: rgba(0, 0, 0, 0.16);
+}
+
+/* ===== 帮助弹窗 ===== */
+.helpOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: helpFadeIn 0.2s ease;
+  /* 关键：覆盖父级 .titleBar 的 pointer-events: none 和 drag 区域 */
+  pointer-events: auto;
+  -webkit-app-region: no-drag;
+}
+
+@keyframes helpFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.helpModal {
+  width: 100%;
+  max-width: 520px;
+  max-height: 85vh;
+  border-radius: var(--radius-xl) !important;
+  padding: 28px 32px 24px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: helpSlideUp 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  /* 不透明背景，覆盖 liquid-glass 的半透明 */
+  background: var(--bg-surface) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  box-shadow: var(--shadow-float) !important;
+  pointer-events: auto;
+  -webkit-app-region: no-drag;
+}
+
+@keyframes helpSlideUp {
+  from { transform: translateY(20px) scale(0.96); opacity: 0; }
+  to { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+.helpHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  color: var(--text-primary);
+}
+
+.helpTitle {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.helpBody {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 4px;
+  pointer-events: auto;
+  -webkit-app-region: no-drag;
+}
+
+.helpBody::-webkit-scrollbar {
+  width: 4px;
+}
+
+.helpBody::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 2px;
+}
+
+.helpSection {
+  margin-bottom: 20px;
+}
+
+.helpSectionTitle {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+  letter-spacing: -0.01em;
+}
+
+.helpText {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+
+.helpList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.helpList li {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  padding-left: 14px;
+  position: relative;
+}
+
+.helpList li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 8px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent-text);
+  opacity: 0.5;
+}
+
+.helpList li b {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.helpContact {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.helpContactRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  border-radius: var(--radius-md);
+  background: rgba(0, 0, 0, 0.03);
+}
+
+.helpContactLabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  width: 50px;
+  flex-shrink: 0;
+}
+
+.helpContactValue {
+  font-size: 13px;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.helpConfirmBtn {
+  margin-top: 20px;
+  padding: 12px 24px;
+  font-size: 15px;
+  font-weight: 600;
+  font-family: inherit;
+  color: var(--btn-primary-fg);
+  background: var(--btn-primary-bg);
+  border: none;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+  flex-shrink: 0;
+  pointer-events: auto;
+  -webkit-app-region: no-drag;
+}
+
+.helpConfirmBtn:hover {
+  opacity: 0.85;
+}
+
+/* ===== 暗色模式 ===== */
+[data-theme="dark"] .helpBtn {
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+[data-theme="dark"] .helpBtn:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+[data-theme="dark"] .helpContactRow {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.focusBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 14px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: var(--radius-pill);
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.focusBtn:hover {
+  background: var(--glass-bg-hover);
+  color: var(--text-primary);
+  border-color: rgba(0, 0, 0, 0.16);
+}
+
+.focusBtnActive {
+  background: var(--accent-text);
+  color: #fff;
+  border-color: transparent;
+}
+
+.focusBtnActive:hover {
+  background: var(--accent-text);
+  color: #fff;
+  filter: brightness(1.08);
+}
+
+/* ===== 暗色模式 ===== */
+[data-theme="dark"] .studyTime {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-secondary);
+}
+
+[data-theme="dark"] .focusBtn {
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+[data-theme="dark"] .focusBtn:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+}

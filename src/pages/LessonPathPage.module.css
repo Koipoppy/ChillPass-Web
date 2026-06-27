@@ -1,0 +1,470 @@
+.page {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 8px 0 40px;
+}
+
+/* ===== 分组标题 ===== */
+.groupHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 4px 10px;
+  color: var(--text-secondary);
+}
+
+.groupHeader svg {
+  color: var(--text-tertiary);
+}
+
+.groupTitle {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.groupCount {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-tertiary);
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+  background: rgba(0, 0, 0, 0.04);
+}
+
+[data-theme="dark"] .groupCount {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="dark"] .groupHeader {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+[data-theme="dark"] .groupHeader:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+[data-theme="codex"] .groupHeader {
+  background: rgba(240, 246, 252, 0.03);
+}
+
+[data-theme="codex"] .groupHeader:hover {
+  background: rgba(240, 246, 252, 0.05);
+}
+
+/* ===== 头部 ===== */
+.header {
+  margin-bottom: 24px;
+}
+
+.headerTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.title {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--text-primary);
+}
+
+.coinsBadge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 14px;
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  border-radius: var(--radius-pill);
+}
+
+.coinsValue {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--success-text);
+}
+
+.coinsLabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-tertiary);
+}
+
+.progressRow {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.progressInfo {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.progressCount {
+  font-size: 14px;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.progressPercent {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.progressBar {
+  height: 6px;
+  background: rgba(0, 0, 0, 0.06);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: var(--btn-primary-bg);
+  border-radius: 3px;
+  transition: width 0.5s ease;
+}
+
+/* ===== 路径卡片 ===== */
+.pathCard {
+  border-radius: var(--radius-xl);
+  padding: 24px 20px;
+}
+
+.path {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===== 单个关卡行 ===== */
+.lessonRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  width: 100%;
+  padding: 0;
+  border: none;
+  background: transparent;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.lessonRow:hover {
+  transform: translateX(4px);
+}
+
+.row_locked {
+  cursor: default;
+}
+
+.row_locked:hover {
+  transform: none;
+}
+
+/* 节点列：连接线 + 圆圈 */
+.nodeColumn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 56px;
+  flex-shrink: 0;
+}
+
+.connector {
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.connectorLine {
+  width: 2px;
+  flex: 1;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 1px;
+}
+
+.connectorActive {
+  background: rgba(0, 0, 0, 0.25);
+}
+
+/* 圆圈节点 */
+.nodeCircle {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+}
+
+.nodeNumber {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+/* 已完成：深色实心 + 白色勾，半透明 */
+.node_completed {
+  background: var(--btn-primary-bg);
+  color: var(--btn-primary-fg);
+  opacity: 0.6;
+}
+
+/* 可用 / 进行中：玻璃圆圈 + 脉冲 */
+.node_available,
+.node_in-progress {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: var(--shadow-ambient);
+  color: var(--text-primary);
+  animation: pulse 2.5s ease-in-out infinite;
+}
+
+/* 锁定：灰色 + 锁图标，半透明 */
+.node_locked {
+  background: rgba(0, 0, 0, 0.04);
+  color: var(--text-tertiary);
+  opacity: 0.5;
+}
+
+/* ===== 关卡信息 ===== */
+.lessonInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  /* padding-top 让标题与圆圈中心对齐：圆圈 56px，meta 行约 22px + gap 4px */
+  padding-top: 17px;
+  padding-bottom: 8px;
+  min-width: 0;
+}
+
+.lessonInfoLocked {
+  opacity: 0.5;
+}
+
+.lessonMeta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.priorityTag {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  padding: 2px 10px;
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.priority_must {
+  color: var(--danger-text);
+}
+
+.priority_high {
+  color: var(--warning-text);
+}
+
+.priority_know {
+  color: var(--accent-text);
+}
+
+.lessonCoins {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-tertiary);
+}
+
+.lessonTitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.4;
+}
+
+.lessonStatusDone {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--success-text);
+}
+
+.lessonStatusActive {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--accent-text);
+}
+
+.lessonStatusLocked {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--text-tertiary);
+}
+
+.skipBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  font-family: inherit;
+  color: var(--accent-text);
+  background: transparent;
+  border: 1px solid rgba(0, 122, 255, 0.25);
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.skipBtn:hover {
+  background: rgba(0, 122, 255, 0.08);
+  border-color: rgba(0, 122, 255, 0.4);
+}
+
+/* "接下来做" 徽章 */
+.nextBadge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(245, 158, 11, 0.08));
+  color: #d97706;
+  border: 1px solid rgba(245, 158, 11, 0.25);
+  white-space: nowrap;
+  transition: opacity 1s ease, transform 1s ease;
+}
+
+.nextBadgeVisible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.nextBadgeHidden {
+  opacity: 0;
+  transform: scale(0.85);
+}
+
+/* "接下来做" 行高亮 — 仅保留徽章，无黄色边框 */
+.lessonRowNext {
+  position: relative;
+}
+
+/* 分组标题 */
+.groupHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  user-select: none;
+  border-radius: var(--radius-md);
+  background: rgba(0, 0, 0, 0.03);
+  transition: background 0.2s ease;
+}
+
+.groupHeader:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.groupTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.groupCount {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-tertiary);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.groupDoneTag {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: var(--radius-pill);
+  background: rgba(52, 199, 89, 0.12);
+  color: var(--success-text);
+}
+
+/* ===== 空状态 ===== */
+.empty {
+  max-width: 480px;
+  margin: 80px auto 0;
+  border-radius: var(--radius-xl);
+  padding: 48px 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 12px;
+}
+
+.emptyIcon {
+  color: var(--text-tertiary);
+  margin-bottom: 8px;
+}
+
+.emptyTitle {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.emptyText {
+  font-size: 15px;
+  color: var(--text-secondary);
+  max-width: 320px;
+  line-height: 1.5;
+}
+
+.emptyButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 12px 24px;
+  font-size: 15px;
+  font-weight: 600;
+  font-family: inherit;
+  color: var(--btn-primary-fg);
+  background: var(--btn-primary-bg);
+  border: none;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-ambient);
+}
+
+.emptyButton:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: var(--shadow-hover);
+}

@@ -1,0 +1,80 @@
+.bgLayer {
+  position: fixed;
+  inset: 0;
+  z-index: -3;
+  background: var(--bg-base);
+  overflow: hidden;
+}
+
+.bgBlob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(100px);
+  will-change: transform, opacity;
+}
+
+.blob1 {
+  width: 800px; height: 800px;
+  background: radial-gradient(circle, rgba(0,0,0,0.06), transparent 70%);
+  top: -20%; left: -15%;
+  animation: drift1 22s ease-in-out infinite;
+}
+.blob2 {
+  width: 700px; height: 700px;
+  background: radial-gradient(circle, rgba(0,0,0,0.04), transparent 70%);
+  top: 25%; right: -20%;
+  animation: drift2 28s ease-in-out infinite;
+}
+.blob3 {
+  width: 750px; height: 750px;
+  background: radial-gradient(circle, rgba(0,0,0,0.05), transparent 70%);
+  bottom: -20%; left: 20%;
+  animation: drift3 32s ease-in-out infinite;
+}
+.blob4 {
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(0,0,0,0.03), transparent 70%);
+  top: 50%; left: 45%;
+  animation: drift4 24s ease-in-out infinite;
+}
+.blobLight1 {
+  width: 900px; height: 900px;
+  background: radial-gradient(circle, rgba(255,255,255,0.8), transparent 60%);
+  top: 10%; right: 10%;
+  animation: drift1 30s ease-in-out infinite reverse;
+}
+.blobLight2 {
+  width: 700px; height: 700px;
+  background: radial-gradient(circle, rgba(255,255,255,0.6), transparent 60%);
+  bottom: 5%; left: 5%;
+  animation: drift3 26s ease-in-out infinite reverse;
+}
+
+@keyframes drift1 {
+  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.7; }
+  33% { transform: translate(80px, -60px) scale(1.15); opacity: 1; }
+  66% { transform: translate(-50px, 70px) scale(0.9); opacity: 0.5; }
+}
+@keyframes drift2 {
+  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.6; }
+  50% { transform: translate(-100px, 80px) scale(1.2); opacity: 0.9; }
+}
+@keyframes drift3 {
+  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.5; }
+  40% { transform: translate(70px, -50px) scale(1.1); opacity: 0.8; }
+  80% { transform: translate(-60px, 40px) scale(0.95); opacity: 0.4; }
+}
+@keyframes drift4 {
+  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.6; }
+  25% { transform: translate(-70px, -40px) scale(1.1); opacity: 0.9; }
+  75% { transform: translate(60px, 50px) scale(0.9); opacity: 0.4; }
+}
+
+.bgNoise {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  opacity: 0.025;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}

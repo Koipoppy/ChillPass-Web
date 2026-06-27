@@ -1,0 +1,358 @@
+.page {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 8px 0 40px;
+}
+
+.header {
+  margin-bottom: 24px;
+}
+
+.title {
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+}
+
+.subtitle {
+  font-size: 15px;
+  color: var(--text-secondary);
+}
+
+.card {
+  border-radius: var(--radius-xl);
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ===== 课程名称输入 ===== */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  letter-spacing: 0.02em;
+}
+
+.input {
+  width: 100%;
+  padding: 12px 16px;
+  font-size: 16px;
+  font-family: inherit;
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: var(--radius-md);
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.input:focus {
+  border-color: rgba(0, 0, 0, 0.22);
+  background: rgba(255, 255, 255, 0.85);
+}
+
+.input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.input::placeholder {
+  color: var(--text-tertiary);
+}
+
+/* ===== 拖拽上传区 ===== */
+.dropzone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 40px 24px;
+  border: 2px dashed rgba(0, 0, 0, 0.15);
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.3);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+  outline: none;
+}
+
+.dropzone:hover {
+  border-color: rgba(0, 0, 0, 0.32);
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.dropzone:hover .dropzoneIcon {
+  color: var(--text-primary);
+}
+
+.dropzoneActive {
+  border-color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.7);
+  transform: scale(1.01);
+}
+
+.dropzoneIcon {
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+  transition: color 0.3s ease;
+}
+
+.dropzoneText {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.dropzoneHint {
+  font-size: 13px;
+  color: var(--text-tertiary);
+}
+
+/* ===== 文件列表 ===== */
+.fileList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.fileItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  border-radius: var(--radius-md);
+  transition: background 0.3s ease;
+  animation: slideIn 0.3s ease-out;
+}
+
+.fileItem:hover {
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.fileIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  background: rgba(0, 0, 0, 0.05);
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+
+.fileInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.fileName {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.fileSize {
+  font-size: 12px;
+  color: var(--text-tertiary);
+}
+
+.fileRemove {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: transparent;
+  color: var(--text-tertiary);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.fileRemove:hover {
+  background: rgba(255, 59, 48, 0.1);
+  color: var(--danger-text);
+}
+
+.fileRemove:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+/* ===== 错误信息 ===== */
+.error {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: rgba(255, 59, 48, 0.08);
+  border: 1px solid rgba(255, 59, 48, 0.15);
+  border-radius: var(--radius-md);
+  color: var(--danger-text);
+  font-size: 14px;
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* ===== 解析进度 ===== */
+.progress {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: var(--radius-md);
+}
+
+/* 步骤指示器 */
+.stepIndicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  padding: 4px 0 8px;
+}
+
+.stepItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.stepCircle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-size: 16px;
+  background: rgba(0, 0, 0, 0.05);
+  border: 2px solid rgba(0, 0, 0, 0.08);
+  transition: all 0.4s ease;
+}
+
+.stepCircleActive {
+  border-color: var(--accent-text);
+  background: rgba(0, 113, 227, 0.1);
+  animation: stepPulse 1.5s ease-in-out infinite;
+}
+
+.stepCircleDone {
+  border-color: var(--success-text);
+  background: rgba(52, 199, 89, 0.12);
+  color: var(--success-text);
+  font-weight: 700;
+  font-size: 14px;
+}
+
+@keyframes stepPulse {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(0, 113, 227, 0.3); }
+  50% { transform: scale(1.08); box-shadow: 0 0 0 6px rgba(0, 113, 227, 0); }
+}
+
+.stepLabel {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-tertiary);
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.stepLabelActive {
+  color: var(--accent-text);
+  font-weight: 600;
+}
+
+.stepLabelDone {
+  color: var(--success-text);
+}
+
+.stepConnector {
+  width: 32px;
+  height: 2px;
+  background: rgba(0, 0, 0, 0.08);
+  border-radius: 1px;
+  margin: 0 4px;
+  transition: background 0.4s ease;
+}
+
+.stepConnectorDone {
+  background: var(--success-text);
+}
+
+.progressHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.spinnerIcon {
+  animation: spin 0.8s linear infinite;
+}
+
+.progressBar {
+  height: 6px;
+  background: rgba(0, 0, 0, 0.06);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: var(--btn-primary-bg);
+  border-radius: 3px;
+  transition: width 0.4s ease;
+}
+
+/* ===== 开始按钮 ===== */
+.parseButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 14px 24px;
+  font-size: 16px;
+  font-weight: 600;
+  font-family: inherit;
+  color: var(--btn-primary-fg);
+  background: var(--btn-primary-bg);
+  border: none;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-ambient);
+}
+
+.parseButton:hover:not(:disabled) {
+  transform: translateY(-2px) scale(1.01);
+  box-shadow: var(--shadow-hover);
+}
+
+.parseButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
