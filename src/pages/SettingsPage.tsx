@@ -1,9 +1,8 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
-  GraduationCap,
-  LogIn,
-  LogOut,
+  User,
+  Pencil,
   Key,
   HardDrive,
   Database,
@@ -11,6 +10,7 @@ import {
   ChevronRight,
   RefreshCw,
   Download,
+  Upload,
   Sparkles,
   Sun,
   Moon,
@@ -20,7 +20,8 @@ import {
   Check,
   Briefcase,
 } from 'lucide-react'
-import { useAuthStore } from '@stores/authStore'
+import { useAuthStore, exportAccountToFile } from '@stores/authStore'
+import type { AccountExportBundle } from '@stores/authStore'
 import { useCourseStore } from '@stores/courseStore'
 import { useThemeStore } from '@stores/themeStore'
 import { useLanguageStore, LANGUAGES } from '@stores/languageStore'
@@ -29,13 +30,14 @@ import type { Language } from '@stores/languageStore'
 import { useT } from '../i18n'
 import type { TranslationKey } from '../i18n'
 import type { UpdateInfo, UpdateStatus } from '@types/index'
-import AccountLogin from '@components/AccountLogin'
+import AccountEditor from '@components/AccountEditor'
 import styles from './SettingsPage.module.css'
 
 export default function SettingsPage() {
   const navigate = useNavigate()
   const account = useAuthStore(s => s.account)
-  const logout = useAuthStore(s => s.logout)
+  const ensureAccount = useAuthStore(s => s.ensureAccount)
+  const importAccount = useAuthStore(s => s.importAccount)
   const courses = useCourseStore(s => s.courses)
 
   const theme = useThemeStore(s => s.theme)
@@ -46,10 +48,16 @@ export default function SettingsPage() {
   const setIsTeacher = useSettingsStore(s => s.setIsTeacher)
   const t = useT()
 
-  const [showLogin, setShowLogin] = useState(false)
+  const [showEditor, setShowEditor] = useState(false)
   const [appVersion, setAppVersion] = useState('1.0.0')
   const [pendingLang, setPendingLang] = useState<Language>(language)
   const [langApplied, setLangApplied] = useState(false)
+  const accountFileInputRef = useRef<HTMLInputElement>(null)
+
+  // 确保账号存在（首次使用自动创建）
+  useEffect(() => {
+    ensureAccount()
+  }, [ensureAccount])
 
   // 更新检查状态
   const [updateStatus, setUpdateStatus] = useState<UpdateStatus>('idle')
@@ -80,10 +88,36 @@ export default function SettingsPage() {
     }
   }
 
-  const handleLogout = () => {
-    if (window.confirm(t('settings.logoutConfirm'))) {
-      logout()
+  const handleExportAccount = () => {
+    exportAccountToFile()
+  }
+
+  const handleImportAccountClick = () => {
+    accountFileInputRef.current?.click()
+  }
+
+  const handleImportAccountFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = () => {
+      try {
+        const data: AccountExportBundle = JSON.parse(reader.result as string)
+        const success = importAccount(data)
+        if (success) {
+          window.alert('账号导入成功！')
+        } else {
+          window.alert('导入失败：文件格式不正确')
+        }
+      } catch {
+        window.alert('导入失败：无法解析 JSON 文件')
+      }
     }
+    reader.onerror = () => {
+      window.alert('导入失败：读取文件出错')
+    }
+    reader.readAsText(file)
+    e.target.value = ''
   }
 
   const handleApplyLanguage = () => {
@@ -93,11 +127,11 @@ export default function SettingsPage() {
   }
 
   // 统计数据
-  const totalCourses = courses.length
+  const totalCourses = courses.filter(b => b.course.status === 'ready').length
   const totalFiles = courses.reduce((sum, b) => sum + b.course.files.length, 0)
 
-  // 账号头像首字
-  const avatarChar = account?.name?.charAt(0)?.toUpperCase() || '?'
+  // 账号头像 emoji（默认 🦊）
+  const avatarEmoji = account?.avatar || '🦊'
 
   const navCards: { path: string; icon: typeof Key; titleKey: TranslationKey; descKey: TranslationKey }[] = [
     {
@@ -207,46 +241,60 @@ export default function SettingsPage() {
         </div>
       </section>
 
-      {/* 2. 账户信息卡片 */}
+      {/* 2. 账户信息卡片（本地离线账号，首次使用自动创建） */}
       <section className={`liquid-glass ${styles.card}`}>
         <div className={styles.cardHeader}>
           <h2 className={styles.cardTitle}>{t('settings.account')}</h2>
           <p className={styles.cardDesc}>{t('settings.accountDesc')}</p>
         </div>
 
-        {account ? (
-          <div className={styles.accountCard}>
-            <div className={styles.avatar}>{avatarChar}</div>
-            <div className={styles.accountInfo}>
-              <span className={styles.accountName}>{account.name}</span>
-              <span className={styles.accountMeta}>
-                {account.school} · {account.studentId}
-              </span>
-              <span className={styles.accountMeta}>
-                {account.college} · {account.major} · {account.grade}
-              </span>
+        {account && (
+          <>
+            <div className={styles.accountCard}>
+              <div className={styles.avatar}>{avatarEmoji}</div>
+              <div className={styles.accountInfo}>
+                <span className={styles.accountName}>{account.name}</span>
+                {account.bio && (
+                  <span className={styles.accountMeta}>{account.bio}</span>
+                )}
+              </div>
+              <button
+                className={styles.logoutBtn}
+                onClick={() => setShowEditor(true)}
+                title="编辑个人资料"
+              >
+                <Pencil size={16} strokeWidth={2} />
+                编辑资料
+              </button>
             </div>
-            <button className={styles.logoutBtn} onClick={handleLogout}>
-              <LogOut size={16} strokeWidth={2} />
-              {t('settings.logout')}
-            </button>
-          </div>
-        ) : (
-          <div className={styles.loginPrompt}>
-            <div className={styles.loginPromptIcon}>
-              <GraduationCap size={28} strokeWidth={1.6} />
+
+            {/* 导出 / 导入账号 */}
+            <div style={{ display: 'flex', gap: '10px', marginTop: '14px' }}>
+              <button
+                className={styles.recheckBtn}
+                onClick={handleExportAccount}
+                style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', padding: '8px 14px' }}
+              >
+                <Download size={15} strokeWidth={2} />
+                导出账号
+              </button>
+              <button
+                className={styles.recheckBtn}
+                onClick={handleImportAccountClick}
+                style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', padding: '8px 14px' }}
+              >
+                <Upload size={15} strokeWidth={2} />
+                导入账号
+              </button>
+              <input
+                type="file"
+                accept=".json"
+                ref={accountFileInputRef}
+                style={{ display: 'none' }}
+                onChange={handleImportAccountFile}
+              />
             </div>
-            <div className={styles.loginPromptText}>
-              <span className={styles.loginPromptTitle}>{t('settings.notLoggedIn')}</span>
-              <span className={styles.loginPromptDesc}>
-                {t('settings.notLoggedInDesc')}
-              </span>
-            </div>
-            <button className={styles.loginBtn} onClick={() => setShowLogin(true)}>
-              <LogIn size={16} strokeWidth={2} />
-              {t('settings.login')}
-            </button>
-          </div>
+          </>
         )}
       </section>
 
@@ -380,8 +428,8 @@ export default function SettingsPage() {
         })}
       </section>
 
-      {/* 登录弹窗 */}
-      {showLogin && <AccountLogin onClose={() => setShowLogin(false)} />}
+      {/* 编辑资料弹窗 */}
+      {showEditor && <AccountEditor onClose={() => setShowEditor(false)} />}
     </div>
   )
 }

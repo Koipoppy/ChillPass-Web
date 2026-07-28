@@ -35,8 +35,9 @@
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 60px 24px;
+  padding: 80px 24px;
   gap: 16px;
+  border-radius: var(--radius-xl);
 }
 
 .emptyIcon {

@@ -14,6 +14,11 @@ sea-prep.blob
 # electron-builder 打包输出
 release/
 
+# 安装程序构建产物
+build/
+installer/tools/
+installer/rcedit-x64.exe
+
 # TypeScript 增量编译缓存
 *.tsbuildinfo
 
@@ -43,3 +48,6 @@ vite.config.js
 
 # 设计规范（内部文档，不公开）
 设计规范.md
+
+# 非项目资源文件
+招聘海报.png

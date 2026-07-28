@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { nanoid } from 'nanoid'
-import { Upload, FileText, Loader, X, ChevronRight, ChevronDown, CheckCircle } from 'lucide-react'
+import { Upload, FileText, Loader, X, ChevronRight, ChevronDown, CheckCircle, Settings } from 'lucide-react'
 import { useCourseStore, useCurrentBundle } from '@stores/courseStore'
 import { parseFile, cleanText } from '@services/fileParser'
 import { extractExamPoints } from '@services/deepseek'
@@ -186,8 +186,14 @@ export default function UploadPage() {
     setProgressText('正在解析课件...')
 
     try {
-      // 创建/重置课程
-      createCourse(courseName.trim())
+      // 创建/重置课程（课程管理系统：禁止同名课程）
+      const newCourseId = createCourse(courseName.trim())
+      if (!newCourseId) {
+        setError('已存在同名课程，请使用其他名称或通过"导入到已有课程"追加内容')
+        setPhase('idle')
+        setProgress(0)
+        return
+      }
       addFiles(files)
 
       // 逐个解析文件
@@ -418,7 +424,7 @@ export default function UploadPage() {
                 onChange={e => handleSelectCourse(e.target.value)}
                 disabled={isBusy}
               >
-                {courses.map(b => (
+                {courses.filter(b => b.course.status === 'ready').map(b => (
                   <option key={b.course.id} value={b.course.id}>
                     {b.course.name}（{STATUS_LABELS[b.course.status]}）
                   </option>
@@ -488,6 +494,33 @@ export default function UploadPage() {
           <div className={styles.error}>
             <X size={16} strokeWidth={2} />
             <span>{error}</span>
+            {error.includes('API Key') && (
+              <button
+                onClick={() => navigate('/settings/api')}
+                style={{
+                  marginLeft: 'auto',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                  padding: '4px 12px',
+                  background: 'var(--accent-text)',
+                  color: '#fff',
+                  border: 'none',
+                  borderRadius: 'var(--radius-sm)',
+                  fontSize: '13px',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  fontFamily: 'inherit',
+                  whiteSpace: 'nowrap',
+                  transition: 'opacity 0.2s ease',
+                }}
+                onMouseEnter={e => (e.currentTarget.style.opacity = '0.85')}
+                onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
+              >
+                <Settings size={14} strokeWidth={2} />
+                去配置
+              </button>
+            )}
           </div>
         )}
 

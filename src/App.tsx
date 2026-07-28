@@ -5,6 +5,7 @@ import Sidebar from './components/layout/Sidebar'
 import TitleBar from './components/layout/TitleBar'
 import GlassFilter from './components/common/GlassFilter'
 import Background from './components/layout/Background'
+import { useAuthStore } from './stores/authStore'
 import Dashboard from './pages/Dashboard'
 import UploadPage from './pages/UploadPage'
 import LessonPathPage from './pages/LessonPathPage'
@@ -63,9 +64,12 @@ function AnimatedPage({ children }: { children: React.ReactNode }) {
 
 export default function App() {
   const location = useLocation()
+  const ensureAccount = useAuthStore(s => s.ensureAccount)
 
   useEffect(() => {
     document.title = 'ChillPass — 期末冲刺助手'
+    // 首次使用自动创建本地账号
+    ensureAccount()
   }, [])
 
   return (

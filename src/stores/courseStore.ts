@@ -27,7 +27,7 @@ interface CourseState {
   currentCourseId: string | null
 
   // Actions
-  createCourse: (name: string) => string
+  createCourse: (name: string) => string | null
   switchCourse: (id: string) => void
   renameCourse: (id: string, newName: string) => void
   deleteCourse: (id: string) => void
@@ -50,6 +50,10 @@ interface CourseState {
   resetCourse: () => void
   /** 批量更新文件路径（资源迁移后调用） */
   updateFilePaths: (pathMap: Record<string, string>) => void
+  /** 导出课程为 JSON 文件 */
+  exportCourse: (id: string) => void
+  /** 导入课程（返回是否成功） */
+  importCourse: (data: CourseBundle) => boolean
 }
 
 /** 更新当前课程的辅助函数 */
@@ -69,10 +73,21 @@ export const useCourseStore = create<CourseState>()(
       currentCourseId: null,
 
       createCourse: (name) => {
+        const trimmedName = name.trim()
+        if (!trimmedName) return null
+
+        // 课程管理系统：禁止同名课程
+        const existing = get().courses.find(b => b.course.name === trimmedName)
+        if (existing) {
+          // 已存在同名课程，切换到该课程并返回 null 表示未创建
+          set({ currentCourseId: existing.course.id })
+          return null
+        }
+
         const id = nanoid()
         const course: Course = {
           id,
-          name,
+          name: trimmedName,
           files: [],
           status: 'empty',
           createdAt: Date.now(),
@@ -92,6 +107,9 @@ export const useCourseStore = create<CourseState>()(
       renameCourse: (id, newName) => {
         const name = newName.trim()
         if (!name) return
+        // 检查是否与其他课程同名
+        const duplicate = get().courses.find(b => b.course.id !== id && b.course.name === name)
+        if (duplicate) return
         set(state => ({
           courses: state.courses.map(bundle =>
             bundle.course.id === id
@@ -140,11 +158,28 @@ export const useCourseStore = create<CourseState>()(
       },
 
       setExamPoints: (points) => {
-        set(state => updateCurrentBundle(state, bundle => ({
-          ...bundle,
-          course: { ...bundle.course, status: 'ready', updatedAt: Date.now() },
-          examPoints: points,
-        })))
+        const courseId = get().currentCourseId
+        set(state => {
+          // 先用 updateCurrentBundle 更新当前课程
+          const updated = updateCurrentBundle(state, bundle => ({
+            ...bundle,
+            course: { ...bundle.course, status: 'ready', updatedAt: Date.now() },
+            examPoints: points,
+          }))
+          // 课程变为 ready 后，清理同名/同内容的旧重复课程（非 ready 状态）
+          if (courseId) {
+            const currentBundle = updated.courses?.find(b => b.course.id === courseId)
+            const currentName = currentBundle?.course.name
+            if (currentName) {
+              updated.courses = updated.courses.filter(b =>
+                b.course.id === courseId ||
+                b.course.status === 'ready' ||
+                b.course.name !== currentName
+              )
+            }
+          }
+          return updated
+        })
         get().generateLessons()
       },
 
@@ -406,6 +441,97 @@ export const useCourseStore = create<CourseState>()(
             },
           })),
         }))
+      },
+
+      exportCourse: (id) => {
+        const bundle = get().courses.find(b => b.course.id === id)
+        if (!bundle) return
+
+        const json = JSON.stringify(bundle, null, 2)
+        const blob = new Blob([json], { type: 'application/json' })
+        const url = URL.createObjectURL(blob)
+
+        const date = new Date()
+        const dateStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
+        const fileName = `ChillPass-${bundle.course.name}-${dateStr}.json`
+
+        const a = document.createElement('a')
+        a.href = url
+        a.download = fileName
+        document.body.appendChild(a)
+        a.click()
+        document.body.removeChild(a)
+        URL.revokeObjectURL(url)
+      },
+
+      importCourse: (data) => {
+        // 验证数据格式
+        if (!data || typeof data !== 'object') return false
+        if (!data.course || !Array.isArray(data.examPoints) || !Array.isArray(data.lessons)) {
+          return false
+        }
+
+        // 课程管理系统：基于内容检测重复课程
+        // 比较考点标题集合，如果重叠率超过 80% 则判定为同一门课程
+        const incomingPointTitles = new Set(data.examPoints.map(p => p.title))
+        const existingDuplicate = get().courses.find(b => {
+          if (b.course.name === data.course.name) return true
+          if (b.examPoints.length === 0 || incomingPointTitles.size === 0) return false
+          const existingTitles = new Set(b.examPoints.map(p => p.title))
+          let overlap = 0
+          for (const t of incomingPointTitles) {
+            if (existingTitles.has(t)) overlap++
+          }
+          const overlapRate = overlap / Math.max(incomingPointTitles.size, existingTitles.size)
+          return overlapRate > 0.8
+        })
+
+        if (existingDuplicate) {
+          // 已存在相同课程，直接切换到该课程，不重复导入
+          set({ currentCourseId: existingDuplicate.course.id })
+          return false
+        }
+
+        const newCourseId = nanoid()
+
+        // 为考点生成新 ID，并建立 旧ID -> 新ID 映射
+        const examPointIdMap: Record<string, string> = {}
+        const newExamPoints: ExamPoint[] = data.examPoints.map(p => {
+          const newId = nanoid()
+          examPointIdMap[p.id] = newId
+          return { ...p, id: newId }
+        })
+
+        // 为关卡生成新 ID，同时更新 courseId 与 examPointId
+        // 保留所有已生成的关卡内容（content 字段）
+        const newLessons: Lesson[] = data.lessons.map(l => ({
+          ...l,
+          id: nanoid(),
+          courseId: newCourseId,
+          examPointId: examPointIdMap[l.examPointId] ?? l.examPointId,
+        }))
+
+        const newBundle: CourseBundle = {
+          ...data,
+          course: {
+            ...data.course,
+            id: newCourseId,
+            status: 'ready',
+            updatedAt: Date.now(),
+          },
+          examPoints: newExamPoints,
+          lessons: newLessons,
+          // 重置后台生成状态（内容已在导出数据中）
+          generatingLessons: false,
+          generationProgress: { current: 0, total: 0 },
+        }
+
+        set(state => ({
+          courses: [...state.courses, newBundle],
+          currentCourseId: newCourseId,
+        }))
+
+        return true
       },
     }),
     {

@@ -110,7 +110,7 @@ export default function WrongBookPage() {
           <h1 className={styles.title}>错题本</h1>
           <p className={styles.subtitle}>按课程归类，逐个击破</p>
         </header>
-        <div className={styles.empty}>
+        <div className={`liquid-glass ${styles.empty}`}>
           <div className={styles.emptyIcon}>
             <BookX size={48} strokeWidth={1.4} />
           </div>

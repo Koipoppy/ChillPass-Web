@@ -14,6 +14,7 @@ import {
   MessageCircle,
   Loader,
   Upload,
+  Download,
   Sparkles,
   FileText,
   Check,
@@ -59,6 +60,8 @@ export default function Dashboard() {
   const switchCourse = useCourseStore(s => s.switchCourse)
   const renameCourse = useCourseStore(s => s.renameCourse)
   const deleteCourse = useCourseStore(s => s.deleteCourse)
+  const exportCourse = useCourseStore(s => s.exportCourse)
+  const importCourse = useCourseStore(s => s.importCourse)
 
   const wrongQuestions = useWrongQuestionStore(s => s.questions)
   const resolveQuestion = useWrongQuestionStore(s => s.resolveQuestion)
@@ -68,6 +71,8 @@ export default function Dashboard() {
   const [renameValue, setRenameValue] = useState('')
   const switcherRef = useRef<HTMLDivElement>(null)
   const renameInputRef = useRef<HTMLInputElement>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const welcomeFileInputRef = useRef<HTMLInputElement>(null)
 
   // 考试日期设置
   const setExamDate = useCourseStore(s => s.setExamDate)
@@ -126,6 +131,59 @@ export default function Dashboard() {
     setSwitcherOpen(false)
   }
 
+  // 导出课程
+  const handleExport = (e: React.MouseEvent, id: string) => {
+    e.stopPropagation()
+    exportCourse(id)
+  }
+
+  // 导入课程：触发隐藏 file input
+  const handleImportClick = (ref: React.RefObject<HTMLInputElement>) => {
+    ref.current?.click()
+  }
+
+  // 读取并解析 JSON 文件，调用 importCourse
+  const handleFileImport = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = () => {
+      try {
+        const data = JSON.parse(reader.result as string)
+        if (!data.course?.name) {
+          window.alert('导入失败：文件格式不正确')
+          return
+        }
+        // 课程管理系统：importCourse 内部会基于内容检测重复
+        // 如果检测到重复课程，返回 false 并自动切换到已有课程
+        const success = importCourse(data)
+        if (success) {
+          window.alert('课程导入成功！')
+          setSwitcherOpen(false)
+        } else {
+          // 可能是重复课程或格式错误
+          // 检查是否因为重复（课程名或考点重叠）
+          const hasValidData = data.course && Array.isArray(data.examPoints) && Array.isArray(data.lessons)
+          if (hasValidData) {
+            window.alert('该课程已存在（名称或考点重复），已自动切换到已有课程')
+            setSwitcherOpen(false)
+          } else {
+            window.alert('导入失败：文件格式不正确')
+          }
+        }
+      } catch (err) {
+        console.error('导入课程解析失败', err)
+        window.alert('导入失败：无法解析 JSON 文件')
+      }
+    }
+    reader.onerror = () => {
+      window.alert('导入失败：读取文件出错')
+    }
+    reader.readAsText(file)
+    // 重置 value 以便可以重复选择同一文件
+    e.target.value = ''
+  }
+
   // ===== 状态 1：无课程 —— 欢迎引导 =====
   if (!bundle) {
     return (
@@ -139,10 +197,41 @@ export default function Dashboard() {
           <p className={styles.heroSubtitle}>
             上传课件，AI 自动提炼考点，生成闯关式冲刺课程
           </p>
-          <button className={styles.primaryBtn} onClick={() => navigate('/upload')}>
-            <Upload size={18} strokeWidth={2} />
-            <span>导入课件</span>
-          </button>
+          <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center' }}>
+            <button className={styles.primaryBtn} onClick={() => navigate('/upload')} style={{ marginTop: 0 }}>
+              <Upload size={18} strokeWidth={2} />
+              <span>导入课件</span>
+            </button>
+            <button
+              onClick={() => handleImportClick(welcomeFileInputRef)}
+              style={{
+                marginTop: 12,
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 8,
+                padding: '14px 28px',
+                border: '1px solid rgba(0, 0, 0, 0.12)',
+                borderRadius: 'var(--radius-pill)',
+                background: 'transparent',
+                color: 'var(--text-secondary)',
+                fontSize: 16,
+                fontWeight: 600,
+                cursor: 'pointer',
+                transition: 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+              }}
+              title="从 JSON 文件导入已导出的课程"
+            >
+              <Download size={18} strokeWidth={2} />
+              <span>导入课程</span>
+            </button>
+            <input
+              type="file"
+              accept=".json"
+              ref={welcomeFileInputRef}
+              style={{ display: 'none' }}
+              onChange={handleFileImport}
+            />
+          </div>
           <div className={styles.heroSteps}>
             <div className={styles.heroStep}>
               <span className={styles.heroStepNum}>1</span>
@@ -276,7 +365,9 @@ export default function Dashboard() {
         {switcherOpen && (
           <div className={`liquid-glass ${styles.dropdown}`}>
             <div className={styles.dropdownList}>
-              {courses.map(b => (
+              {courses
+                .filter(b => b.course.status === 'ready')
+                .map(b => (
                 <div
                   key={b.course.id}
                   className={`${styles.dropdownItem} ${
@@ -293,29 +384,57 @@ export default function Dashboard() {
                       {statusText[b.course.status]}
                     </span>
                   </div>
-                  <button
-                    className={styles.deleteBtn}
-                    onClick={e => {
-                      e.stopPropagation()
-                      handleDelete(b.course.id, b.course.name)
-                    }}
-                    title="删除课程"
-                  >
-                    <Trash2 size={16} strokeWidth={1.8} />
-                  </button>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 2, flexShrink: 0 }}>
+                    <button
+                      className={styles.deleteBtn}
+                      onClick={e => handleExport(e, b.course.id)}
+                      title="导出课程"
+                    >
+                      <Download size={16} strokeWidth={1.8} />
+                    </button>
+                    <button
+                      className={styles.deleteBtn}
+                      onClick={e => {
+                        e.stopPropagation()
+                        handleDelete(b.course.id, b.course.name)
+                      }}
+                      title="删除课程"
+                    >
+                      <Trash2 size={16} strokeWidth={1.8} />
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
-            <button
-              className={styles.newCourseBtn}
-              onClick={() => {
-                setSwitcherOpen(false)
-                navigate('/upload')
-              }}
-            >
-              <Plus size={18} strokeWidth={2} />
-              <span>新建课程</span>
-            </button>
+            <div style={{ display: 'flex', gap: 8, marginTop: 4 }}>
+              <button
+                className={styles.newCourseBtn}
+                style={{ flex: 1 }}
+                onClick={() => {
+                  setSwitcherOpen(false)
+                  navigate('/upload')
+                }}
+              >
+                <Plus size={18} strokeWidth={2} />
+                <span>新建课程</span>
+              </button>
+              <button
+                className={styles.newCourseBtn}
+                style={{ flex: 1 }}
+                onClick={() => handleImportClick(fileInputRef)}
+                title="从 JSON 文件导入课程"
+              >
+                <Download size={18} strokeWidth={2} />
+                <span>导入课程</span>
+              </button>
+            </div>
+            <input
+              type="file"
+              accept=".json"
+              ref={fileInputRef}
+              style={{ display: 'none' }}
+              onChange={handleFileImport}
+            />
           </div>
         )}
       </div>

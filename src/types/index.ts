@@ -204,22 +204,20 @@ export interface CourseBundle {
   generationProgress: { current: number; total: number }
 }
 
-// ===== 校园账号类型 =====
+// ===== 本地账号类型 =====
 
-/** 校园账号信息（为未来接入教务系统做准备） */
-export interface CampusAccount {
-  studentId: string
+/** 本地用户账号（离线运行，不与任何校园系统挂钩） */
+export interface LocalAccount {
+  /** 用户昵称 */
   name: string
-  school: string
-  college: string
-  major: string
-  grade: string
-  /** 教务系统类型，为未来对接不同教务系统预留 */
-  academicSystem?: string
-  /** 登录时间戳 */
-  loggedAt: number
-  /** 未来教务系统 token（暂未使用） */
-  authToken?: string
+  /** 自定义头像 emoji（可选） */
+  avatar?: string
+  /** 个性签名（可选） */
+  bio?: string
+  /** 创建时间戳 */
+  createdAt: number
+  /** 上次活跃时间戳 */
+  lastActiveAt: number
 }
 
 // ===== 更新检查类型 =====

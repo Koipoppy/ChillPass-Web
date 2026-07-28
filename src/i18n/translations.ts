@@ -24,11 +24,9 @@ export type TranslationKey =
   | 'settings.retry'
   | 'settings.account'
   | 'settings.accountDesc'
-  | 'settings.logout'
-  | 'settings.logoutConfirm'
-  | 'settings.notLoggedIn'
-  | 'settings.notLoggedInDesc'
-  | 'settings.login'
+  | 'settings.editProfile'
+  | 'settings.exportAccount'
+  | 'settings.importAccount'
   | 'settings.api'
   | 'settings.apiDesc'
   | 'settings.storage'
@@ -177,12 +175,10 @@ const zh: Record<TranslationKey, string> = {
   'settings.downloadUpdate': '下载更新',
   'settings.retry': '重试',
   'settings.account': '账户信息',
-  'settings.accountDesc': '校园账号登录，为未来教务系统对接做准备',
-  'settings.logout': '退出登录',
-  'settings.logoutConfirm': '确定要退出登录吗？',
-  'settings.notLoggedIn': '尚未登录校园账号',
-  'settings.notLoggedInDesc': '登录后可同步课程信息，未来支持教务系统自动导入',
-  'settings.login': '登录',
+  'settings.accountDesc': '本地离线账号，首次使用自动创建，数据仅保存在本机',
+  'settings.editProfile': '编辑资料',
+  'settings.exportAccount': '导出账号',
+  'settings.importAccount': '导入账号',
   'settings.api': 'API 配置',
   'settings.apiDesc': 'DeepSeek 模型密钥与参数',
   'settings.storage': '存储与迁移',
@@ -332,12 +328,10 @@ const en: Record<TranslationKey, string> = {
   'settings.downloadUpdate': 'Download Update',
   'settings.retry': 'Retry',
   'settings.account': 'Account',
-  'settings.accountDesc': 'Campus account login, preparing for future SIS integration',
-  'settings.logout': 'Log Out',
-  'settings.logoutConfirm': 'Are you sure you want to log out?',
-  'settings.notLoggedIn': 'Not logged in to campus account',
-  'settings.notLoggedInDesc': 'Log in to sync course info; future SIS auto-import supported',
-  'settings.login': 'Log In',
+  'settings.accountDesc': 'Local offline account, auto-created on first use, stored on this device only',
+  'settings.editProfile': 'Edit Profile',
+  'settings.exportAccount': 'Export Account',
+  'settings.importAccount': 'Import Account',
   'settings.api': 'API Config',
   'settings.apiDesc': 'DeepSeek model key and parameters',
   'settings.storage': 'Storage',
@@ -487,12 +481,10 @@ const ru: Record<TranslationKey, string> = {
   'settings.downloadUpdate': 'Скачать обновление',
   'settings.retry': 'Повторить',
   'settings.account': 'Аккаунт',
-  'settings.accountDesc': 'Вход через кампусный аккаунт, подготовка к интеграции с СДО',
-  'settings.logout': 'Выйти',
-  'settings.logoutConfirm': 'Вы уверены, что хотите выйти?',
-  'settings.notLoggedIn': 'Вход в кампусный аккаунт не выполнен',
-  'settings.notLoggedInDesc': 'Войдите для синхронизации курсов; будущий автоимпорт из СДО',
-  'settings.login': 'Войти',
+  'settings.accountDesc': 'Локальный офлайн-аккаунт, создаётся автоматически, данные только на этом устройстве',
+  'settings.editProfile': 'Изменить профиль',
+  'settings.exportAccount': 'Экспорт аккаунта',
+  'settings.importAccount': 'Импорт аккаунта',
   'settings.api': 'API',
   'settings.apiDesc': 'Ключ и параметры модели DeepSeek',
   'settings.storage': 'Хранилище',
@@ -642,12 +634,10 @@ const ja: Record<TranslationKey, string> = {
   'settings.downloadUpdate': '更新をダウンロード',
   'settings.retry': '再試行',
   'settings.account': 'アカウント',
-  'settings.accountDesc': 'キャンパスアカウントでログイン、将来の教务システム連携に備える',
-  'settings.logout': 'ログアウト',
-  'settings.logoutConfirm': 'ログアウトしますか？',
-  'settings.notLoggedIn': 'キャンパスアカウント未ログイン',
-  'settings.notLoggedInDesc': 'ログインでコース情報を同期、将来の教务システム自動インポート対応',
-  'settings.login': 'ログイン',
+  'settings.accountDesc': 'ローカルオフラインアカウント、初回使用時に自動作成、データはこの端末にのみ保存',
+  'settings.editProfile': 'プロフィール編集',
+  'settings.exportAccount': 'アカウントエクスポート',
+  'settings.importAccount': 'アカウントインポート',
   'settings.api': 'API設定',
   'settings.apiDesc': 'DeepSeekモデルのキーとパラメータ',
   'settings.storage': 'ストレージ',
@@ -797,12 +787,10 @@ const ko: Record<TranslationKey, string> = {
   'settings.downloadUpdate': '업데이트 다운로드',
   'settings.retry': '재시도',
   'settings.account': '계정',
-  'settings.accountDesc': '캠퍼스 계정 로그인, 향후 학사시스템 연동 대비',
-  'settings.logout': '로그아웃',
-  'settings.logoutConfirm': '로그아웃하시겠습니까?',
-  'settings.notLoggedIn': '캠퍼스 계정 미로그인',
-  'settings.notLoggedInDesc': '로그인 시 코스 정보 동기화, 향후 학사시스템 자동 가져오기 지원',
-  'settings.login': '로그인',
+  'settings.accountDesc': '로컬 오프라인 계정, 첫 사용 시 자동 생성, 데이터는 이 기기에만 저장',
+  'settings.editProfile': '프로필 편집',
+  'settings.exportAccount': '계정 내보내기',
+  'settings.importAccount': '계정 가져오기',
   'settings.api': 'API 설정',
   'settings.apiDesc': 'DeepSeek 모델 키 및 매개변수',
   'settings.storage': '저장소',

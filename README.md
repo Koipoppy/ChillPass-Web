@@ -1,11 +1,11 @@
 <p align="center">
-  <img src="https://img.shields.io/badge/version-1.2.2-blue?style=flat-square" alt="Version" />
-  <img src="https://img.shields.io/badge/Electron-31.7.7-9FEAF9?style=flat-square&logo=electron" alt="Electron" />
+  <img src="https://img.shields.io/badge/version-1.2.3-blue?style=flat-square" alt="Version" />
+  <img src="https://img.shields.io/badge/Node.js-SEA-339933?style=flat-square&logo=node.js" alt="Node.js SEA" />
   <img src="https://img.shields.io/badge/React-18-61DAFB?style=flat-square&logo=react" alt="React" />
   <img src="https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript" alt="TypeScript" />
   <img src="https://img.shields.io/badge/DeepSeek-AI-4D6BFE?style=flat-square" alt="DeepSeek" />
   <img src="https://img.shields.io/badge/Platform-Windows-0078D4?style=flat-square&logo=windows" alt="Windows" />
-  <img src="https://img.shields.io/badge/License-Educational-green?style=flat-square" alt="License" />
+  <img src="https://img.shields.io/badge/License-MIT-green?style=flat-square" alt="License" />
 </p>
 
 <h1 align="center">ChillPass Web</h1>
@@ -19,12 +19,12 @@
   <a href="#-installation">Install</a> &bull;
   <a href="#-quick-start">Quick Start</a> &bull;
   <a href="#-tech-stack">Tech Stack</a> &bull;
-  <a href="https://github.com/Koipoppy/ChillPass/releases">Download</a>
+  <a href="https://github.com/Koipoppy/ChillPass-Web/releases">Download</a>
 </p>
 
 <p align="center">
-  <a href="https://github.com/Koipoppy/ChillPass/releases/tag/v1.2.2">
-    <img src="https://img.shields.io/badge/⬇️_Download-ChillPass%20Setup%201.2.2.exe-blue?style=for-the-badge" alt="Download" />
+  <a href="https://github.com/Koipoppy/ChillPass-Web/releases/latest">
+    <img src="https://img.shields.io/badge/⬇️_Download-ChillPass%20Setup%201.2.3.exe-blue?style=for-the-badge" alt="Download" />
   </a>
 </p>
 
@@ -34,7 +34,7 @@
 
 ChillPass is a **desktop application** that transforms your course materials (PDF, PPTX, TXT, MD) into a **gamified learning experience**. Upload your lecture slides, and the AI engine automatically extracts exam-critical topics, generates structured lessons with worked examples, and creates adaptive quizzes — all prioritized by how likely each topic is to appear on your exam.
 
-But that's not all. ChillPass v1.2.2 introduces **Athena** — an AI agent that goes beyond Q&A to write papers, generate reports, summarize knowledge, and plan your revision. Plus a **Teacher Workspace** for generating exam papers with AI, exporting to PDF in 5 languages. New in v1.2.1-1.2.2: quiz regenerate & skip, lesson grouping by source file, "Next Up" smart marker, help modal, and refined card layouts.
+Starting from **v1.2.3**, ChillPass has been rebuilt as a **browser-based web app** packaged as a standalone Windows executable via Node.js SEA (Single Executable Application). No Electron, no heavy runtime — just a single `chillpass.exe` that starts a local HTTP server and opens your default browser. Data stays 100% local (IndexedDB + localStorage), fully offline.
 
 **How it works:**
 
@@ -66,6 +66,7 @@ Upload Materials → AI Extracts Topics → Generates Quest Levels → You Play 
 | **Adaptive Quizzes** | One question per page with a progress navigator. Answer wrong? The question regenerates on the same topic until you master it |
 | **Regenerate & Skip** | Stuck on a question? Regenerate a new question on the same topic (free) or skip it for 10 Chill Coins |
 | **Dynamic Difficulty** | Quiz volume scales with topic priority — Must-Know gets 4-5 questions, Good-to-Know gets 2 |
+| **Duplicate Course Detection** | Importing a course with an existing name prompts a replace dialog — no more accidental duplicates |
 
 ### 🧠 Six Question Types with AI Grading
 
@@ -85,6 +86,17 @@ Upload Materials → AI Extracts Topics → Generates Quest Levels → You Play 
 Wrong answers trigger **adaptive retry**:
 - **Choice questions** → Options are shuffled, try again
 - **Fill-in / Short answer** → AI generates a brand-new question on the same topic
+
+### 👤 Local Account System
+
+A fully offline account system — no servers, no login, no tracking:
+
+| Capability | Description |
+|-----------|-------------|
+| **Auto-Create** | A default local account is created on first launch — no signup needed |
+| **Profile Editing** | Set nickname, pick from 12 emoji avatars, add a bio |
+| **Export / Import** | Export your account as a JSON file and import it on another device |
+| **Privacy-First** | All account data lives in the browser's localStorage — never uploaded anywhere |
 
 ### 🤖 Athena — AI Agent
 
@@ -127,6 +139,15 @@ A dedicated workspace for educators (enable in Settings → "I am a Teacher"):
 - **5-Language Export** — Full translation of all question content before export (Chinese, English, Japanese, Korean, Russian)
 - **Retry & Timeout** — Robust API calls with 3 retries, 90s timeout, and dynamic token limits
 
+### 🖥️ System Tray & Auto-Update
+
+| Feature | Description |
+|-----------|-------------|
+| **System Tray Icon** | A native Windows tray icon (PowerShell-based) with "Open in Browser" and "Quit" actions — auto-disappears when the server exits |
+| **Auto-Update Checker** | Checks GitHub Releases for new versions; supports silent mode (auto-download + install) and GUI mode (WinForms dialog with progress bar) |
+| **Proxy Fallback** | Update downloads automatically fall back to a GitHub proxy if direct download fails |
+| **In-App Update Check** | One-click update check from Settings, with download button linking to the latest release |
+
 ### 🎨 Five Themes
 
 | Theme | Style |
@@ -154,18 +175,27 @@ A circular help button next to the focus mode toggle opens a modal with:
 
 ### Download (Recommended)
 
-Go to [Releases](https://github.com/Koipoppy/ChillPass/releases) → Download `ChillPass Setup 1.2.2.exe` → Install.
+Go to [Releases](https://github.com/Koipoppy/ChillPass-Web/releases) → Download `ChillPass-Setup-1.2.3.exe` → Install.
 
-> Windows 10/11 (64-bit). Data auto-preserved on updates.
+> Windows 10/11 (64-bit). Per-user install (no admin needed). Data auto-preserved on updates.
 
 ### Build from Source
 
 ```bash
-git clone https://github.com/Koipoppy/ChillPass.git
-cd ChillPass
+git clone https://github.com/Koipoppy/ChillPass-Web.git
+cd ChillPass-Web
 npm install
-npm run electron:preview       # Dev mode
-npm run electron:build:win     # Build installer → release/
+
+# ── Dev mode (browser only) ──
+npm run dev                  # Vite dev server at http://localhost:5173
+
+# ── Production build ──
+npm run build                # Vite build → dist/
+
+# ── Build standalone executable ──
+# Requires: Node.js 22+ (for SEA), NSIS 3.x (for installer)
+node installer/build-sea.mjs              # Builds chillpass.exe via Node.js SEA
+makensis installer/installer.nsi          # Wraps exe into NSIS installer
 ```
 
 ---
@@ -191,20 +221,23 @@ npm run electron:build:win     # Build installer → release/
 ## 🛠️ Tech Stack
 
 ```
-Electron 31     ── Desktop shell
-React 18        ── UI components
-TypeScript 5    ── Type safety
-Vite 5          ── Build pipeline
-Zustand         ── State management (persist)
-Framer Motion   ── Page transitions & animations
-DeepSeek API    ── AI chat, grading, topic extraction, translation
-KaTeX           ── LaTeX formula rendering (placeholder strategy)
-Tesseract.js    ── OCR (CDN-loaded, renderer process)
-PDF.js          ── PDF text extraction
-JSZip           ── PPTX parsing
-CSS Modules     ── Scoped styling
-SVG Filters     ── Liquid glass visual effects
-electron-builder ── NSIS installer
+Node.js 22 (SEA)  ── Standalone executable (Single Executable Application)
+React 18          ── UI components
+TypeScript 5      ── Type safety
+Vite 5            ── Build pipeline
+React Router 6    ── Client-side routing
+Zustand           ── State management (persist to localStorage)
+Framer Motion     ── Page transitions & animations
+DeepSeek API      ── AI chat, grading, topic extraction, translation
+KaTeX             ── LaTeX formula rendering (placeholder strategy)
+Tesseract.js      ── OCR (CDN-loaded, renderer process)
+PDF.js            ── PDF text extraction
+JSZip             ── PPTX parsing
+IndexedDB         ── Browser-side file storage (course materials)
+CSS Modules       ── Scoped styling
+SVG Filters       ── Liquid glass visual effects
+NSIS 3            ── Windows installer (per-user, no admin)
+PowerShell        ── System tray + auto-update checker
 ```
 
 ---
@@ -213,20 +246,51 @@ electron-builder ── NSIS installer
 
 ```
 src/
-├── components/layout/     Sidebar, TitleBar, Background
-├── pages/                 Dashboard, Upload, QuestPath, QuestDetail,
-│                          WrongBook, Athena (AIChat), Settings,
-│                          TeacherWorkspace
-├── stores/                courseStore, chatStore, settingsStore,
-│                          studyTimeStore, themeStore, languageStore,
-│                          wrongQuestionStore, athenaStore
-├── services/              deepseek (API + grading + batch extraction
-│                          + exam generation + translation),
-│                          fileParser, imageService (OCR)
-├── utils/                 markdown (KaTeX placeholder pipeline)
-├── i18n/                  5-language translations (74+ keys)
-├── styles/                Global CSS + 5 theme variable sets
-└── types/                 TypeScript interfaces
+├── components/
+│   ├── layout/          Sidebar, TitleBar, Background
+│   ├── common/          GlassFilter
+│   ├── AccountLogin.tsx     Local account creation modal
+│   └── AccountEditor.tsx    Profile editing modal
+├── pages/
+│   ├── Dashboard.tsx        Course list, exam countdown, Chill Coins
+│   ├── UploadPage.tsx       Material import + AI extraction
+│   ├── LessonPathPage.tsx   Quest path with progressive unlocking
+│   ├── LessonDetailPage.tsx Knowledge points, examples, quiz
+│   ├── WrongBookPage.tsx    Mistake notebook (grouped by course)
+│   ├── AIChatPage.tsx       Athena agent (Q&A, paper, report, summary, plan)
+│   ├── TeacherWorkspace.tsx Exam paper generation + PDF export
+│   ├── SettingsPage.tsx     Account, theme, language, teacher mode
+│   └── settings/            ApiSettings, StorageSettings, DataSettings, AboutSettings
+├── stores/
+│   ├── authStore.ts         Local account (create, edit, export, import)
+│   ├── courseStore.ts       Courses, exam points, lessons, progress
+│   ├── chatStore.ts         Athena chat history
+│   ├── athenaStore.ts       Abilities, memories, tasks
+│   ├── settingsStore.ts     API key, teacher mode
+│   ├── studyTimeStore.ts    Study time tracking → Chill Coins
+│   ├── themeStore.ts        5 themes
+│   ├── languageStore.ts     5 languages
+│   └── wrongQuestionStore.ts Mistake records
+├── services/
+│   ├── deepseek.ts          API + grading + batch extraction + exam gen + translation
+│   ├── fileParser.ts        PDF / PPTX / TXT / MD text extraction
+│   ├── imageService.ts      OCR via Tesseract.js
+│   ├── lessonGenerator.ts   Lesson content generation pipeline
+│   └── browserFileStore.ts  IndexedDB file storage
+├── utils/                   markdown (KaTeX placeholder), electronMock
+├── i18n/                    5-language translations (74+ keys)
+├── styles/                  Global CSS + 5 theme variable sets
+└── types/                   TypeScript interfaces
+
+installer/
+├── app.cjs                  SEA entry point (HTTP server + tray launcher)
+├── build-sea.mjs            Builds chillpass.exe via Node.js SEA
+├── installer.nsi            NSIS installer script
+├── updater.ps1              Auto-update checker (silent + GUI modes)
+└── build-installer.ps1      One-click build helper
+
+server.mjs                   Dev server (zero-dependency, Node.js built-ins)
+tray.ps1                     System tray icon (WinForms NotifyIcon)
 ```
 
 ---
@@ -237,11 +301,25 @@ src/
 |-|-|
 | **OS** | Windows 10/11 (64-bit) |
 | **Runtime** | DeepSeek API Key ([get one](https://platform.deepseek.com/api_keys)) |
-| **Dev** | Node.js 18+ |
+| **Dev** | Node.js 22+ (for SEA build), NSIS 3.x (for installer) |
 
 ---
 
 ## 📝 Changelog
+
+<details>
+<summary><strong>v1.2.3</strong> — 2026-07-29</summary>
+
+- **Web Architecture Rewrite**: Rebuilt from Electron to a browser-based web app packaged as a standalone executable via Node.js SEA (Single Executable Application) — no Electron dependency, single `chillpass.exe`
+- **Local Account System**: Offline account with nickname, 12 emoji avatars, and bio; auto-created on first launch; export/import as JSON for cross-device migration
+- **NSIS Installer**: Per-user Windows installer (no admin) with desktop shortcut, Start Menu shortcuts, auto-start option, and full uninstaller
+- **System Tray Icon**: Native Windows tray (PowerShell WinForms) with "Open in Browser" and "Quit"; auto-disappears when server exits
+- **Auto-Update Checker**: GitHub Releases integration with silent mode (auto-download + install) and GUI mode (WinForms dialog with progress); proxy fallback for downloads
+- **Course Duplicate Detection**: Importing a course with an existing name now prompts a replace dialog instead of creating duplicates
+- **Wrong Book Empty State**: Fixed to use liquid-glass card styling consistent with other pages
+- **Data Management**: Storage info panel with install path, data path, disk usage, and per-course size breakdown with progress bars
+- **In-App Update Check**: One-click update check from Settings with download link to latest release
+</details>
 
 <details>
 <summary><strong>v1.2.2</strong> — 2026-06-24</summary>
@@ -328,11 +406,11 @@ src/
 
 ## 📄 License
 
-This project is for **personal and educational use only**.
+This project is licensed under the **MIT License**.
 
 ## 🙏 Acknowledgments
 
-[DeepSeek](https://www.deepseek.com/) &bull; [Tesseract.js](https://tesseract.projectnaptha.com/) &bull; [KaTeX](https://katex.org/) &bull; [PDF.js](https://mozilla.github.io/pdf.js/) &bull; [electron-builder](https://www.electron.build/) &bull; [Framer Motion](https://www.framer.com/motion/)
+[DeepSeek](https://www.deepseek.com/) &bull; [Tesseract.js](https://tesseract.projectnaptha.com/) &bull; [KaTeX](https://katex.org/) &bull; [PDF.js](https://mozilla.github.io/pdf.js/) &bull; [NSIS](https://nsis.sourceforge.io/) &bull; [Framer Motion](https://www.framer.com/motion/) &bull; [Node.js SEA](https://nodejs.org/api/single-executable-applications.html)
 
 ---
 
