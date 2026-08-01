@@ -1,0 +1,492 @@
+/* ==========================================
+   Login / Register — Clean Minimal Design
+   ========================================== */
+
+/* ---- Page Container ---- */
+.container {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  padding: 24px;
+}
+
+/* ---- Card ---- */
+.card {
+  position: relative;
+  width: 100%;
+  max-width: 380px;
+  padding: 44px 36px 36px;
+  border-radius: 20px;
+  background: var(--bg-surface);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.04),
+    0 12px 40px rgba(0, 0, 0, 0.08);
+}
+
+/* ---- Brand Area ---- */
+.brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 36px;
+}
+
+.logoMark {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #0071e3, #00a2ff);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 14px rgba(0, 113, 227, 0.25);
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin: 0;
+  font-weight: 400;
+}
+
+/* ---- Form ---- */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* Error Message */
+.error {
+  font-size: 13px;
+  color: #ff3b30;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: rgba(255, 59, 48, 0.06);
+  border: 1px solid rgba(255, 59, 48, 0.12);
+  line-height: 1.4;
+  overflow: hidden;
+}
+
+/* ---- Form Field ---- */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  letter-spacing: -0.01em;
+  padding-left: 2px;
+}
+
+/* ---- Input ---- */
+.inputWrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.inputIcon {
+  position: absolute;
+  left: 13px;
+  color: var(--text-tertiary);
+  pointer-events: none;
+  z-index: 2;
+  transition: color 0.2s ease;
+  flex-shrink: 0;
+}
+
+.input {
+  width: 100%;
+  padding: 12px 40px 12px 40px;
+  border: 1.5px solid rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
+  font-size: 15px;
+  font-family: inherit;
+  font-weight: 400;
+  color: var(--text-primary);
+  background: var(--bg-elevated);
+  outline: none;
+  transition: all 0.2s ease;
+  letter-spacing: -0.01em;
+}
+
+.input::placeholder {
+  color: var(--text-tertiary);
+}
+
+.input:focus {
+  border-color: #0071e3;
+  background: var(--bg-surface);
+  box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.1);
+}
+
+.input:focus ~ .inputIcon {
+  color: #0071e3;
+}
+
+.inputWrap:focus-within .inputIcon {
+  color: #0071e3;
+}
+
+/* Password Toggle */
+.toggleBtn {
+  position: absolute;
+  right: 10px;
+  background: none;
+  border: none;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  transition: all 0.15s ease;
+  z-index: 2;
+}
+
+.toggleBtn:hover {
+  color: var(--text-secondary);
+  background: rgba(0, 0, 0, 0.04);
+}
+
+/* ---- Submit Button ---- */
+.submitBtn {
+  width: 100%;
+  padding: 13px;
+  border: none;
+  border-radius: 12px;
+  background: #1d1d1f;
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: 6px;
+  letter-spacing: -0.01em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.submitBtn:hover:not(:disabled) {
+  background: #000000;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+}
+
+.submitBtn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ---- Footer ---- */
+.footer {
+  text-align: center;
+  margin-top: 24px;
+  font-size: 14px;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.link {
+  color: #0071e3;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.15s ease;
+}
+
+.link:hover {
+  color: #0058b0;
+  text-decoration: underline;
+}
+
+/* ==========================================
+   RegisterPage Shared Styles
+   ========================================== */
+
+.avatarSection {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.avatarLabel {
+  font-size: 13px;
+  color: var(--text-secondary);
+  font-weight: 600;
+  padding-left: 2px;
+}
+
+.avatarGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.avatarItem {
+  width: 40px;
+  height: 40px;
+  border: 1.5px solid rgba(0, 0, 0, 0.08);
+  border-radius: 10px;
+  background: var(--bg-elevated);
+  cursor: pointer;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.avatarItem:hover {
+  border-color: #0071e3;
+  background: rgba(0, 113, 227, 0.05);
+  transform: scale(1.06);
+}
+
+.avatarSelected {
+  border-color: #0071e3;
+  background: rgba(0, 113, 227, 0.08);
+  box-shadow: 0 0 0 2px rgba(0, 113, 227, 0.15);
+}
+
+/* ==========================================
+   Dark Theme Overrides
+   ========================================== */
+
+[data-theme="dark"] .card {
+  background: var(--bg-surface);
+  border-color: rgba(255, 255, 255, 0.06);
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.3),
+    0 12px 40px rgba(0, 0, 0, 0.5);
+}
+
+[data-theme="dark"] .input {
+  border-color: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+[data-theme="dark"] .input:focus {
+  border-color: #0a84ff;
+  background: rgba(255, 255, 255, 0.06);
+  box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.15);
+}
+
+[data-theme="dark"] .inputWrap:focus-within .inputIcon {
+  color: #0a84ff;
+}
+
+[data-theme="dark"] .toggleBtn:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+[data-theme="dark"] .submitBtn {
+  background: #f0f0f2;
+  color: #0d0d0f;
+}
+
+[data-theme="dark"] .submitBtn:hover:not(:disabled) {
+  background: #ffffff;
+}
+
+[data-theme="dark"] .spinner {
+  border-color: rgba(0, 0, 0, 0.2);
+  border-top-color: #0d0d0f;
+}
+
+[data-theme="dark"] .avatarItem {
+  border-color: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+[data-theme="dark"] .avatarItem:hover {
+  border-color: #0a84ff;
+  background: rgba(10, 132, 255, 0.1);
+}
+
+[data-theme="dark"] .avatarSelected {
+  border-color: #0a84ff;
+  background: rgba(10, 132, 255, 0.12);
+}
+
+[data-theme="dark"] .error {
+  background: rgba(255, 69, 58, 0.1);
+  border-color: rgba(255, 69, 58, 0.2);
+}
+
+[data-theme="dark"] .link {
+  color: #0a84ff;
+}
+
+[data-theme="dark"] .link:hover {
+  color: #409cff;
+}
+
+[data-theme="dark"] .logoMark {
+  background: linear-gradient(135deg, #0a84ff, #409cff);
+}
+
+/* ==========================================
+   Vista Theme Overrides
+   ========================================== */
+
+[data-theme="vista"] .card {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(20px);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+[data-theme="vista"] .input {
+  border-radius: 4px;
+  border-color: rgba(0, 0, 0, 0.15);
+}
+
+[data-theme="vista"] .submitBtn {
+  border-radius: 4px;
+}
+
+/* ==========================================
+   Win95 Theme Overrides
+   ========================================== */
+
+[data-theme="win95"] .card {
+  border-radius: 0;
+  border: 2px solid;
+  border-color: #ffffff #808080 #808080 #ffffff;
+  box-shadow: inset 1px 1px 0 #dfdfdf, inset -1px -1px 0 #000000;
+}
+
+[data-theme="win95"] .input {
+  border-radius: 0;
+  border: 2px solid;
+  border-color: #808080 #ffffff #ffffff #808080;
+  background: #ffffff;
+}
+
+[data-theme="win95"] .submitBtn {
+  border-radius: 0;
+  background: #000080;
+  color: #ffffff;
+}
+
+[data-theme="win95"] .submitBtn:hover:not(:disabled) {
+  background: #000080;
+  box-shadow: none;
+}
+
+[data-theme="win95"] .logoMark {
+  border-radius: 0;
+  background: #000080;
+}
+
+[data-theme="win95"] .avatarItem {
+  border-radius: 0;
+}
+
+/* ==========================================
+   Codex Theme Overrides
+   ========================================== */
+
+[data-theme="codex"] .card {
+  background: #161b22;
+  border-color: rgba(240, 246, 252, 0.1);
+  box-shadow: 0 0 0 1px rgba(240, 246, 252, 0.06);
+}
+
+[data-theme="codex"] .input {
+  background: #0d1117;
+  border-color: rgba(240, 246, 252, 0.1);
+  border-radius: 6px;
+}
+
+[data-theme="codex"] .input:focus {
+  border-color: #00d4ff;
+  box-shadow: 0 0 0 2px rgba(0, 212, 255, 0.15);
+}
+
+[data-theme="codex"] .inputWrap:focus-within .inputIcon {
+  color: #00d4ff;
+}
+
+[data-theme="codex"] .submitBtn {
+  background: #00d4ff;
+  color: #0d1117;
+  border-radius: 6px;
+}
+
+[data-theme="codex"] .submitBtn:hover:not(:disabled) {
+  background: #00d4ff;
+  box-shadow: 0 0 14px rgba(0, 212, 255, 0.3);
+}
+
+[data-theme="codex"] .logoMark {
+  background: linear-gradient(135deg, #00d4ff, #0095c7);
+}
+
+[data-theme="codex"] .link {
+  color: #00d4ff;
+}
+
+[data-theme="codex"] .spinner {
+  border-color: rgba(0, 0, 0, 0.2);
+  border-top-color: #0d1117;
+}
+
+/* ===== 竖屏（手机）适配 ===== */
+@media (max-aspect-ratio: 1/1) {
+  .container {
+    padding: 16px;
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+
+  .card {
+    max-width: 360px;
+    padding: 32px 24px 28px;
+    border-radius: 16px;
+  }
+
+  .brand {
+    margin-bottom: 28px;
+  }
+
+  .title {
+    font-size: 22px;
+  }
+}

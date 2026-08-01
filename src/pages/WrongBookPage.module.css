@@ -1,0 +1,418 @@
+/* ========================================
+   错题本页面样式
+   液态玻璃设计系统
+   ======================================== */
+
+.page {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 8px 0 40px;
+}
+
+/* ===== 头部 ===== */
+.header {
+  margin-bottom: 24px;
+}
+
+.title {
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+.subtitle {
+  font-size: 15px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+/* ===== 空状态 ===== */
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 80px 24px;
+  gap: 16px;
+  border-radius: var(--radius-xl);
+}
+
+.emptyIcon {
+  color: var(--text-tertiary);
+}
+
+.emptyTitle {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.emptyText {
+  font-size: 15px;
+  color: var(--text-secondary);
+}
+
+/* ===== 课程分组 ===== */
+.courseGroup {
+  margin-bottom: 24px;
+}
+
+.courseHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  cursor: pointer;
+  border-radius: var(--radius-lg);
+  background: rgba(0, 0, 0, 0.03);
+  transition: background 0.2s ease;
+  user-select: none;
+}
+
+.courseHeader:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="dark"] .courseHeader {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+[data-theme="dark"] .courseHeader:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.courseHeaderLeft {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.chevron {
+  color: var(--text-tertiary);
+  flex-shrink: 0;
+}
+
+.folderIcon {
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+
+.courseName {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.courseCount {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  background: rgba(0, 0, 0, 0.06);
+  padding: 2px 10px;
+  border-radius: var(--radius-pill);
+  flex-shrink: 0;
+}
+
+[data-theme="dark"] .courseCount {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.courseActions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.clearBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: inherit;
+  color: var(--text-tertiary);
+  padding: 4px 12px;
+  border-radius: var(--radius-pill);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.clearBtn:hover {
+  color: var(--danger-text);
+  border-color: var(--danger-text);
+}
+
+[data-theme="dark"] .clearBtn {
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+/* ===== 错题列表（可折叠） ===== */
+.questionList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 12px;
+  overflow: hidden;
+  max-height: 10000px;
+  transition: max-height 0.3s ease, margin-top 0.3s ease, opacity 0.3s ease;
+  opacity: 1;
+}
+
+.questionListCollapsed {
+  max-height: 0;
+  margin-top: 0;
+  opacity: 0;
+}
+
+/* ===== 错题卡片 ===== */
+.questionCard {
+  padding: 20px 24px 28px;
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  /* 强制覆盖 .liquid-glass 的 overflow: hidden，防止按钮被裁剪 */
+  overflow: visible !important;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.priorityTag {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  padding: 2px 10px;
+  border-radius: var(--radius-pill);
+  flex-shrink: 0;
+}
+
+.priorityMust {
+  color: var(--danger-text);
+  background: rgba(255, 59, 48, 0.08);
+}
+
+.priorityHigh {
+  color: var(--warning-text);
+  background: rgba(255, 204, 0, 0.08);
+}
+
+.priorityKnow {
+  color: var(--accent-text);
+  background: rgba(0, 122, 255, 0.08);
+}
+
+.lessonTitle {
+  font-size: 13px;
+  color: var(--text-tertiary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: right;
+}
+
+.questionText {
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--text-primary);
+  /* 限制题目高度，超长内容内部滚动，按钮始终可见 */
+  max-height: 250px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+/* ===== 答案对比 ===== */
+.answers {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.answerRow {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.answerWrong {
+  background: rgba(255, 59, 48, 0.06);
+  border-left: 3px solid var(--danger-text);
+  color: var(--text-primary);
+}
+
+.answerCorrect {
+  background: rgba(48, 209, 88, 0.06);
+  border-left: 3px solid var(--success-text);
+  color: var(--text-primary);
+}
+
+[data-theme="dark"] .answerWrong {
+  background: rgba(255, 69, 58, 0.1);
+}
+
+[data-theme="dark"] .answerCorrect {
+  background: rgba(48, 209, 88, 0.1);
+}
+
+.answerLabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  flex-shrink: 0;
+  width: 60px;
+}
+
+.answerValue {
+  flex: 1;
+  min-width: 0;
+  word-break: break-word;
+}
+
+/* ===== 解析 ===== */
+.explanation {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  padding: 12px 14px;
+  background: rgba(0, 0, 0, 0.03);
+  border-radius: var(--radius-md);
+  /* 限制解析高度，超长内容内部滚动 */
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+[data-theme="dark"] .explanation {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* 题目和解析区域的滚动条样式 */
+.questionText::-webkit-scrollbar,
+.explanation::-webkit-scrollbar {
+  width: 4px;
+}
+
+.questionText::-webkit-scrollbar-track,
+.explanation::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.questionText::-webkit-scrollbar-thumb,
+.explanation::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 2px;
+}
+
+[data-theme="dark"] .questionText::-webkit-scrollbar-thumb,
+[data-theme="dark"] .explanation::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* ===== 操作按钮 ===== */
+.cardActions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  flex-shrink: 0;
+  padding-top: 4px;
+}
+
+.askBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  padding: 8px 18px;
+  border-radius: var(--radius-pill);
+  border: none;
+  background: var(--btn-primary-bg);
+  color: var(--btn-primary-fg);
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.askBtn:hover {
+  opacity: 0.85;
+}
+
+.resolveBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  padding: 8px 18px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border-color);
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.resolveBtn:hover {
+  border-color: var(--success-text);
+  color: var(--success-text);
+}
+
+/* ===== Markdown / KaTeX 公式样式 ===== */
+.markdownContent {
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.markdownContent :global(.katex) {
+  font-size: 1.05em;
+}
+
+.markdownContent :global(.katex-display) {
+  margin: 12px 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 4px 0;
+}
+
+.markdownContent :global(.katex-display::-webkit-scrollbar) {
+  display: none;
+}
+
+.markdownContent p {
+  margin: 0 0 8px;
+}
+
+.markdownContent p:last-child {
+  margin-bottom: 0;
+}
+
+.markdownContent code {
+  background: rgba(0, 0, 0, 0.06);
+  padding: 2px 6px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-family: "SF Mono", "Fira Code", "Consolas", monospace;
+}
+
+[data-theme="dark"] .markdownContent code {
+  background: rgba(255, 255, 255, 0.1);
+}
