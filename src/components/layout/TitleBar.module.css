@@ -264,6 +264,32 @@
   font-weight: 500;
 }
 
+/* QQ 群二维码 */
+.helpQr {
+  margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 14px;
+  border-radius: var(--radius-md);
+  background: rgba(0, 0, 0, 0.03);
+}
+
+.helpQr img {
+  width: 168px;
+  height: 168px;
+  border-radius: var(--radius-sm);
+  object-fit: cover;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+
+.helpQr span {
+  font-size: 12px;
+  color: var(--text-tertiary);
+  font-weight: 500;
+}
+
 .helpConfirmBtn {
   margin-top: 20px;
   padding: 12px 24px;
@@ -295,6 +321,10 @@
 }
 
 [data-theme="dark"] .helpContactRow {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+[data-theme="dark"] .helpQr {
   background: rgba(255, 255, 255, 0.05);
 }
 

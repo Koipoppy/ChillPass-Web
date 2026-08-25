@@ -13,7 +13,7 @@
 ; ── App Info ────────────────────────────────────────────────────
 !define APP_NAME         "ChillPass"
 !define APP_NAME_FULL    "ChillPass 期末冲刺助手"
-!define APP_VERSION      "0.0.6"
+!define APP_VERSION      "0.0.7"
 !define APP_PUBLISHER    "ChillPass"
 !define APP_URL          "https://github.com/Koipoppy/ChillPass-Web"
 !define APP_EXE          "chillpass.exe"
@@ -41,8 +41,8 @@ VIAddVersionKey "CompanyName"      "${APP_PUBLISHER}"
 VIAddVersionKey "LegalCopyright"   "MIT License"
 VIAddVersionKey "FileVersion"      "${APP_VERSION}"
 VIAddVersionKey "ProductVersion"   "${APP_VERSION}"
-VIProductVersion "0.0.6.0"
-VIFileVersion    "0.0.6.0"
+VIProductVersion "0.0.7.0"
+VIFileVersion    "0.0.7.0"
 
 ; ── Modern UI 2 Settings ────────────────────────────────────────
 !define MUI_ABORTWARNING
@@ -67,10 +67,8 @@ Page custom OptionsPageCreate OptionsPageLeave
 !insertmacro MUI_LANGUAGE "English"
 
 ; ── Variables ───────────────────────────────────────────────────
-Var CheckboxDesktop
 Var CheckboxAutostart
 Var CheckboxLaunch
-Var OptDesktop
 Var OptAutostart
 Var OptLaunch
 
@@ -91,17 +89,12 @@ Function OptionsPageCreate
     Abort
   ${EndIf}
 
-  ; Desktop shortcut
-  ${NSD_CreateCheckbox} 0 10u 100% 12u "创建桌面快捷方式"
-  Pop $CheckboxDesktop
-  ${NSD_SetState} $CheckboxDesktop ${BST_CHECKED}
-
   ; Auto-start with Windows
-  ${NSD_CreateCheckbox} 0 30u 100% 12u "开机自动启动 ChillPass"
+  ${NSD_CreateCheckbox} 0 10u 100% 12u "开机自动启动 ChillPass"
   Pop $CheckboxAutostart
 
   ; Launch after install
-  ${NSD_CreateCheckbox} 0 50u 100% 12u "安装完成后启动 ChillPass"
+  ${NSD_CreateCheckbox} 0 30u 100% 12u "安装完成后启动 ChillPass"
   Pop $CheckboxLaunch
   ${NSD_SetState} $CheckboxLaunch ${BST_CHECKED}
 
@@ -109,7 +102,6 @@ Function OptionsPageCreate
 FunctionEnd
 
 Function OptionsPageLeave
-  ${NSD_GetState} $CheckboxDesktop  $OptDesktop
   ${NSD_GetState} $CheckboxAutostart $OptAutostart
   ${NSD_GetState} $CheckboxLaunch    $OptLaunch
 FunctionEnd
@@ -159,11 +151,10 @@ Section "Install" SecInstall
   CreateShortcut "$SMPROGRAMS\${APP_NAME}\卸载 ${APP_NAME}.lnk" \
     "$INSTDIR\uninstall.exe" "" "$INSTDIR\icon.ico" 0
 
-  ; ── Desktop shortcut (optional) ────────────────────────────
-  ${If} $OptDesktop == ${BST_CHECKED}
-    CreateShortcut "$DESKTOP\${APP_NAME}.lnk" \
-      "$INSTDIR\${APP_EXE}" "" "$INSTDIR\icon.ico" 0
-  ${EndIf}
+  ; ── Desktop shortcut (always created on install) ───────────
+  DetailPrint "正在创建桌面快捷方式..."
+  CreateShortcut "$DESKTOP\${APP_NAME}.lnk" \
+    "$INSTDIR\${APP_EXE}" "" "$INSTDIR\icon.ico" 0
 
   ; ── Auto-start (optional) ──────────────────────────────────
   ${If} $OptAutostart == ${BST_CHECKED}
@@ -201,14 +192,7 @@ Section "Install" SecInstall
   ; ── Launch app (non-silent only) ───────────────────────────
   ${IfNot} ${Silent}
     ${If} $OptLaunch == ${BST_CHECKED}
-    ${OrIf} $OptLaunch == ""  ; default when page was skipped (update)
-      ; Only launch if not an update (detected by existing install)
-      ${If} $OptDesktop == ""
-      ${AndIf} $OptAutostart == ""
-        ; This is likely an update — don't auto-launch
-      ${Else}
-        Call LaunchApp
-      ${EndIf}
+      Call LaunchApp
     ${EndIf}
   ${EndIf}
 

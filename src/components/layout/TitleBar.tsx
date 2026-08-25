@@ -221,8 +221,12 @@ export default function TitleBar() {
                   </div>
                   <div className={styles.helpContactRow}>
                     <span className={styles.helpContactLabel}>版本</span>
-                    <span className={styles.helpContactValue}>v0.0.6</span>
+                    <span className={styles.helpContactValue}>v0.0.7</span>
                   </div>
+                </div>
+                <div className={styles.helpQr}>
+                  <img src="qrcode.jpg" alt="ChillPass 用户交流群二维码" />
+                  <span>扫码加入 ChillPass 用户交流群</span>
                 </div>
               </section>
             </div>

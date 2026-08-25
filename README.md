@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://img.shields.io/badge/version-0.0.6-blue?style=flat-square" alt="Version" />
+  <img src="https://img.shields.io/badge/version-0.0.7-blue?style=flat-square" alt="Version" />
   <img src="https://img.shields.io/badge/Node.js-SEA-339933?style=flat-square&logo=node.js" alt="Node.js SEA" />
   <img src="https://img.shields.io/badge/React-18-61DAFB?style=flat-square&logo=react" alt="React" />
   <img src="https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript" alt="TypeScript" />
@@ -24,7 +24,7 @@
 
 <p align="center">
   <a href="https://github.com/Koipoppy/ChillPass-Web/releases/latest">
-    <img src="https://img.shields.io/badge/⬇️_Download-ChillPass%20Setup%200.0.6.exe-blue?style=for-the-badge" alt="Download" />
+    <img src="https://img.shields.io/badge/⬇️_Download-ChillPass%20Setup%200.0.7.exe-blue?style=for-the-badge" alt="Download" />
   </a>
 </p>
 
@@ -175,7 +175,7 @@ A circular help button next to the focus mode toggle opens a modal with:
 
 ### Download (Recommended)
 
-Go to [Releases](https://github.com/Koipoppy/ChillPass-Web/releases) → Download `ChillPass-Setup-0.0.6.exe` → Install.
+Go to [Releases](https://github.com/Koipoppy/ChillPass-Web/releases) → Download `ChillPass-Setup-0.0.7.exe` → Install.
 
 > Windows 10/11 (64-bit). Per-user install (no admin needed). Data auto-preserved on updates.
 

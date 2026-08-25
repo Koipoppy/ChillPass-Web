@@ -12,11 +12,12 @@
  *
  * Usage:  node installer/build-sea.mjs
  */
-import { existsSync, readFileSync, openSync, readSync, writeSync, closeSync } from 'node:fs'
+import { existsSync, readFileSync, openSync, readSync, writeSync, closeSync, writeFileSync } from 'node:fs'
 import { copyFile, mkdir, writeFile, rm, stat } from 'node:fs/promises'
 import { join, dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { execSync, spawnSync } from 'node:child_process'
+import { NtExecutable, NtExecutableResource, Data, Resource } from 'resedit'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const PROJECT_ROOT = resolve(__dirname, '..')
@@ -90,6 +91,51 @@ function setGuiSubsystem(exePath) {
   }
 }
 
+// Set exe icon and version info using resedit (pure JS PE resource editor).
+// Runs AFTER postject: NtExecutable.from/generate preserves the SEA blob (overlay),
+// and generate() clears the certificate table (removes any digital signature).
+function setIconAndVersionInfo(exePath, icoPath, appVersion) {
+  const exeBuffer = readFileSync(exePath)
+  const exe = NtExecutable.from(exeBuffer, { ignoreCert: true })
+  const res = NtExecutableResource.from(exe)
+
+  // ── Icon: replace existing RT_ICON_GROUP (or create with id 1) ──
+  const iconFile = Data.IconFile.from(readFileSync(icoPath))
+  const iconGroups = Resource.IconGroupEntry.fromEntries(res.entries)
+  const iconGroupID = iconGroups.length > 0 ? iconGroups[0].id : 1
+  Resource.IconGroupEntry.replaceIconsForResource(
+    res.entries,
+    iconGroupID,
+    0x0409, // en-US
+    iconFile.icons.map(i => i.data),
+  )
+
+  // ── Version info: update string values and file/product version ──
+  const viList = Resource.VersionInfo.fromEntries(res.entries)
+  if (viList.length > 0) {
+    const vi = viList[0]
+    const lang = vi.getAllLanguagesForStringValues()[0]
+      ?? vi.getAvailableLanguages()[0]
+      ?? { lang: 1033, codepage: 1200 }
+    vi.setStringValues(lang, {
+      CompanyName: 'ChillPass',
+      FileDescription: 'ChillPass Web',
+      ProductName: 'ChillPass',
+      OriginalFilename: 'chillpass.exe',
+      LegalCopyright: 'MIT License',
+    })
+    vi.setFileVersion(`${appVersion}.0`)
+    vi.setProductVersion(`${appVersion}.0`)
+    vi.outputToResourceEntries(res.entries)
+  } else {
+    log('  No version resource found in exe, skipping version info.')
+  }
+
+  // ── Write back (generate() preserves the SEA blob overlay) ──
+  res.outputResource(exe)
+  writeFileSync(exePath, Buffer.from(exe.generate()))
+}
+
 async function main() {
   log(`Building chillpass.exe v${APP_VERSION}`)
 
@@ -160,44 +206,14 @@ async function main() {
     ])
   }
 
-  // ── 7. Set icon and version info ────────────────────────────
-  log('Setting exe icon and version info...')
-  let iconSet = false
-
-  const rceditPaths = [
-    join(__dirname, 'rcedit-x64.exe'),
-    join(__dirname, 'rcedit.exe'),
-    join(__dirname, 'tools', 'rcedit-x64.exe'),
-  ]
-  const rcedit = rceditPaths.find(p => existsSync(p))
-
-  if (rcedit) {
-    try {
-      // Add 15s timeout — rcedit can hang on some Windows configs
-      const rceditResult = spawnSync(rcedit, [
-        EXE_PATH,
-        '--set-icon', ICON_PATH,
-        '--set-version-string', 'FileDescription', 'ChillPass Web',
-        '--set-version-string', 'ProductName', 'ChillPass',
-        '--set-version-string', 'OriginalFilename', 'chillpass.exe',
-        '--set-version-string', 'CompanyName', 'ChillPass',
-        '--set-version-string', 'LegalCopyright', 'MIT License',
-        '--set-file-version', APP_VERSION,
-        '--set-product-version', APP_VERSION,
-      ], { stdio: 'inherit', shell: false, timeout: 15000 })
-      if (rceditResult.status === 0) {
-        log('  Icon and version info set via rcedit.')
-        iconSet = true
-      } else {
-        log(`  rcedit exited with code ${rceditResult.status} (signal: ${rceditResult.signal})`)
-      }
-    } catch (e) {
-      log(`  rcedit failed: ${e.message}`)
-    }
-  }
-
-  if (!iconSet) {
-    log('  rcedit not found — exe will use default Node.js icon.')
+  // ── 7. Set icon and version info (resedit, pure JS) ─────────
+  log('Setting exe icon and version info (resedit)...')
+  try {
+    setIconAndVersionInfo(EXE_PATH, ICON_PATH, APP_VERSION)
+    log('  Icon and version info set via resedit.')
+  } catch (e) {
+    log(`  resedit failed: ${e.message}`)
+    log('  exe will use default Node.js icon.')
     log('  Shortcuts will still use the correct icon (set by NSIS).')
   }
 
