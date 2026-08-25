@@ -102,11 +102,18 @@
   font-family: "SF Mono", "Menlo", "Consolas", monospace;
 }
 
-/* ===== 统计行 ===== */
+/* ===== 统计行（含更新按钮） ===== */
+.statAndUpdateRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 4px 0;
+}
+
 .statRow {
   display: flex;
   gap: 32px;
-  padding: 4px 0;
 }
 
 .statItem {
@@ -127,9 +134,11 @@
   color: var(--text-tertiary);
 }
 
-/* ===== 更新检查 ===== */
-.updateSection {
-  padding-top: 4px;
+/* ===== 更新检查（同一行右侧） ===== */
+.updateSectionInline {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
 }
 
 .updateBtn {
@@ -251,66 +260,75 @@
   color: var(--danger-text);
 }
 
-/* ===== 账户信息 ===== */
-.accountCard {
+/* ===== 本地信息 ===== */
+.localInfoContent {
   display: flex;
   align-items: center;
   gap: 16px;
+  padding: 16px;
+  border-radius: var(--radius-md);
+  background: rgba(0, 0, 0, 0.02);
 }
 
-.avatar {
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--btn-primary-bg), var(--text-secondary));
-  color: var(--btn-primary-fg);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 22px;
-  font-weight: 700;
+.localInfoIcon {
   flex-shrink: 0;
+  color: var(--accent-text);
 }
 
-.accountInfo {
-  flex: 1;
+.localInfoText {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  min-width: 0;
 }
 
-.accountName {
-  font-size: 17px;
+.localInfoTitle {
+  font-size: 15px;
   font-weight: 600;
   color: var(--text-primary);
 }
 
-.accountMeta {
+.localInfoDesc {
   font-size: 13px;
   color: var(--text-tertiary);
+  line-height: 1.5;
 }
 
-.logoutBtn {
+.localInfoBtn {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 16px;
-  border: 1px solid rgba(255, 59, 48, 0.2);
+  gap: 8px;
+  padding: 10px 18px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: var(--radius-pill);
-  background: rgba(255, 59, 48, 0.04);
-  color: var(--danger-text);
+  background: rgba(255, 255, 255, 0.5);
+  color: var(--text-secondary);
   font-size: 13px;
   font-weight: 600;
   font-family: inherit;
   cursor: pointer;
   transition: all 0.25s ease;
   flex-shrink: 0;
+  margin-left: auto;
 }
 
-.logoutBtn:hover {
-  background: rgba(255, 59, 48, 0.1);
-  border-color: rgba(255, 59, 48, 0.35);
+.localInfoBtn:hover {
+  background: rgba(255, 255, 255, 0.8);
+  color: var(--text-primary);
+  border-color: rgba(0, 0, 0, 0.16);
+}
+
+[data-theme="dark"] .localInfoContent {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+[data-theme="dark"] .localInfoBtn {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+[data-theme="dark"] .localInfoBtn:hover {
+  background: rgba(255, 255, 255, 0.14);
+  color: var(--text-primary);
 }
 
 /* ===== 登录提示 ===== */
@@ -432,6 +450,55 @@
 .navCardArrow {
   flex-shrink: 0;
   color: var(--text-tertiary);
+}
+
+.navCardActive {
+  background: rgba(var(--accent-rgb, 0, 122, 255), 0.08);
+}
+
+.navCardActive .navCardIcon {
+  background: rgba(var(--accent-rgb, 0, 122, 255), 0.15);
+  color: var(--accent-text, #007aff);
+}
+
+/* ===== 小型教师切换（导航卡片内） ===== */
+.teacherToggleSmall {
+  width: 40px;
+  height: 22px;
+  border-radius: 11px;
+  background: rgba(0, 0, 0, 0.15);
+  position: relative;
+  cursor: pointer;
+  transition: background 0.25s ease;
+  flex-shrink: 0;
+}
+
+.teacherToggleThumbSmall {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: white;
+  transition: transform 0.25s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.teacherToggleThumbSmallActive {
+  transform: translateX(18px);
+}
+
+.teacherToggleSmall:has(.teacherToggleThumbSmallActive) {
+  background: var(--accent-bg, #007aff);
+}
+
+[data-theme="dark"] .teacherToggleSmall {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+[data-theme="dark"] .teacherToggleSmall:has(.teacherToggleThumbSmallActive) {
+  background: var(--accent-bg, #0a84ff);
 }
 
 /* ===== 外观与语言 ===== */
