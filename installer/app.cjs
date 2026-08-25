@@ -14,6 +14,7 @@ const { readFile, stat } = require('node:fs/promises');
 const { existsSync } = require('node:fs');
 const { extname, join, normalize, dirname } = require('node:path');
 const { exec, spawn } = require('node:child_process');
+const os = require('node:os');
 
 // ── Resolve base directory ──────────────────────────────────────
 // In SEA (CJS): __dirname → directory of the executable
@@ -24,7 +25,7 @@ const DIST_DIR = join(BASE_DIR, 'dist');
 const TRAY_SCRIPT = join(BASE_DIR, 'tray.ps1');
 const ICON_PATH = join(BASE_DIR, 'icon.ico');
 const PORT = 5174;
-const APP_VERSION = '1.2.3';
+const APP_VERSION = '0.0.5';
 
 const MIME_TYPES = {
   '.html': 'text/html; charset=utf-8',
@@ -102,10 +103,51 @@ function shutdown(signal) {
   setTimeout(() => process.exit(0), 3000);
 }
 
+// ── API endpoints ──────────────────────────────────────────────
+function sendJson(res, obj, status = 200) {
+  res.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8' });
+  res.end(JSON.stringify(obj));
+}
+
+function handleApi(req, res, urlPath) {
+  // 获取应用版本
+  if (urlPath === '/api/getAppVersion' && req.method === 'GET') {
+    sendJson(res, { version: APP_VERSION });
+    return true;
+  }
+  // 获取应用路径信息
+  if (urlPath === '/api/getAppPaths' && req.method === 'GET') {
+    sendJson(res, {
+      installPath: BASE_DIR,
+      exePath: process.execPath,
+      userDataPath: '浏览器 IndexedDB / localStorage',
+      tempPath: os.tmpdir(),
+    });
+    return true;
+  }
+  // 在资源管理器中定位安装位置（选中 exe）
+  if (urlPath === '/api/openInstallPath' && req.method === 'POST') {
+    const exe = process.execPath;
+    exec(`explorer.exe /select,"${exe}"`, (err) => {
+      if (err) console.log(`[OpenPath] ${err.message}`);
+    });
+    sendJson(res, { ok: true });
+    return true;
+  }
+  return false;
+}
+
 // ── HTTP server ─────────────────────────────────────────────────
 const server = createServer(async (req, res) => {
   try {
     let urlPath = decodeURIComponent(req.url ? req.url.split('?')[0] : '/');
+
+    // API routes take priority
+    if (urlPath.startsWith('/api/')) {
+      if (handleApi(req, res, urlPath)) return;
+      sendJson(res, { error: 'Not Found' }, 404);
+      return;
+    }
 
     // Security: prevent path traversal
     const safePath = normalize(urlPath).replace(/^(\.\.[/\\])+/, '');

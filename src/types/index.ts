@@ -323,6 +323,8 @@ export interface ElectronAPI {
   // 应用路径与存储占用
   getAppPaths: () => Promise<{ installPath: string; userDataPath: string; tempPath: string }>
   getStorageSize: () => Promise<number>
+  // 在资源管理器中定位安装位置
+  openInstallPath: () => Promise<void>
   // 更新检查
   checkForUpdates: () => Promise<UpdateInfo | null>
   openExternalUrl: (url: string) => Promise<void>

@@ -36,9 +36,9 @@ function compareVersions(v1: string, v2: string): number {
   return 0
 }
 
-const APP_VERSION = '1.2.2'
+const APP_VERSION = '0.0.5'
 const UPDATE_CHECK_URL =
-  'https://api.github.com/repos/Koipoppy/ChillPass/releases/latest'
+  'https://api.github.com/repos/Koipoppy/ChillPass-Web/releases/latest'
 
 export function setupElectronMock() {
   if (window.electronAPI) return
@@ -163,11 +163,31 @@ export function setupElectronMock() {
     getAppVersion: async () => APP_VERSION,
 
     // ===== 应用路径与存储占用 =====
-    getAppPaths: async () => ({
-      installPath: '浏览器应用（无需安装）',
-      userDataPath: '浏览器 IndexedDB / localStorage',
-      tempPath: '浏览器内存',
-    }),
+    getAppPaths: async () => {
+      // 安装版（SEA）由 app.cjs 提供真实路径；网页预览模式回退到提示信息
+      try {
+        const res = await fetch('/api/getAppPaths')
+        if (res.ok) return await res.json()
+      } catch {
+        // 忽略，走回退
+      }
+      return {
+        installPath: '未安装（网页预览模式）',
+        userDataPath: '浏览器 IndexedDB / localStorage',
+        tempPath: '浏览器内存',
+      }
+    },
+
+    // ===== 定位安装位置（安装版在资源管理器中选中 exe） =====
+    openInstallPath: async () => {
+      try {
+        const res = await fetch('/api/openInstallPath', { method: 'POST' })
+        if (res.ok) return
+      } catch {
+        // 忽略，走回退
+      }
+      window.alert('当前为网页预览模式，未安装应用，无法定位安装位置')
+    },
 
     getStorageSize: async () => {
       try {

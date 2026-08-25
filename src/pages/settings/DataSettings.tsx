@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ArrowLeft, Trash2, HardDrive, Folder, MapPin } from 'lucide-react'
+import { ArrowLeft, Trash2, HardDrive, Folder, MapPin, FolderOpen } from 'lucide-react'
 import { useCourseStore } from '@stores/courseStore'
 import { clearAllFiles } from '@services/browserFileStore'
 import styles from './SettingsSub.module.css'
@@ -111,6 +111,15 @@ export default function DataSettings() {
                 {paths?.installPath || '加载中...'}
               </span>
             </div>
+            <button
+              type="button"
+              className={styles.locateBtn}
+              onClick={() => window.electronAPI?.openInstallPath()}
+              title="在资源管理器中定位安装位置"
+            >
+              <FolderOpen size={14} strokeWidth={2} />
+              定位
+            </button>
           </div>
 
           <div className={styles.pathRow}>

@@ -213,7 +213,7 @@ export default function TitleBar() {
                 <div className={styles.helpContact}>
                   <div className={styles.helpContactRow}>
                     <span className={styles.helpContactLabel}>GitHub</span>
-                    <span className={styles.helpContactValue}>github.com/Koipoppy/ChillPass</span>
+                    <span className={styles.helpContactValue}>github.com/Koipoppy/ChillPass-Web</span>
                   </div>
                   <div className={styles.helpContactRow}>
                     <span className={styles.helpContactLabel}>微信</span>
@@ -221,7 +221,7 @@ export default function TitleBar() {
                   </div>
                   <div className={styles.helpContactRow}>
                     <span className={styles.helpContactLabel}>版本</span>
-                    <span className={styles.helpContactValue}>v1.2.2</span>
+                    <span className={styles.helpContactValue}>v0.0.5</span>
                   </div>
                 </div>
               </section>
