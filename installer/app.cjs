@@ -15,6 +15,13 @@ const { existsSync } = require('node:fs');
 const { extname, join, normalize, dirname } = require('node:path');
 const { exec, spawn } = require('node:child_process');
 const os = require('node:os');
+const https = require('node:https');
+
+// ── Safe console (GUI subsystem has no valid stdout) ───────────
+const safeLog = (...args) => { try { console.log(...args) } catch {} };
+const safeError = (...args) => { try { console.error(...args) } catch {} };
+console.log = safeLog;
+console.error = safeError;
 
 // ── Resolve base directory ──────────────────────────────────────
 // In SEA (CJS): __dirname → directory of the executable
@@ -25,7 +32,8 @@ const DIST_DIR = join(BASE_DIR, 'dist');
 const TRAY_SCRIPT = join(BASE_DIR, 'tray.ps1');
 const ICON_PATH = join(BASE_DIR, 'icon.ico');
 const PORT = 5174;
-const APP_VERSION = '0.0.5';
+const APP_VERSION = '0.0.6';
+const GITHUB_REPO = 'Koipoppy/ChillPass-Web';
 
 const MIME_TYPES = {
   '.html': 'text/html; charset=utf-8',
@@ -103,13 +111,63 @@ function shutdown(signal) {
   setTimeout(() => process.exit(0), 3000);
 }
 
+// ── Version compare ─────────────────────────────────────────────
+function compareVersion(a, b) {
+  const pa = String(a || '0.0.0').replace(/^v/, '').split('.').map(Number);
+  const pb = String(b || '0.0.0').replace(/^v/, '').split('.').map(Number);
+  const len = Math.max(pa.length, pb.length);
+  for (let i = 0; i < len; i++) {
+    const av = pa[i] || 0, bv = pb[i] || 0;
+    if (av > bv) return 1;
+    if (av < bv) return -1;
+  }
+  return 0;
+}
+
+// ── GitHub HTTPS request (with proxy fallback) ─────────────────
+function httpsGetJson(url, timeoutMs = 20000) {
+  return new Promise((resolve, reject) => {
+    const req = https.get(url, {
+      headers: {
+        'User-Agent': 'ChillPass-Updater/1.0',
+        Accept: 'application/vnd.github+json',
+      },
+    }, (res) => {
+      let data = '';
+      res.on('data', (c) => {
+        data += c;
+        if (data.length > 5 * 1024 * 1024) { req.destroy(); reject(new Error('Response too large')); }
+      });
+      res.on('end', () => {
+        if (res.statusCode >= 200 && res.statusCode < 300) {
+          try { resolve(JSON.parse(data)); } catch (e) { reject(e); }
+        } else { reject(new Error(`HTTP ${res.statusCode}`)); }
+      });
+    });
+    req.on('error', reject);
+    req.setTimeout(timeoutMs, () => req.destroy(new Error('Timeout')));
+  });
+}
+
+async function fetchLatestRelease() {
+  const apiUrl = `https://api.github.com/repos/${GITHUB_REPO}/releases/latest`;
+  const urls = [
+    apiUrl,
+    `https://gh-proxy.com/${apiUrl}`,
+  ];
+  for (const url of urls) {
+    try { return await httpsGetJson(url); } catch { /* try next */ }
+  }
+  return null;
+}
+
 // ── API endpoints ──────────────────────────────────────────────
 function sendJson(res, obj, status = 200) {
   res.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8' });
   res.end(JSON.stringify(obj));
 }
 
-function handleApi(req, res, urlPath) {
+async function handleApi(req, res, urlPath) {
   // 获取应用版本
   if (urlPath === '/api/getAppVersion' && req.method === 'GET') {
     sendJson(res, { version: APP_VERSION });
@@ -129,8 +187,54 @@ function handleApi(req, res, urlPath) {
   if (urlPath === '/api/openInstallPath' && req.method === 'POST') {
     const exe = process.execPath;
     exec(`explorer.exe /select,"${exe}"`, (err) => {
-      if (err) console.log(`[OpenPath] ${err.message}`);
+      if (err) safeLog(`[OpenPath] ${err.message}`);
     });
+    sendJson(res, { ok: true });
+    return true;
+  }
+  // 检查更新（后端请求 GitHub，避免浏览器跨域/网络限制）
+  if (urlPath === '/api/checkForUpdates' && req.method === 'GET') {
+    const release = await fetchLatestRelease();
+    if (!release) {
+      sendJson(res, { error: '无法获取版本信息，请检查网络连接后重试' }, 502);
+      return true;
+    }
+    const latestVersion = String(release.tag_name || '0.0.0').replace(/^v/, '');
+    const asset = (release.assets || []).find(
+      (a) => /\.exe$/i.test(a.name) && !/\.blockmap$/i.test(a.name),
+    );
+    const hasUpdate = compareVersion(latestVersion, APP_VERSION) > 0;
+    sendJson(res, {
+      updateAvailable: hasUpdate,
+      latestVersion,
+      currentVersion: APP_VERSION,
+      downloadUrl: asset ? asset.browser_download_url : (release.html_url || ''),
+      releaseNotes: release.body || '',
+      releaseDate: release.published_at || '',
+    });
+    return true;
+  }
+  // 自动更新：启动 updater.ps1 -Silent（下载安装包 → 静默安装 → 重启）
+  if (urlPath === '/api/startUpdate' && req.method === 'POST') {
+    const updater = join(BASE_DIR, 'updater.ps1');
+    if (!existsSync(updater)) {
+      sendJson(res, { error: '未找到更新程序（updater.ps1）' }, 500);
+      return true;
+    }
+    const psArgs = [
+      '-ExecutionPolicy', 'Bypass',
+      '-NoProfile',
+      '-WindowStyle', 'Hidden',
+      '-File', updater,
+      '-Silent',
+    ];
+    const child = spawn('powershell.exe', psArgs, {
+      detached: true,
+      stdio: 'ignore',
+      windowsHide: true,
+    });
+    child.on('error', (err) => safeLog(`[StartUpdate] ${err.message}`));
+    child.unref();
     sendJson(res, { ok: true });
     return true;
   }
@@ -144,7 +248,7 @@ const server = createServer(async (req, res) => {
 
     // API routes take priority
     if (urlPath.startsWith('/api/')) {
-      if (handleApi(req, res, urlPath)) return;
+      if (await handleApi(req, res, urlPath)) return;
       sendJson(res, { error: 'Not Found' }, 404);
       return;
     }

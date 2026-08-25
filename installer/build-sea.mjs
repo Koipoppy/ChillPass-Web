@@ -12,7 +12,7 @@
  *
  * Usage:  node installer/build-sea.mjs
  */
-import { existsSync, readFileSync } from 'node:fs'
+import { existsSync, readFileSync, openSync, readSync, writeSync, closeSync } from 'node:fs'
 import { copyFile, mkdir, writeFile, rm, stat } from 'node:fs/promises'
 import { join, dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -62,6 +62,32 @@ function findPostject() {
   const sh = join(binDir, 'postject')
   if (existsSync(sh)) return { cmd: sh, useShell: false }
   return null
+}
+
+// Switch the exe PE subsystem from Console (3) to Windows GUI (2),
+// so no console window appears when the user launches the app.
+function setGuiSubsystem(exePath) {
+  const fd = openSync(exePath, 'r+')
+  try {
+    const head = Buffer.alloc(0x400)
+    readSync(fd, head, 0, 0x400, 0)
+    const peOffset = head.readUInt32LE(0x3C)
+    if (head.toString('ascii', peOffset, peOffset + 2) !== 'PE') {
+      throw new Error('Not a valid PE file')
+    }
+    // Optional header: PE signature(4) + COFF header(20); Subsystem at +68 (0x44)
+    const subOffset = peOffset + 4 + 20 + 68
+    const oldSub = head.readUInt16LE(subOffset)
+    if (oldSub !== 2) {
+      head.writeUInt16LE(2, subOffset)
+      writeSync(fd, head, 0, subOffset + 2, 0)
+      log(`  PE subsystem: ${oldSub} → 2 (GUI, console window hidden)`)
+    } else {
+      log('  PE subsystem already GUI (2)')
+    }
+  } finally {
+    closeSync(fd)
+  }
 }
 
 async function main() {
@@ -173,6 +199,14 @@ async function main() {
   if (!iconSet) {
     log('  rcedit not found — exe will use default Node.js icon.')
     log('  Shortcuts will still use the correct icon (set by NSIS).')
+  }
+
+  // ── 8. Switch to GUI subsystem (hide console window) ────────
+  log('Switching to GUI subsystem (hide console window)...')
+  try {
+    setGuiSubsystem(EXE_PATH)
+  } catch (e) {
+    log(`  Failed to switch subsystem: ${e.message}`)
   }
 
   // ── Done ────────────────────────────────────────────────────

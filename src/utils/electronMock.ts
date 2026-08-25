@@ -36,7 +36,7 @@ function compareVersions(v1: string, v2: string): number {
   return 0
 }
 
-const APP_VERSION = '0.0.5'
+const APP_VERSION = '0.0.6'
 const UPDATE_CHECK_URL =
   'https://api.github.com/repos/Koipoppy/ChillPass-Web/releases/latest'
 
@@ -197,42 +197,66 @@ export function setupElectronMock() {
       }
     },
 
-    // ===== 更新检查（直接 fetch GitHub API） =====
+    // ===== 更新检查（优先走后端 API，避免浏览器直连 GitHub 被限制） =====
     checkForUpdates: async () => {
+      // 安装版：由 app.cjs 后端请求 GitHub API（带代理 fallback）
       try {
-        const response = await fetch(UPDATE_CHECK_URL, {
-          headers: {
-            'User-Agent': 'ChillPass-Update-Checker',
-            Accept: 'application/vnd.github+json',
-          },
-        })
-        if (!response.ok) throw new Error(`HTTP ${response.status}`)
-        const release = await response.json()
-
-        const latestVersion = release.tag_name || '0.0.0'
-        const exeAsset = release.assets?.find(
-          (a: any) => a.name.endsWith('.exe') && !a.name.endsWith('.blockmap'),
-        )
-        const downloadUrl =
-          exeAsset?.browser_download_url || release.html_url || ''
-        const releaseNotes = release.body || '暂无更新说明'
-        const releaseDate = release.published_at || new Date().toISOString()
-
-        if (compareVersions(latestVersion, APP_VERSION) > 0) {
+        const res = await fetch('/api/checkForUpdates')
+        if (res.ok) {
+          const data = await res.json()
+          if (!data.updateAvailable) return null
           return {
-            version: latestVersion,
-            releaseNotes,
-            downloadUrl,
-            releaseDate,
-            currentVersion: APP_VERSION,
+            version: data.latestVersion,
+            releaseNotes: data.releaseNotes || '暂无更新说明',
+            downloadUrl: data.downloadUrl || '',
+            releaseDate: data.releaseDate || '',
+            currentVersion: data.currentVersion || APP_VERSION,
           }
         }
-        return null
-      } catch (err) {
-        throw new Error(
-          `更新检查失败: ${err instanceof Error ? err.message : '未知错误'}`,
-        )
+        throw new Error(`HTTP ${res.status}`)
+      } catch {
+        // 回退：直接请求 GitHub API（网页预览模式）
+        try {
+          const response = await fetch(UPDATE_CHECK_URL, {
+            headers: {
+              'User-Agent': 'ChillPass-Update-Checker',
+              Accept: 'application/vnd.github+json',
+            },
+          })
+          if (!response.ok) throw new Error(`HTTP ${response.status}`)
+          const release = await response.json()
+
+          const latestVersion = release.tag_name || '0.0.0'
+          const exeAsset = release.assets?.find(
+            (a: any) => a.name.endsWith('.exe') && !a.name.endsWith('.blockmap'),
+          )
+          const downloadUrl =
+            exeAsset?.browser_download_url || release.html_url || ''
+          const releaseNotes = release.body || '暂无更新说明'
+          const releaseDate = release.published_at || new Date().toISOString()
+
+          if (compareVersions(latestVersion, APP_VERSION) > 0) {
+            return {
+              version: latestVersion,
+              releaseNotes,
+              downloadUrl,
+              releaseDate,
+              currentVersion: APP_VERSION,
+            }
+          }
+          return null
+        } catch (err) {
+          throw new Error(
+            `无法连接更新服务器，请检查网络后重试（${err instanceof Error ? err.message : '未知错误'}）`,
+          )
+        }
       }
+    },
+
+    // ===== 自动更新：下载安装包并启动更新程序 =====
+    startUpdate: async () => {
+      const res = await fetch('/api/startUpdate', { method: 'POST' })
+      if (!res.ok) throw new Error(`HTTP ${res.status}`)
     },
 
     openExternalUrl: async (url: string) => {

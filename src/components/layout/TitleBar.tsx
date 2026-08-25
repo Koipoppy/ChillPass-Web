@@ -221,7 +221,7 @@ export default function TitleBar() {
                   </div>
                   <div className={styles.helpContactRow}>
                     <span className={styles.helpContactLabel}>版本</span>
-                    <span className={styles.helpContactValue}>v0.0.5</span>
+                    <span className={styles.helpContactValue}>v0.0.6</span>
                   </div>
                 </div>
               </section>

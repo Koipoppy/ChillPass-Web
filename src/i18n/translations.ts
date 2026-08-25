@@ -21,6 +21,8 @@ export type TranslationKey =
   | 'settings.newVersionFound'
   | 'settings.currentVersion'
   | 'settings.downloadUpdate'
+  | 'settings.updateNow'
+  | 'settings.manualDownload'
   | 'settings.retry'
   | 'settings.localInfo'
   | 'settings.localInfoDesc'
@@ -177,6 +179,8 @@ const zh: Record<TranslationKey, string> = {
   'settings.newVersionFound': '发现新版本 v{version}',
   'settings.currentVersion': '（当前 v{version}）',
   'settings.downloadUpdate': '下载更新',
+  'settings.updateNow': '立即更新',
+  'settings.manualDownload': '手动下载',
   'settings.retry': '重试',
   'settings.localInfo': '本地信息',
   'settings.localInfoDesc': '应用数据完全存储在本地，无需账户登录',
@@ -334,6 +338,8 @@ const en: Record<TranslationKey, string> = {
   'settings.newVersionFound': 'New version v{version} available',
   'settings.currentVersion': '(current v{version})',
   'settings.downloadUpdate': 'Download Update',
+  'settings.updateNow': 'Update Now',
+  'settings.manualDownload': 'Manual Download',
   'settings.retry': 'Retry',
   'settings.localInfo': 'Local Info',
   'settings.localInfoDesc': 'All app data is stored locally, no account login required',
@@ -491,6 +497,8 @@ const ru: Record<TranslationKey, string> = {
   'settings.newVersionFound': 'Доступна новая версия v{version}',
   'settings.currentVersion': '(текущая v{version})',
   'settings.downloadUpdate': 'Скачать обновление',
+  'settings.updateNow': 'Обновить сейчас',
+  'settings.manualDownload': 'Скачать вручную',
   'settings.retry': 'Повторить',
   'settings.localInfo': 'Локальная информация',
   'settings.localInfoDesc': 'Все данные приложения хранятся локально, вход в аккаунт не требуется',
@@ -648,6 +656,8 @@ const ja: Record<TranslationKey, string> = {
   'settings.newVersionFound': '新バージョン v{version} があります',
   'settings.currentVersion': '（現在 v{version}）',
   'settings.downloadUpdate': '更新をダウンロード',
+  'settings.updateNow': '今すぐ更新',
+  'settings.manualDownload': '手動ダウンロード',
   'settings.retry': '再試行',
   'settings.localInfo': 'ローカル情報',
   'settings.localInfoDesc': 'アプリデータはすべてローカルに保存され、アカウントログインは不要です',
@@ -805,6 +815,8 @@ const ko: Record<TranslationKey, string> = {
   'settings.newVersionFound': '새 버전 v{version}이 있습니다',
   'settings.currentVersion': '(현재 v{version})',
   'settings.downloadUpdate': '업데이트 다운로드',
+  'settings.updateNow': '지금 업데이트',
+  'settings.manualDownload': '수동 다운로드',
   'settings.retry': '재시도',
   'settings.localInfo': '로컬 정보',
   'settings.localInfoDesc': '모든 앱 데이터가 로컬에 저장되어 계정 로그인이 필요 없습니다',

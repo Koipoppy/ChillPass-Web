@@ -327,6 +327,8 @@ export interface ElectronAPI {
   openInstallPath: () => Promise<void>
   // 更新检查
   checkForUpdates: () => Promise<UpdateInfo | null>
+  // 自动更新：下载安装包并启动更新程序
+  startUpdate: () => Promise<void>
   openExternalUrl: (url: string) => Promise<void>
   // 资源迁移
   migrateFiles: (filePaths: string[], targetDir: string, move?: boolean) => Promise<MigrationResult>

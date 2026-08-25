@@ -72,6 +72,23 @@ export default function SettingsPage() {
     }
   }
 
+  // 用户确认后自动下载更新包并启动更新程序
+  const handleUpdateNow = async () => {
+    if (!updateInfo) return
+    const confirmed = window.confirm(
+      `发现新版本 v${updateInfo.version}（当前 v${updateInfo.currentVersion}），是否立即下载并更新？\n\n更新过程中应用将自动关闭，完成后自动重新启动。`,
+    )
+    if (!confirmed) return
+    try {
+      await window.electronAPI.startUpdate()
+      setUpdateStatus('checking')
+      setUpdateError('')
+    } catch {
+      // 自动更新不可用时，回退到手动下载
+      window.electronAPI.openExternalUrl(updateInfo.downloadUrl)
+    }
+  }
+
   const handleApplyLanguage = () => {
     setLanguage(pendingLang)
     setLangApplied(true)
@@ -165,13 +182,19 @@ export default function SettingsPage() {
                     {t('settings.currentVersion').replace('{version}', updateInfo.currentVersion)}
                   </span>
                 </div>
-                <button
-                  className={styles.downloadBtn}
-                  onClick={() => window.electronAPI.openExternalUrl(updateInfo.downloadUrl)}
-                >
-                  <Download size={15} strokeWidth={2} />
-                  {t('settings.downloadUpdate')}
-                </button>
+                <div className={styles.updateActions}>
+                  <button className={styles.downloadBtn} onClick={handleUpdateNow}>
+                    <Download size={15} strokeWidth={2} />
+                    {t('settings.updateNow')}
+                  </button>
+                  <button
+                    className={styles.manualBtn}
+                    onClick={() => window.electronAPI.openExternalUrl(updateInfo.downloadUrl)}
+                    title={t('settings.manualDownload')}
+                  >
+                    {t('settings.manualDownload')}
+                  </button>
+                </div>
               </div>
             )}
             {updateStatus === 'error' && (
