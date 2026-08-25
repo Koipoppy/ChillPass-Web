@@ -1,454 +1,455 @@
 <p align="center">
-  <img src="https://img.shields.io/badge/version-0.0.7-blue?style=flat-square" alt="Version" />
+  <img src="https://img.shields.io/badge/version-0.0.7-blue?style=flat-square" alt="版本" />
   <img src="https://img.shields.io/badge/Node.js-SEA-339933?style=flat-square&logo=node.js" alt="Node.js SEA" />
   <img src="https://img.shields.io/badge/React-18-61DAFB?style=flat-square&logo=react" alt="React" />
   <img src="https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript" alt="TypeScript" />
   <img src="https://img.shields.io/badge/DeepSeek-AI-4D6BFE?style=flat-square" alt="DeepSeek" />
-  <img src="https://img.shields.io/badge/Platform-Windows-0078D4?style=flat-square&logo=windows" alt="Windows" />
+  <img src="https://img.shields.io/badge/平台-Windows-0078D4?style=flat-square&logo=windows" alt="Windows" />
   <img src="https://img.shields.io/badge/License-MIT-green?style=flat-square" alt="License" />
 </p>
 
 <p align="center">
-  <img src="public/icon.png" alt="ChillPass" width="110" height="110" />
+  <img src="public/icon.ico" alt="ChillPass 图标" width="110" height="110" />
 </p>
 
-<h1 align="center">ChillPass Web</h1>
+<h1 align="center">ChillPass</h1>
 
 <p align="center">
-  <strong>Your AI-powered academic companion — from finals prep to paper writing.</strong>
+  <strong>你的 AI 学习伙伴 —— 从期末冲刺到论文写作</strong>
 </p>
 
 <p align="center">
-  <a href="#-key-features">Features</a> &bull;
-  <a href="#-installation">Install</a> &bull;
-  <a href="#-quick-start">Quick Start</a> &bull;
-  <a href="#-tech-stack">Tech Stack</a> &bull;
-  <a href="https://github.com/Koipoppy/ChillPass-Web/releases">Download</a>
+  <a href="#-核心功能">核心功能</a> &bull;
+  <a href="#-安装">安装</a> &bull;
+  <a href="#-加入交流群">加入交流群</a> &bull;
+  <a href="#-快速上手">快速上手</a> &bull;
+  <a href="#-技术栈">技术栈</a> &bull;
+  <a href="https://github.com/Koipoppy/ChillPass-Web/releases">下载</a>
 </p>
 
 <p align="center">
   <a href="https://github.com/Koipoppy/ChillPass-Web/releases/latest">
-    <img src="https://img.shields.io/badge/⬇️_Download-ChillPass%20Setup%200.0.7.exe-blue?style=for-the-badge" alt="Download" />
+    <img src="https://img.shields.io/badge/%E4%B8%8B%E8%BD%BD-ChillPass%20Setup%200.0.7.exe-blue?style=for-the-badge" alt="下载" />
   </a>
 </p>
 
 ---
 
-## What is ChillPass?
+## 什么是 ChillPass？
 
-ChillPass is a **desktop application** that transforms your course materials (PDF, PPTX, TXT, MD) into a **gamified learning experience**. Upload your lecture slides, and the AI engine automatically extracts exam-critical topics, generates structured lessons with worked examples, and creates adaptive quizzes — all prioritized by how likely each topic is to appear on your exam.
+ChillPass 是一款**桌面应用**，把你的课程资料（PDF、PPTX、TXT、MD）转化为**闯关式学习体验**。上传课件后，AI 引擎会自动提取考试重点，生成带例题的结构化课程，并创建自适应小测——所有内容按考到的概率高低排序。
 
-Starting from **v1.2.3**, ChillPass has been rebuilt as a **browser-based web app** packaged as a standalone Windows executable via Node.js SEA (Single Executable Application). No Electron, no heavy runtime — just a single `chillpass.exe` that starts a local HTTP server and opens your default browser. Data stays 100% local (IndexedDB + localStorage), fully offline.
+从 **v1.2.3** 起，ChillPass 重构为**浏览器式 Web 应用**，通过 Node.js SEA（Single Executable Application）打包成独立的 Windows 可执行文件。无需 Electron、无需重型运行时——只有一个 `chillpass.exe`，启动本地 HTTP 服务并打开默认浏览器。数据 100% 本地保存（IndexedDB + localStorage），完全离线运行。
 
-**How it works:**
+**工作流程：**
 
 ```
-Upload Materials → AI Extracts Topics → Generates Quest Levels → You Play Through
-                         ↓
-              Must-Know / High-Frequency / Good-to-Know
-                         ↓
-        Knowledge Points → Examples → Quiz → Earn Chill Coins
-                         ↓
-                    Athena Agent
-          ┌──────────────┼──────────────┐
-     Paper Writing   Report Writing   Knowledge Summary
-          └──────────────┼──────────────┘
-                  Revision Planning
+上传资料 → AI 提取考点 → 生成闯关路径 → 逐关闯关
+                        ↓
+        必考 / 高频 / 了解（三个优先级）
+                        ↓
+      知识点讲解 → 例题 → 小测 → 赚取 Chill 币
+                        ↓
+                   Athena 智能体
+        ┌──────────────┼──────────────┐
+    论文写作        报告写作        知识总结
+        └──────────────┼──────────────┘
+                 复习规划
 ```
 
 ---
 
-## ✨ Key Features
+## 核心功能
 
-### 🎮 Quest-Based Learning Engine
+### 闯关式学习引擎
 
-| Feature | Description |
+| 功能 | 说明 |
 |---------|-------------|
-| **AI Topic Extraction** | DeepSeek analyzes your materials and extracts exam topics, classified into 3 priority tiers |
-| **Batch Processing** | 200+ page PDFs are split into chunks, extracted in parallel, deduplicated, and consolidated — zero content left behind |
-| **Progressive Unlocking** | Complete a level to unlock the next. Each level contains knowledge points, worked examples, and a quiz checkpoint |
-| **Adaptive Quizzes** | One question per page with a progress navigator. Answer wrong? The question regenerates on the same topic until you master it |
-| **Regenerate & Skip** | Stuck on a question? Regenerate a new question on the same topic (free) or skip it for 10 Chill Coins |
-| **Dynamic Difficulty** | Quiz volume scales with topic priority — Must-Know gets 4-5 questions, Good-to-Know gets 2 |
-| **Course Management** | Export any course (including all of its generated levels) as a JSON file to share with others, import courses from friends, and uninstall courses you no longer need |
-| **Duplicate Course Detection** | Importing a course with an existing name prompts a replace dialog — no more accidental duplicates |
+| **AI 考点提取** | DeepSeek 分析你的资料，提取考试考点，按三个优先级分类 |
+| **批量处理** | 200+ 页 PDF 分块提取、并行处理、去重合并——一页都不会漏 |
+| **渐进解锁** | 完成一关解锁下一关。每关包含知识点、例题和通关小测 |
+| **自适应小测** | 每题一页，带进度导航。答错后同考点重新出题，直到掌握 |
+| **重新生成与跳过** | 卡住了？免费重新生成同考点新题，或花 10 Chill 币跳过 |
+| **动态难度** | 题量随考点优先级缩放——必考 4-5 题，了解级 2 题 |
+| **课程管理** | 课程可一键导出（含全部已生成关卡）为 JSON 分享给他人，也可导入好友的课程、卸载不再需要的课程 |
+| **重复课程检测** | 导入同名课程时弹出替换确认，不再产生重复课程 |
 
-### 🧠 Six Question Types with AI Grading
+### 六种题型 + AI 批改
 
 ```
-┌─────────────────┬──────────────────────────────────────────────┐
-│   Question Type  │                  Behavior                     │
-├─────────────────┼──────────────────────────────────────────────┤
-│  Single Choice   │ 4 options, instant correct/wrong feedback    │
-│  Multiple Choice │ 4-6 options, ≥2 correct, submit to check     │
-│  Fill-in-Blank   │ Free text input, keyword matching + AI grade  │
-│  Short Answer    │ Free-form response, AI evaluates, ref shown   │
-│  Calculation     │ Step-by-step solution, AI grades each step    │
-│  Essay           │ Extended response, AI evaluates structure     │
-└─────────────────┴──────────────────────────────────────────────┘
+┌─────────────┬──────────────────────────────────────────────┐
+│    题型      │                  行为                        │
+├─────────────┼──────────────────────────────────────────────┤
+│  单选题      │ 4 个选项，即时对错反馈                        │
+│  多选题      │ 4-6 个选项，至少 2 个正确，提交后判分           │
+│  填空题      │ 自由文本输入，关键词匹配 + AI 批改             │
+│  简答题      │ 自由作答，AI 评分，附参考答案                  │
+│  计算题      │ 分步解答，AI 逐步评分                          │
+│  论述题      │ 长篇作答，AI 按结构评分                        │
+└─────────────┴──────────────────────────────────────────────┘
 ```
 
-Wrong answers trigger **adaptive retry**:
-- **Choice questions** → Options are shuffled, try again
-- **Fill-in / Short answer** → AI generates a brand-new question on the same topic
+答错触发**自适应重试**：
+- **选择题** → 选项乱序，再试一次
+- **填空 / 简答** → AI 在相同考点重新生成全新题目
 
-### 👤 Local Account System
+### 本地账户系统
 
-A fully offline account system — no servers, no login, no tracking:
+完全离线的账户体系——没有服务器、没有登录、没有追踪：
 
-| Capability | Description |
+| 能力 | 说明 |
 |-----------|-------------|
-| **Auto-Create** | A default local account is created on first launch — no signup needed |
-| **Profile Editing** | Set nickname, pick from 12 emoji avatars, add a bio |
-| **Export / Import** | Export your account as a JSON file and import it on another device |
-| **Privacy-First** | All account data lives in the browser's localStorage — never uploaded anywhere |
+| **自动创建** | 首次启动自动创建默认本地账户，无需注册 |
+| **资料编辑** | 设置昵称、从 12 个表情头像中挑选、添加个性签名 |
+| **导出 / 导入** | 账户导出为 JSON 文件，在新设备上导入即可迁移 |
+| **隐私优先** | 所有账户数据保存在浏览器 localStorage，永不外传 |
 
-### 🤖 Athena — AI Agent
+### Athena —— AI 智能体
 
-Athena is not just a chatbot. She's a full agent with **abilities**, **memory**, and **task workflows**:
+Athena 不只是聊天机器人，而是拥有**能力**、**记忆**和**任务工作流**的完整智能体：
 
-| Capability | Description |
+| 能力 | 说明 |
 |-----------|-------------|
-| **Free Q&A** | Context-aware chat powered by DeepSeek, grounded in your course materials |
-| **Paper Writing** | Structured academic paper generation — topic, word count, level, requirements |
-| **Report Writing** | Lab reports, research reports, reading reports — formatted and structured |
-| **Knowledge Summary** | Systematic review of core concepts across chapters |
-| **Revision Planning** | Personalized study schedule based on exam date and weak areas |
-| **Ability Management** | Auto-discovered + manually added skills, exportable across devices |
-| **Memory System** | Charter memory (user-managed identity/rules) + Flow memory (agent-managed context) |
-| **Image OCR** | Snap a photo → Tesseract.js recognition → AI explanation |
-| **Status Indicator** | Real-time status bar showing idle / thinking / tasking state |
+| **自由问答** | DeepSeek 驱动的上下文感知对话，基于你的课程资料 |
+| **论文写作** | 结构化学术论文生成——主题、字数、层次、要求均可定制 |
+| **报告写作** | 实验报告、调研报告、读书报告——格式规范、结构完整 |
+| **知识总结** | 跨章节系统梳理核心概念 |
+| **复习规划** | 根据考试日期和薄弱点制定个性化复习计划 |
+| **能力管理** | 自动发现 + 手动添加技能，可跨设备导出 |
+| **记忆系统** | 宪章记忆（用户管理的身份/规则）+ 流动记忆（智能体管理的上下文） |
+| **图片 OCR** | 拍照 → Tesseract.js 识别 → AI 讲解 |
+| **状态指示** | 实时状态栏显示空闲 / 思考 / 任务中 |
 
-### 💰 Chill Coin Economy
+### Chill 币经济
 
-A virtual currency that ties studying to tangible rewards:
+把学习和即时奖励联系起来的虚拟货币：
 
-- **Earn**: Complete quiz levels (30-40 coins) + 1 coin per minute of study time
-- **Spend**: Unlock levels (30-40 coins) + Skip quiz questions (10 coins each)
-- **Track**: Real-time balance on dashboard, sidebar, and quest path with bounce animation
+- **赚取**：完成小测关卡（30-40 币）+ 学习时长每分钟 1 币
+- **消费**：解锁关卡（30-40 币）+ 跳过小测题目（每题 10 币）
+- **追踪**：仪表盘、侧边栏、闯关路径实时显示余额，带弹跳动画
 
-### 📝 Teacher Workspace
+### 教师工作台
 
-A dedicated workspace for educators (enable in Settings → "I am a Teacher"):
+为教师打造的独立工作区（设置 → "我是教师"开启）：
 
-- **AI Question Generation** — Generate 6 question types (choice, multi, fill, short, calculation, essay) from course materials with adjustable difficulty and count (1-50, free input)
-- **Smart Type Matching** — AI analyzes each exam point and generates the most appropriate question type (e.g., calculation for formulas, short answer for concepts)
-- **Smart Grouping** — Questions auto-grouped by type, each group collapsible
-- **Full Content Preview** — Every question displayed in full with KaTeX formula rendering
-- **PDF Export** — Generate professional exam papers with:
-  - Student info fields (name, ID, class) in a bordered frame
-  - Section headers with point totals
-  - Answer lines for subjective questions
-  - Separate answer key page with solution steps for calculation problems
-  - KaTeX formula rendering in print output
-- **5-Language Export** — Full translation of all question content before export (Chinese, English, Japanese, Korean, Russian)
-- **Retry & Timeout** — Robust API calls with 3 retries, 90s timeout, and dynamic token limits
+- **AI 出题** — 从课程资料生成 6 种题型（单选、多选、填空、简答、计算、论述），难度和题量（1-50，可自由输入）可调
+- **智能题型匹配** — AI 分析每个考点，自动生成最合适的题型（公式配计算题、概念配简答题）
+- **智能分组** — 题目按题型自动分组，每组可折叠
+- **完整预览** — 每道题完整展示，KaTeX 公式渲染
+- **PDF 导出** — 生成专业试卷：
+  - 带边框的考生信息栏（姓名、学号、班级）
+  - 带总分的小题分值标题
+  - 主观题答题线
+  - 独立答案页，计算题附解答步骤
+  - 打印输出中的 KaTeX 公式渲染
+- **5 语言导出** — 导出前全文翻译（中文、英文、日文、韩文、俄文）
+- **重试与超时** — 稳健的 API 调用：3 次重试、90 秒超时、动态 token 上限
 
-### 🖥️ System Tray & Auto-Update
+### 系统托盘与自动更新
 
-| Feature | Description |
+| 功能 | 说明 |
 |-----------|-------------|
-| **System Tray Icon** | A native Windows tray icon (PowerShell-based) with "Open in Browser" and "Quit" actions — auto-disappears when the server exits |
-| **Auto-Update Checker** | Checks GitHub Releases for new versions; supports silent mode (auto-download + install) and GUI mode (WinForms dialog with progress bar) |
-| **Proxy Fallback** | Update downloads automatically fall back to a GitHub proxy if direct download fails |
-| **In-App Update Check** | One-click update check from Settings, with download button linking to the latest release |
+| **系统托盘图标** | 原生 Windows 托盘图标（PowerShell 实现），支持"在浏览器中打开"和"退出"——服务器退出时自动消失 |
+| **自动更新检查** | 检查 GitHub Releases 新版本；支持静默模式（自动下载+安装）和图形界面模式（WinForms 进度对话框） |
+| **代理回退** | 直连下载失败时自动回退到 GitHub 代理 |
+| **应用内更新检查** | 设置页一键检查更新；是最新版时提示"无需更新"，有新版本时弹窗确认自动下载并安装 |
 
-### 🎨 Themes
+### 主题（3 种）
 
-| Theme | Style |
+| 主题 | 风格 |
 |-------|-------|
-| **Light** | Translucent liquid glass, clean and minimal |
-| **Dark** | High-contrast (#0d0d0f base), pure white text, optimized readability |
-| **Win95** | Retro classic — teal desktop, beveled gray windows, MS Sans Serif |
+| **浅色** | 半透明液态玻璃，干净简约 |
+| **深色** | 高对比（#0d0d0f 底），纯白文字，阅读优化 |
+| **Win95** | 复古经典——青色桌面、斜面灰窗、MS Sans Serif |
 
-### 🌐 5 Languages
+### 5 种语言
 
-Chinese, English, Russian, Japanese, Korean — switch instantly from settings. 74+ translation keys covering all UI elements.
+中文、英文、俄文、日文、韩文——设置里一键切换。74+ 翻译键覆盖全部界面元素。
 
-### ❓ Help System
+### 帮助系统
 
-A circular help button next to the focus mode toggle opens a modal with:
-- **Software introduction** — what ChillPass does and how it works
-- **Quick start guide** — 10 step-by-step tips covering all major features
-- **Developer contact** — GitHub repository, WeChat ID, and a QQ group QR code
+专注模式按钮旁的圆形帮助按钮打开帮助弹窗，包含：
+- **软件介绍** —— ChillPass 是什么、怎么用
+- **快速上手** —— 覆盖全部主要功能的 10 条操作提示
+- **开发者联系方式** —— GitHub 仓库、微信，以及 QQ 交流群二维码
 
 ---
 
-## 📦 Installation
+## 安装
 
-### Download (Recommended)
+### 下载安装（推荐）
 
-Go to [Releases](https://github.com/Koipoppy/ChillPass-Web/releases) → Download `ChillPass-Setup-0.0.7.exe` → Install.
+前往 [Releases](https://github.com/Koipoppy/ChillPass-Web/releases) → 下载 `ChillPass-Setup-0.0.7.exe` → 安装。
 
-> Windows 10/11 (64-bit). Per-user install (no admin needed). A desktop shortcut is created automatically after install. Data auto-preserved on updates.
+> Windows 10/11（64 位）。按用户安装（无需管理员权限）。安装后自动在桌面创建快捷方式。更新时数据自动保留。
 
-### Build from Source
+### 从源码构建
 
 ```bash
 git clone https://github.com/Koipoppy/ChillPass-Web.git
 cd ChillPass-Web
 npm install
 
-# ── Dev mode (browser only) ──
-npm run dev                  # Vite dev server at http://localhost:5173
+# ── 开发模式（仅浏览器）──
+npm run dev                  # Vite 开发服务器 http://localhost:5173
 
-# ── Production build ──
-npm run build                # Vite build → dist/
+# ── 生产构建 ──
+npm run build                # Vite 构建 → dist/
 
-# ── Build standalone executable ──
-# Requires: Node.js 22+ (for SEA), NSIS 3.x (for installer)
-node installer/build-sea.mjs              # Builds chillpass.exe via Node.js SEA
-makensis installer/installer.nsi          # Wraps exe into NSIS installer
+# ── 构建独立可执行文件 ──
+# 需要：Node.js 22+（SEA）、NSIS 3.x（安装程序）
+node installer/build-sea.mjs              # 通过 Node.js SEA 构建 chillpass.exe
+makensis installer/installer.nsi          # 将 exe 封装为 NSIS 安装程序
 ```
 
 ---
 
-## 👥 Join the Community
+## 加入交流群
 
-Scan the QR code to join the official ChillPass QQ group — get the latest news, share study tips, and reach the developer directly.
+扫描下方二维码加入 ChillPass 官方 QQ 交流群——获取最新动态、分享学习技巧、直接联系开发者。
 
 <p align="center">
-  <img src="public/qrcode.jpg" alt="ChillPass QQ group QR code" width="200" />
+  <img src="public/qrcode.jpg" alt="ChillPass QQ 群二维码" width="200" />
 </p>
 
 ---
 
-## 🚀 Quick Start
+## 快速上手
 
-**1.** Open **Settings → API Config** → Enter your [DeepSeek API Key](https://platform.deepseek.com/api_keys)
+**1.** 打开 **设置 → API 配置** → 填入你的 [DeepSeek API Key](https://platform.deepseek.com/api_keys)
 
-**2.** Click **Import Materials** → Select your PDF/PPTX files → Name your course → Wait for AI to generate levels
+**2.** 点击 **导入课件** → 选择 PDF/PPTX 文件 → 命名课程 → 等待 AI 生成关卡
 
-**3.** Enter **Quest Sprint** → Start from Level 1 → Read key points → Study examples → Pass the quiz
+**3.** 进入 **闯关冲刺** → 从第 1 关开始 → 阅读知识点 → 学习例题 → 通过小测
 
-**4.** Earn Chill Coins from quizzes and study time. Use them to unlock levels or skip difficult quiz questions (10 coins each). Stuck? Regenerate a new question on the same topic for free.
+**4.** 从小测和学习时长中赚取 Chill 币，用来解锁关卡或跳过难题（每题 10 币）。卡住了？免费重新生成同考点新题。
 
-**5.** Open **Athena** → Ask anything, or start a task (paper, report, summary, plan) → Get structured output
+**5.** 打开 **Athena** → 随便问，或开始一个任务（论文、报告、总结、规划）→ 获得结构化输出
 
-**6.** (Teachers) Enable **Teacher Mode** in Settings → Open **Teacher Workspace** → Generate questions → Export PDF
+**6.** （教师）在设置中开启 **教师模式** → 打开 **教师工作台** → 生成题目 → 导出 PDF
 
-**7.** Set your exam date on the dashboard to see a countdown timer.
-
----
-
-## 🛠️ Tech Stack
-
-```
-Node.js 22 (SEA)  ── Standalone executable (Single Executable Application)
-React 18          ── UI components
-TypeScript 5      ── Type safety
-Vite 5            ── Build pipeline
-React Router 6    ── Client-side routing
-Zustand           ── State management (persist to localStorage)
-Framer Motion     ── Page transitions & animations
-DeepSeek API      ── AI chat, grading, topic extraction, translation
-KaTeX             ── LaTeX formula rendering (placeholder strategy)
-Tesseract.js      ── OCR (CDN-loaded, renderer process)
-PDF.js            ── PDF text extraction
-JSZip             ── PPTX parsing
-IndexedDB         ── Browser-side file storage (course materials)
-CSS Modules       ── Scoped styling
-SVG Filters       ── Liquid glass visual effects
-NSIS 3            ── Windows installer (per-user, no admin)
-PowerShell        ── System tray + auto-update checker
-```
+**7.** 在仪表盘设置考试日期，查看倒计时。
 
 ---
 
-## 📁 Architecture
+## 技术栈
+
+```
+Node.js 22 (SEA)  ── 独立可执行文件（Single Executable Application）
+React 18          ── UI 组件
+TypeScript 5      ── 类型安全
+Vite 5            ── 构建工具
+React Router 6    ── 前端路由
+Zustand           ── 状态管理（持久化到 localStorage）
+Framer Motion     ── 页面过渡与动画
+DeepSeek API      ── AI 对话、批改、考点提取、翻译
+KaTeX             ── LaTeX 公式渲染（占位符策略）
+Tesseract.js      ── OCR 文字识别（CDN 加载）
+PDF.js            ── PDF 文本提取
+JSZip             ── PPTX 解析
+IndexedDB         ── 浏览器端文件存储（课程资料）
+CSS Modules       ── 作用域样式
+SVG Filters       ── 液态玻璃视觉效果
+NSIS 3            ── Windows 安装程序（按用户安装，无需管理员）
+PowerShell        ── 系统托盘 + 自动更新检查
+```
+
+---
+
+## 项目结构
 
 ```
 src/
 ├── components/
-│   ├── layout/          Sidebar, TitleBar, Background
+│   ├── layout/          Sidebar、TitleBar、Background
 │   ├── common/          GlassFilter
-│   ├── AccountLogin.tsx     Local account creation modal
-│   └── AccountEditor.tsx    Profile editing modal
+│   ├── AccountLogin.tsx     本地账户创建弹窗
+│   └── AccountEditor.tsx    资料编辑弹窗
 ├── pages/
-│   ├── Dashboard.tsx        Course list, exam countdown, Chill Coins
-│   ├── UploadPage.tsx       Material import + AI extraction
-│   ├── LessonPathPage.tsx   Quest path with progressive unlocking
-│   ├── LessonDetailPage.tsx Knowledge points, examples, quiz
-│   ├── WrongBookPage.tsx    Mistake notebook (grouped by course)
-│   ├── AIChatPage.tsx       Athena agent (Q&A, paper, report, summary, plan)
-│   ├── TeacherWorkspace.tsx Exam paper generation + PDF export
-│   ├── SettingsPage.tsx     Account, theme, language, teacher mode
-│   └── settings/            ApiSettings, StorageSettings, DataSettings, AboutSettings
+│   ├── Dashboard.tsx        课程列表、考试倒计时、Chill 币
+│   ├── UploadPage.tsx       资料导入 + AI 提取
+│   ├── LessonPathPage.tsx   渐进解锁的闯关路径
+│   ├── LessonDetailPage.tsx 知识点、例题、小测
+│   ├── WrongBookPage.tsx    错题本（按课程分组）
+│   ├── AIChatPage.tsx       Athena 智能体（问答、论文、报告、总结、规划）
+│   ├── TeacherWorkspace.tsx 试卷生成 + PDF 导出
+│   ├── SettingsPage.tsx     账户、主题、语言、教师模式
+│   └── settings/            ApiSettings、StorageSettings、DataSettings、AboutSettings
 ├── stores/
-│   ├── authStore.ts         Local account (create, edit, export, import)
-│   ├── courseStore.ts       Courses, exam points, lessons, progress
-│   ├── chatStore.ts         Athena chat history
-│   ├── athenaStore.ts       Abilities, memories, tasks
-│   ├── settingsStore.ts     API key, teacher mode
-│   ├── studyTimeStore.ts    Study time tracking → Chill Coins
-│   ├── themeStore.ts        3 themes
-│   ├── languageStore.ts     5 languages
-│   └── wrongQuestionStore.ts Mistake records
+│   ├── authStore.ts         本地账户（创建、编辑、导出、导入）
+│   ├── courseStore.ts       课程、考点、关卡、进度
+│   ├── chatStore.ts         Athena 聊天记录
+│   ├── athenaStore.ts       能力、记忆、任务
+│   ├── settingsStore.ts     API Key、教师模式
+│   ├── studyTimeStore.ts    学习时长追踪 → Chill 币
+│   ├── themeStore.ts        3 种主题
+│   ├── languageStore.ts     5 种语言
+│   └── wrongQuestionStore.ts 错题记录
 ├── services/
-│   ├── deepseek.ts          API + grading + batch extraction + exam gen + translation
-│   ├── fileParser.ts        PDF / PPTX / TXT / MD text extraction
-│   ├── imageService.ts      OCR via Tesseract.js
-│   ├── lessonGenerator.ts   Lesson content generation pipeline
-│   └── browserFileStore.ts  IndexedDB file storage
-├── utils/                   markdown (KaTeX placeholder), electronMock
-├── i18n/                    5-language translations (74+ keys)
-├── styles/                  Global CSS + 5 theme variable sets
-└── types/                   TypeScript interfaces
+│   ├── deepseek.ts          API + 批改 + 批量提取 + 出题 + 翻译
+│   ├── fileParser.ts        PDF / PPTX / TXT / MD 文本提取
+│   ├── imageService.ts      通过 Tesseract.js 实现 OCR
+│   ├── lessonGenerator.ts   关卡内容生成流水线
+│   └── browserFileStore.ts  IndexedDB 文件存储
+├── utils/                   markdown（KaTeX 占位符）、electronMock
+├── i18n/                    5 语言翻译（74+ 键）
+├── styles/                  全局样式 + 3 套主题变量
+└── types/                   TypeScript 接口
 
 installer/
-├── app.cjs                  SEA entry point (HTTP server + tray launcher)
-├── build-sea.mjs            Builds chillpass.exe via Node.js SEA
-├── installer.nsi            NSIS installer script
-├── updater.ps1              Auto-update checker (silent + GUI modes)
-└── build-installer.ps1      One-click build helper
+├── app.cjs                  SEA 入口（HTTP 服务器 + 托盘启动器）
+├── build-sea.mjs            通过 Node.js SEA 构建 chillpass.exe
+├── installer.nsi            NSIS 安装程序脚本
+├── updater.ps1              自动更新检查（静默 + 图形界面模式）
+└── build-installer.ps1      一键构建脚本
 
-server.mjs                   Dev server (zero-dependency, Node.js built-ins)
-tray.ps1                     System tray icon (WinForms NotifyIcon)
+server.mjs                   开发服务器（零依赖，Node.js 内置模块）
+tray.ps1                     系统托盘图标（WinForms NotifyIcon）
 ```
 
 ---
 
-## 🔑 Requirements
+## 环境要求
 
 | | |
 |-|-|
-| **OS** | Windows 10/11 (64-bit) |
-| **Runtime** | DeepSeek API Key ([get one](https://platform.deepseek.com/api_keys)) |
-| **Dev** | Node.js 22+ (for SEA build), NSIS 3.x (for installer) |
+| **操作系统** | Windows 10/11（64 位） |
+| **运行时** | DeepSeek API Key（[获取](https://platform.deepseek.com/api_keys)） |
+| **开发环境** | Node.js 22+（SEA 构建）、NSIS 3.x（安装程序） |
 
 ---
 
-## 📝 Changelog
+## 更新日志
 
 <details>
 <summary><strong>v0.0.7</strong> — 2026-08-25</summary>
 
-- **App Icon**: ChillPass now ships with its own custom icon, applied to both the executable and the installer
-- **Desktop Shortcut**: A desktop shortcut is now created automatically after install (no longer an optional checkbox)
-- **QQ Group QR Code**: Added the official QQ group QR code to the in-app help modal for easier community access
+- **应用图标**：ChillPass 现在使用自己的专属图标，应用于可执行文件和安装程序
+- **桌面快捷方式**：安装后自动在桌面创建快捷方式（不再是可选勾选项）
+- **QQ 群二维码**：应用内帮助弹窗加入官方 QQ 交流群二维码，方便用户加入社区
 </details>
 
 <details>
 <summary><strong>v0.0.6</strong> — 2026-08-25</summary>
 
-- **Auto-Update**: In-app update check now shows "you're up to date" when running the latest version, and prompts to auto-download and install when a new version is available
-- **Hidden Console**: The startup terminal window is now hidden (GUI subsystem) so users can't accidentally close the app's local server
+- **自动更新**：应用内检查更新时，运行最新版提示"无需更新"；检测到新版本弹窗确认，自动下载并安装
+- **隐藏控制台**：启动时的终端窗口已隐藏（GUI 子系统），用户无法误关应用服务
 </details>
 
 <details>
 <summary><strong>v0.0.5</strong> — 2026-08-25</summary>
 
-- **Install Location**: Data management page can now locate the installation folder (opens Explorer with the exe selected)
-- **Update Check Fix**: Update checker now points to the correct `ChillPass-Web` repository
+- **安装位置定位**：数据管理页可定位安装文件夹（资源管理器中选中 exe）
+- **更新检查修复**：更新检查指向正确的 `ChillPass-Web` 仓库
 </details>
 
 <details>
 <summary><strong>v1.2.3</strong> — 2026-07-29</summary>
 
-- **Web Architecture Rewrite**: Rebuilt from Electron to a browser-based web app packaged as a standalone executable via Node.js SEA (Single Executable Application) — no Electron dependency, single `chillpass.exe`
-- **Local Account System**: Offline account with nickname, 12 emoji avatars, and bio; auto-created on first launch; export/import as JSON for cross-device migration
-- **NSIS Installer**: Per-user Windows installer (no admin) with desktop shortcut, Start Menu shortcuts, auto-start option, and full uninstaller
-- **System Tray Icon**: Native Windows tray (PowerShell WinForms) with "Open in Browser" and "Quit"; auto-disappears when server exits
-- **Auto-Update Checker**: GitHub Releases integration with silent mode (auto-download + install) and GUI mode (WinForms dialog with progress); proxy fallback for downloads
-- **Course Duplicate Detection**: Importing a course with an existing name now prompts a replace dialog instead of creating duplicates
-- **Wrong Book Empty State**: Fixed to use liquid-glass card styling consistent with other pages
-- **Data Management**: Storage info panel with install path, data path, disk usage, and per-course size breakdown with progress bars
-- **In-App Update Check**: One-click update check from Settings with download link to latest release
+- **Web 架构重写**：从 Electron 重构为浏览器式 Web 应用，通过 Node.js SEA 打包为独立可执行文件——无需 Electron 依赖，单个 `chillpass.exe`
+- **本地账户系统**：离线账户，支持昵称、12 个表情头像和签名；首次启动自动创建；JSON 导出/导入跨设备迁移
+- **NSIS 安装程序**：按用户安装（无需管理员），含桌面快捷方式、开始菜单快捷方式、开机自启选项和完整卸载程序
+- **系统托盘图标**：原生 Windows 托盘（PowerShell WinForms），支持"在浏览器中打开"和"退出"；服务器退出时自动消失
+- **自动更新检查**：接入 GitHub Releases，静默模式（自动下载+安装）和图形界面模式（WinForms 对话框）；下载失败时代理回退
+- **重复课程检测**：导入同名课程时弹出替换确认，不再产生重复课程
+- **错题本空状态修复**：与其他页面一致的液态玻璃卡片样式
+- **数据管理**：存储信息面板，含安装路径、数据路径、磁盘占用和按课程大小明细（带进度条）
+- **应用内更新检查**：设置页一键检查更新，提供最新版下载链接
 </details>
 
 <details>
 <summary><strong>v1.2.2</strong> — 2026-06-24</summary>
 
-- **Quiz Regenerate & Skip**: Regenerate same-topic questions (free) or skip for 10 Chill Coins
-- **Help Modal**: Circular help button in title bar with software intro, quick start guide, and developer contact
-- **Quiz Card Layout**: Removed fixed min-height, unified spacing with flex gap
-- **Help Modal Fix**: Resolved pointer-events inheritance from title bar drag region
+- **小测重新生成与跳过**：同考点免费重新生成，或花 10 Chill 币跳过
+- **帮助弹窗**：标题栏圆形帮助按钮，含软件介绍、快速上手和开发者联系方式
+- **小测卡片布局**：去掉固定最小高度，flex 间距统一
+- **帮助弹窗修复**：解决标题栏拖拽区域 pointer-events 继承问题
 </details>
 
 <details>
 <summary><strong>v1.2.1</strong> — 2026-06-24</summary>
 
-- **Lesson Grouping**: Lessons grouped by source file with collapsible headers, auto-collapse on full completion
-- **"Next Up" Marker**: Smart badge marking the lesson after the most recently completed one (by timestamp), with auto-scroll and group expansion
-- **Unlock System**: "Skip" renamed to "Unlock", only unlocks target lesson (no cascade), sets status to `available` not `completed`
-- **Upload Flow**: Navigate to home after import, 3-step progress indicator
-- **Quiz Option Fix**: AI prompt examples updated, `cleanOptionText()` regex strips duplicate prefixes
-- **Wrong Book Layout**: `overflow: visible !important` + content height limits with internal scroll
-- **Teacher Workspace**: Free number input (1-50) replacing fixed buttons, smart question type matching
-- **Smart Exam Generation**: AI analyzes exam points for optimal question type, 30% calculation in choice questions
+- **关卡分组**：按源文件分组，可折叠标题，全部完成后自动折叠
+- **"下一关"标记**：智能徽章标记最近完成关卡（按时间戳）之后的下一关，自动滚动和展开分组
+- **解锁系统**："跳过"改名为"解锁"，只解锁目标关卡（不级联），状态设为 `available` 而非 `completed`
+- **上传流程**：导入后回到首页，三步进度指示
+- **选项修复**：AI 提示示例更新，`cleanOptionText()` 正则去除重复前缀
+- **错题本布局**：`overflow: visible !important` + 内容高度限制内部滚动
+- **教师工作台**：自由输入题量（1-50）替代固定按钮，智能题型匹配
+- **智能出题**：AI 分析考点选择最优题型，选择题中 30% 为计算题
 </details>
 
 <details>
 <summary><strong>v1.2.0</strong> — 2026-06-23</summary>
 
-- **Athena Agent**: Upgraded AI tutor to full agent with abilities, charter/flow memory, task workflows (paper, report, summary, plan), export/import
-- **Teacher Workspace**: AI question generation (6 types), grouped question list, PDF export with 5-language translation
-- **Codex Theme**: Terminal-inspired dark theme
-- **Calculation Questions**: Step-by-step solution rendering in quizzes and exam papers
-- **Dark Theme Fix**: Button contrast system (`--btn-primary-bg` / `--btn-primary-fg` variables across 5 themes)
-- **API Reliability**: 3-retry with exponential backoff, 90s timeout, dynamic maxTokens
-- **Formula Rendering**: KaTeX pre-rendering for PDF export, inline markdown in question list
-- **Fill-in Input Fix**: `user-select: text` for input/textarea elements
-- **i18n Expansion**: 74+ translation keys, all UI elements localized
+- **Athena 智能体**：AI 助教升级为完整智能体，具备能力、宪章/流动记忆、任务工作流（论文、报告、总结、规划）、导出/导入
+- **教师工作台**：AI 出题（6 种题型）、分组题目列表、5 语言翻译 PDF 导出
+- **Codex 主题**：终端风格深色主题（后续精简为主题体系中的深色变体）
+- **计算题**：小测和试卷中的分步解答渲染
+- **深色主题修复**：按钮对比度体系（5 套主题的 `--btn-primary-bg` / `--btn-primary-fg` 变量）
+- **API 可靠性**：3 次重试 + 指数退避、90 秒超时、动态 maxTokens
+- **公式渲染**：PDF 导出的 KaTeX 预渲染、题目列表内联 markdown
+- **填空输入修复**：input/textarea 元素 `user-select: text`
+- **i18n 扩展**：74+ 翻译键，全部界面元素本地化
 </details>
 
 <details>
 <summary><strong>v1.1.3</strong> — 2026-06-22</summary>
 
-- Chill Coin economy system (earn from quizzes + study time, spend to skip levels)
-- Multiple choice questions in quizzes
-- Course renaming from dashboard
-- Standard answer always shown after fill-in/short-answer grading
-- Large PDF batch extraction with deduplication and consolidation
+- Chill 币经济系统（小测 + 学习时长赚取，跳过关卡消费）
+- 多选题
+- 仪表盘课程重命名
+- 填空/简答批改后始终显示参考答案
+- 大 PDF 批量提取，去重合并
 </details>
 
 <details>
 <summary><strong>v1.1.2</strong> — 2026-06-22</summary>
 
-- Image OCR fully fixed (renderer process + CDN resources)
-- KaTeX formula rendering (placeholder strategy)
-- One-question-per-page quiz with progress dots
-- Fill-in-the-blank and short answer with AI grading
-- Mistake notebook white screen fix
+- 图片 OCR 完全修复（渲染进程 + CDN 资源）
+- KaTeX 公式渲染（占位符策略）
+- 一题一页小测，带进度圆点
+- 填空和简答 + AI 批改
+- 错题本白屏修复
 </details>
 
 <details>
 <summary><strong>v1.1.1</strong> — 2026-06-22</summary>
 
-- KaTeX math formula rendering
-- Vista and Win95 themes
-- DeepSeek platform link in API settings
-- Storage info panel
-- Dark mode contrast optimization
+- KaTeX 数学公式渲染
+- Vista 和 Win95 主题（后续精简为主题体系中的 Win95）
+- API 设置中的 DeepSeek 平台链接
+- 存储信息面板
+- 深色模式对比度优化
 </details>
 
 <details>
 <summary><strong>v1.1.0</strong> — 2026-06-21</summary>
 
-- Standalone mistake notebook with course grouping
-- Incremental import with duplicate detection
-- 5-language i18n with instant switch
-- Page transition animation (sync + absolute positioning)
+- 独立错题本，按课程分组
+- 增量导入 + 重复检测
+- 5 语言 i18n，即时切换
+- 页面过渡动画（同步 + 绝对定位）
 </details>
 
 <details>
 <summary><strong>v1.0.0</strong> — 2026-06-20</summary>
 
-- Initial release: upload → AI extraction → quest levels → AI tutor
+- 首次发布：上传 → AI 提取 → 闯关 → AI 助教
 </details>
 
 ---
 
-## 📄 License
+## 许可证
 
-This project is licensed under the **MIT License**.
+本项目基于 **MIT License** 开源。
 
-## 🙏 Acknowledgments
+## 致谢
 
 [DeepSeek](https://www.deepseek.com/) &bull; [Tesseract.js](https://tesseract.projectnaptha.com/) &bull; [KaTeX](https://katex.org/) &bull; [PDF.js](https://mozilla.github.io/pdf.js/) &bull; [NSIS](https://nsis.sourceforge.io/) &bull; [Framer Motion](https://www.framer.com/motion/) &bull; [Node.js SEA](https://nodejs.org/api/single-executable-applications.html)
 
 ---
 
 <p align="center">
-  <sub>Built with ❤️ for students who'd rather chill than cram.</sub>
+  <sub>为想从容备考而不是临时抱佛脚的同学们打造。</sub>
 </p>
