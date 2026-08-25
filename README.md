@@ -8,6 +8,10 @@
   <img src="https://img.shields.io/badge/License-MIT-green?style=flat-square" alt="License" />
 </p>
 
+<p align="center">
+  <img src="public/icon.png" alt="ChillPass" width="110" height="110" />
+</p>
+
 <h1 align="center">ChillPass Web</h1>
 
 <p align="center">
@@ -66,6 +70,7 @@ Upload Materials → AI Extracts Topics → Generates Quest Levels → You Play 
 | **Adaptive Quizzes** | One question per page with a progress navigator. Answer wrong? The question regenerates on the same topic until you master it |
 | **Regenerate & Skip** | Stuck on a question? Regenerate a new question on the same topic (free) or skip it for 10 Chill Coins |
 | **Dynamic Difficulty** | Quiz volume scales with topic priority — Must-Know gets 4-5 questions, Good-to-Know gets 2 |
+| **Course Management** | Export any course (including all of its generated levels) as a JSON file to share with others, import courses from friends, and uninstall courses you no longer need |
 | **Duplicate Course Detection** | Importing a course with an existing name prompts a replace dialog — no more accidental duplicates |
 
 ### 🧠 Six Question Types with AI Grading
@@ -148,15 +153,13 @@ A dedicated workspace for educators (enable in Settings → "I am a Teacher"):
 | **Proxy Fallback** | Update downloads automatically fall back to a GitHub proxy if direct download fails |
 | **In-App Update Check** | One-click update check from Settings, with download button linking to the latest release |
 
-### 🎨 Five Themes
+### 🎨 Themes
 
 | Theme | Style |
 |-------|-------|
 | **Light** | Translucent liquid glass, clean and minimal |
 | **Dark** | High-contrast (#0d0d0f base), pure white text, optimized readability |
-| **Vista** | Windows Aero Glass — blue gradient, frosted windows, glossy buttons |
 | **Win95** | Retro classic — teal desktop, beveled gray windows, MS Sans Serif |
-| **Codex** | Terminal-inspired — dark base, monospace accents, green-on-black code aesthetic |
 
 ### 🌐 5 Languages
 
@@ -167,7 +170,7 @@ Chinese, English, Russian, Japanese, Korean — switch instantly from settings. 
 A circular help button next to the focus mode toggle opens a modal with:
 - **Software introduction** — what ChillPass does and how it works
 - **Quick start guide** — 10 step-by-step tips covering all major features
-- **Developer contact** — GitHub repository and WeChat ID
+- **Developer contact** — GitHub repository, WeChat ID, and a QQ group QR code
 
 ---
 
@@ -177,7 +180,7 @@ A circular help button next to the focus mode toggle opens a modal with:
 
 Go to [Releases](https://github.com/Koipoppy/ChillPass-Web/releases) → Download `ChillPass-Setup-0.0.7.exe` → Install.
 
-> Windows 10/11 (64-bit). Per-user install (no admin needed). Data auto-preserved on updates.
+> Windows 10/11 (64-bit). Per-user install (no admin needed). A desktop shortcut is created automatically after install. Data auto-preserved on updates.
 
 ### Build from Source
 
@@ -197,6 +200,16 @@ npm run build                # Vite build → dist/
 node installer/build-sea.mjs              # Builds chillpass.exe via Node.js SEA
 makensis installer/installer.nsi          # Wraps exe into NSIS installer
 ```
+
+---
+
+## 👥 Join the Community
+
+Scan the QR code to join the official ChillPass QQ group — get the latest news, share study tips, and reach the developer directly.
+
+<p align="center">
+  <img src="public/qrcode.jpg" alt="ChillPass QQ group QR code" width="200" />
+</p>
 
 ---
 
@@ -268,7 +281,7 @@ src/
 │   ├── athenaStore.ts       Abilities, memories, tasks
 │   ├── settingsStore.ts     API key, teacher mode
 │   ├── studyTimeStore.ts    Study time tracking → Chill Coins
-│   ├── themeStore.ts        5 themes
+│   ├── themeStore.ts        3 themes
 │   ├── languageStore.ts     5 languages
 │   └── wrongQuestionStore.ts Mistake records
 ├── services/
@@ -306,6 +319,28 @@ tray.ps1                     System tray icon (WinForms NotifyIcon)
 ---
 
 ## 📝 Changelog
+
+<details>
+<summary><strong>v0.0.7</strong> — 2026-08-25</summary>
+
+- **App Icon**: ChillPass now ships with its own custom icon, applied to both the executable and the installer
+- **Desktop Shortcut**: A desktop shortcut is now created automatically after install (no longer an optional checkbox)
+- **QQ Group QR Code**: Added the official QQ group QR code to the in-app help modal for easier community access
+</details>
+
+<details>
+<summary><strong>v0.0.6</strong> — 2026-08-25</summary>
+
+- **Auto-Update**: In-app update check now shows "you're up to date" when running the latest version, and prompts to auto-download and install when a new version is available
+- **Hidden Console**: The startup terminal window is now hidden (GUI subsystem) so users can't accidentally close the app's local server
+</details>
+
+<details>
+<summary><strong>v0.0.5</strong> — 2026-08-25</summary>
+
+- **Install Location**: Data management page can now locate the installation folder (opens Explorer with the exe selected)
+- **Update Check Fix**: Update checker now points to the correct `ChillPass-Web` repository
+</details>
 
 <details>
 <summary><strong>v1.2.3</strong> — 2026-07-29</summary>
