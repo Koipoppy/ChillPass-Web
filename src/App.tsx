@@ -5,6 +5,8 @@ import Sidebar from './components/layout/Sidebar'
 import TitleBar from './components/layout/TitleBar'
 import GlassFilter from './components/common/GlassFilter'
 import Background from './components/layout/Background'
+import WelcomeModal from './components/onboarding/WelcomeModal'
+import GuideCard from './components/onboarding/GuideCard'
 import { useAuthStore } from './stores/authStore'
 import Dashboard from './pages/Dashboard'
 import UploadPage from './pages/UploadPage'
@@ -99,6 +101,9 @@ export default function App() {
           </AnimatePresence>
         </main>
       </div>
+      {/* 新手引导：欢迎向导 + 悬浮任务卡（组件内部自行判断是否显示） */}
+      <WelcomeModal />
+      <GuideCard />
     </>
   )
 }

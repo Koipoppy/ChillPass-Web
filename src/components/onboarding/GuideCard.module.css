@@ -1,0 +1,476 @@
+/* ===== 新手引导悬浮任务卡 ===== */
+/* 固定定位锚点：全局 .liquid-glass 自带 position:relative，故定位放在外层容器 */
+.cardAnchor {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 990; /* 高于页面内容，低于现有弹窗层（1000/10000） */
+}
+
+/* 提高特异性：global.css 的 .liquid-glass 运行时可能晚于本文件注入，避免背景被覆盖 */
+.card:global(.liquid-glass) {
+  width: 320px;
+  max-height: 70vh;
+  overflow-y: auto;
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.85);
+  box-shadow: var(--shadow-float);
+  animation: cardSlideIn 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+  scrollbar-width: none;
+}
+
+.card::-webkit-scrollbar {
+  display: none;
+}
+
+@keyframes cardSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===== 主题覆盖 ===== */
+[data-theme="dark"] .card {
+  background: rgba(28, 28, 30, 0.94);
+}
+
+[data-theme="vista"] .card {
+  background: rgba(255, 255, 255, 0.85);
+}
+
+/* ===== 折叠徽章：圆形悬浮按钮 + 进度角标 ===== */
+.collapsedCard:global(.liquid-glass) {
+  width: 52px;
+  height: 52px;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-pill);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.88);
+  color: var(--text-primary);
+  cursor: pointer;
+  box-shadow: var(--shadow-float);
+  transition: transform 0.25s cubic-bezier(0.32, 0.72, 0, 1), box-shadow 0.25s ease;
+}
+
+.collapsedCard:hover {
+  transform: scale(1.08);
+  box-shadow: var(--shadow-hover);
+}
+
+.collapsedCard:active {
+  transform: scale(0.95);
+}
+
+.collapsedIcon {
+  color: var(--accent-text);
+}
+
+.collapsedIconDone {
+  color: var(--success-text);
+}
+
+.collapsedCount {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  min-width: 21px;
+  height: 21px;
+  padding: 0 6px;
+  border-radius: var(--radius-pill);
+  background: var(--btn-primary-bg);
+  color: var(--btn-primary-fg);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 21px;
+  text-align: center;
+  box-shadow: var(--shadow-ambient);
+}
+
+.collapsedCountDone {
+  background: var(--success-text);
+  color: #ffffff;
+}
+
+/* 折叠徽章主题覆盖 */
+[data-theme="dark"] .collapsedCard {
+  background: rgba(28, 28, 30, 0.92);
+}
+
+[data-theme="vista"] .collapsedCard {
+  background: rgba(255, 255, 255, 0.72);
+}
+
+/* ===== 头部 ===== */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.headerTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.headerIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: var(--radius-sm);
+  background: rgba(0, 113, 227, 0.1);
+  color: var(--accent-text);
+}
+
+[data-theme="dark"] .headerIcon {
+  background: rgba(0, 113, 227, 0.2);
+}
+
+.headerActions {
+  display: flex;
+  gap: 4px;
+}
+
+.iconBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border: none;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.iconBtn:hover {
+  background: rgba(0, 0, 0, 0.06);
+  color: var(--text-primary);
+}
+
+[data-theme="dark"] .iconBtn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* ===== 进度条 ===== */
+.progressTrack {
+  height: 4px;
+  border-radius: var(--radius-pill);
+  background: rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+  margin-top: 12px;
+}
+
+.progressFill {
+  height: 100%;
+  border-radius: var(--radius-pill);
+  background: linear-gradient(90deg, var(--accent-text), rgba(0, 113, 227, 0.7));
+  transition: width 0.4s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+/* ===== 步骤列表 ===== */
+.stepList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.stepItem {
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.stepItemCurrent {
+  background: rgba(0, 113, 227, 0.05);
+  border-color: rgba(0, 113, 227, 0.18);
+  padding: 10px 12px;
+}
+
+.stepItemDone {
+  opacity: 0.62;
+}
+
+[data-theme="dark"] .stepItemCurrent {
+  background: rgba(0, 113, 227, 0.12);
+  border-color: rgba(0, 113, 227, 0.3);
+}
+
+.stepHead {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+}
+
+.stepItemCurrent .stepHead {
+  padding: 0 0 8px 0;
+}
+
+.stepStatus {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  border-radius: var(--radius-pill);
+  background: rgba(0, 0, 0, 0.08);
+  color: var(--text-tertiary);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.stepStatusCurrent {
+  background: var(--btn-primary-bg);
+  color: var(--btn-primary-fg);
+}
+
+.stepStatusDone {
+  background: var(--success-text);
+  color: #ffffff;
+}
+
+.stepIcon {
+  color: var(--text-tertiary);
+  flex-shrink: 0;
+}
+
+.stepItemCurrent .stepIcon {
+  color: var(--accent-text);
+}
+
+.stepTitle {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--text-primary);
+  min-width: 0;
+}
+
+/* ===== 当前步骤展开内容 ===== */
+.stepBody {
+  padding: 0 0 2px 28px;
+}
+
+.stepDesc {
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--text-secondary);
+  margin: 0 0 10px;
+}
+
+.actionBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: var(--radius-pill);
+  background: var(--btn-primary-bg);
+  color: var(--btn-primary-fg);
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1), box-shadow 0.3s ease;
+}
+
+.actionBtn:hover {
+  transform: translateY(-1px) scale(1.02);
+  box-shadow: var(--shadow-hover);
+}
+
+.actionBtn:active {
+  transform: translateY(0) scale(1);
+}
+
+/* ===== 生成进度 ===== */
+.genProgress {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.genText {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--accent-text);
+}
+
+.genTrack {
+  height: 6px;
+  border-radius: var(--radius-pill);
+  background: rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+}
+
+.genFill {
+  height: 100%;
+  border-radius: var(--radius-pill);
+  background: linear-gradient(90deg, var(--accent-text), rgba(0, 113, 227, 0.7));
+  transition: width 0.4s ease;
+}
+
+/* ===== 完成态 ===== */
+.donePanel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-top: 14px;
+}
+
+.doneIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border-radius: var(--radius-md);
+  background: rgba(52, 199, 89, 0.1);
+  color: var(--success-text);
+  margin-bottom: 10px;
+}
+
+[data-theme="dark"] .doneIcon {
+  background: rgba(52, 199, 89, 0.18);
+}
+
+.doneTitle {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.doneDesc {
+  font-size: 12.5px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+.genNote {
+  margin-top: 10px;
+  padding: 7px 12px;
+  border-radius: var(--radius-pill);
+  background: rgba(0, 113, 227, 0.08);
+  border: 1px solid rgba(0, 113, 227, 0.16);
+  font-size: 11.5px;
+  color: var(--accent-text);
+}
+
+.featureList {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  width: 100%;
+  margin-top: 14px;
+  text-align: left;
+}
+
+.featureRow {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--text-secondary);
+}
+
+.featureRow svg {
+  flex-shrink: 0;
+  color: var(--accent-text);
+}
+
+.donePanel .actionBtn {
+  margin-top: 16px;
+}
+
+/* ===== 通知列表 ===== */
+.notifList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.notifItem {
+  display: flex;
+  gap: 9px;
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  background: rgba(0, 0, 0, 0.03);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.notifItemUnread {
+  background: rgba(255, 159, 10, 0.08);
+  border-color: rgba(255, 159, 10, 0.25);
+}
+
+.notifItemIcon {
+  color: var(--text-tertiary);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.notifItemUnread .notifItemIcon {
+  color: var(--warning-text);
+}
+
+.notifItemText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.notifItemTitle {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.notifItemBody {
+  font-size: 11.5px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+/* 通知列表主题覆盖 */
+[data-theme="dark"] .notifItem {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="dark"] .notifItemUnread {
+  background: rgba(255, 159, 10, 0.12);
+  border-color: rgba(255, 159, 10, 0.3);
+}
+
+/* ===== 收起徽章：有新通知时的黄色感叹号形态 ===== */
+.collapsedIconAlert {
+  color: var(--warning-text);
+}
+
+.collapsedCountAlert {
+  background: var(--warning-text);
+  color: #ffffff;
+}

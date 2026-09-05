@@ -157,6 +157,57 @@ export type TranslationKey =
   | 'athena.flowMemory'
   | 'athena.export'
   | 'athena.import'
+  | 'onboarding.welcomeTitle'
+  | 'onboarding.welcomeSubtitle'
+  | 'onboarding.privacyNote'
+  | 'onboarding.languageLabel'
+  | 'onboarding.overviewTitle'
+  | 'onboarding.step1Title'
+  | 'onboarding.step1Desc'
+  | 'onboarding.step2Title'
+  | 'onboarding.step2Desc'
+  | 'onboarding.step3Title'
+  | 'onboarding.step3Desc'
+  | 'onboarding.startTitle'
+  | 'onboarding.startDesc'
+  | 'onboarding.goConfig'
+  | 'onboarding.prev'
+  | 'onboarding.next'
+  | 'onboarding.skip'
+  | 'guide.cardTitle'
+  | 'guide.stepApiTitle'
+  | 'guide.stepApiDesc'
+  | 'guide.stepUploadTitle'
+  | 'guide.stepUploadDesc'
+  | 'guide.stepGenerateTitle'
+  | 'guide.stepGenerateDesc'
+  | 'guide.generating'
+  | 'guide.goConfig'
+  | 'guide.goUpload'
+  | 'guide.doneTitle'
+  | 'guide.doneDesc'
+  | 'guide.featureLessons'
+  | 'guide.featureWrongbook'
+  | 'guide.featureAthena'
+  | 'guide.startQuest'
+  | 'guide.collapse'
+  | 'guide.expand'
+  | 'settings.reviewGuide'
+  | 'settings.reviewGuideDesc'
+  | 'tokens.title'
+  | 'tokens.desc'
+  | 'tokens.total'
+  | 'tokens.today'
+  | 'tokens.calls'
+  | 'tokens.prompt'
+  | 'tokens.completion'
+  | 'tokens.last7'
+  | 'tokens.reset'
+  | 'tokens.resetConfirm'
+  | 'tokens.empty'
+  | 'notify.lessonsDoneTitle'
+  | 'notify.lessonsDoneBody'
+  | 'notify.newNotice'
 
 const zh: Record<TranslationKey, string> = {
   'nav.dashboard': '首页',
@@ -315,6 +366,57 @@ const zh: Record<TranslationKey, string> = {
   'athena.flowMemory': '流动记忆',
   'athena.export': '导出 Athena',
   'athena.import': '导入 Athena',
+  'onboarding.welcomeTitle': '欢迎使用 ChillPass',
+  'onboarding.welcomeSubtitle': '你的 AI 学习伙伴 —— 从期末冲刺到论文写作',
+  'onboarding.privacyNote': '所有数据仅保存在本机，完全离线运行，无需注册登录',
+  'onboarding.languageLabel': '界面语言',
+  'onboarding.overviewTitle': '三步开始你的冲刺',
+  'onboarding.step1Title': '配置 API Key',
+  'onboarding.step1Desc': '填入你的 DeepSeek API Key，解锁全部 AI 能力',
+  'onboarding.step2Title': '导入课件',
+  'onboarding.step2Desc': '上传 PDF / PPTX / TXT / MD 课程资料',
+  'onboarding.step3Title': 'AI 生成闯关课程',
+  'onboarding.step3Desc': '自动提炼考点，按优先级生成关卡、例题与小测',
+  'onboarding.startTitle': '准备好了吗？',
+  'onboarding.startDesc': '第一步是配置 DeepSeek API Key，大约需要 2 分钟',
+  'onboarding.goConfig': '去配置 API',
+  'onboarding.prev': '上一步',
+  'onboarding.next': '下一步',
+  'onboarding.skip': '跳过引导',
+  'guide.cardTitle': '新手引导',
+  'guide.stepApiTitle': '配置 API Key',
+  'guide.stepApiDesc': '在「设置 → API 配置」中填入 DeepSeek API Key',
+  'guide.stepUploadTitle': '导入课件，创建课程',
+  'guide.stepUploadDesc': '选择你的课程资料，AI 会自动解析并提炼考点',
+  'guide.stepGenerateTitle': '等待 AI 生成关卡',
+  'guide.stepGenerateDesc': 'AI 正在为每个考点生成讲解、例题与小测',
+  'guide.generating': '正在生成关卡 {current}/{total}...',
+  'guide.goConfig': '去配置',
+  'guide.goUpload': '去导入课件',
+  'guide.doneTitle': '引导完成！',
+  'guide.doneDesc': '你的闯关课程已就绪，开始学习吧',
+  'guide.featureLessons': '闯关冲刺：逐关学习，赚取 Chill 币',
+  'guide.featureWrongbook': '错题本：自动收录答错的题目',
+  'guide.featureAthena': 'Athena：问答、论文、报告、复习规划',
+  'guide.startQuest': '开始闯关冲刺',
+  'guide.collapse': '收起',
+  'guide.expand': '展开引导',
+  'settings.reviewGuide': '重新查看新手引导',
+  'settings.reviewGuideDesc': '重看「配置 → 导入 → 生成」的完整引导流程',
+  'tokens.title': 'Token 用量',
+  'tokens.desc': '统计本设备发起的 DeepSeek API 调用消耗',
+  'tokens.total': '累计 Tokens',
+  'tokens.today': '今日消耗',
+  'tokens.calls': '调用次数',
+  'tokens.prompt': '输入',
+  'tokens.completion': '输出',
+  'tokens.last7': '近 7 日',
+  'tokens.reset': '清除统计',
+  'tokens.resetConfirm': '确定要清除所有 Token 统计数据吗？',
+    'tokens.empty': '暂无调用记录',
+  'notify.lessonsDoneTitle': '关卡生成完成',
+  'notify.lessonsDoneBody': '「{course}」的 {count} 个关卡已生成完毕，开始学习吧',
+  'notify.newNotice': '新通知',
 }
 
 const en: Record<TranslationKey, string> = {
@@ -474,6 +576,57 @@ const en: Record<TranslationKey, string> = {
   'athena.flowMemory': 'Flow Memory',
   'athena.export': 'Export Athena',
   'athena.import': 'Import Athena',
+  'onboarding.welcomeTitle': 'Welcome to ChillPass',
+  'onboarding.welcomeSubtitle': 'Your AI study companion — from exam prep to paper writing',
+  'onboarding.privacyNote': 'All data stays on your device. Fully offline, no sign-up, no tracking',
+  'onboarding.languageLabel': 'Language',
+  'onboarding.overviewTitle': 'Get started in three steps',
+  'onboarding.step1Title': 'Configure API Key',
+  'onboarding.step1Desc': 'Enter your DeepSeek API key to unlock all AI features',
+  'onboarding.step2Title': 'Import courseware',
+  'onboarding.step2Desc': 'Upload PDF / PPTX / TXT / MD course materials',
+  'onboarding.step3Title': 'AI builds your quest course',
+  'onboarding.step3Desc': 'Exam points are extracted and turned into lessons, examples and quizzes',
+  'onboarding.startTitle': 'Ready to go?',
+  'onboarding.startDesc': 'Step one is configuring your DeepSeek API key — it takes about 2 minutes',
+  'onboarding.goConfig': 'Configure API',
+  'onboarding.prev': 'Back',
+  'onboarding.next': 'Next',
+  'onboarding.skip': 'Skip tour',
+  'guide.cardTitle': 'Getting Started',
+  'guide.stepApiTitle': 'Configure API Key',
+  'guide.stepApiDesc': 'Enter your DeepSeek API key in Settings → API',
+  'guide.stepUploadTitle': 'Import courseware',
+  'guide.stepUploadDesc': 'Pick your course materials — AI will parse them and extract exam points',
+  'guide.stepGenerateTitle': 'Wait for AI to build lessons',
+  'guide.stepGenerateDesc': 'AI is generating explanations, examples and quizzes for each exam point',
+  'guide.generating': 'Generating lessons {current}/{total}...',
+  'guide.goConfig': 'Configure',
+  'guide.goUpload': 'Import',
+  'guide.doneTitle': 'All set!',
+  'guide.doneDesc': 'Your quest course is ready — start learning',
+  'guide.featureLessons': 'Quests: level up lesson by lesson, earn Chill coins',
+  'guide.featureWrongbook': 'Mistakes: wrong answers are collected automatically',
+  'guide.featureAthena': 'Athena: Q&A, papers, reports and study plans',
+  'guide.startQuest': 'Start your first quest',
+  'guide.collapse': 'Collapse',
+  'guide.expand': 'Expand tour',
+  'settings.reviewGuide': 'Replay getting started tour',
+  'settings.reviewGuideDesc': 'Walk through the configure → import → generate flow again',
+  'tokens.title': 'Token Usage',
+  'tokens.desc': 'DeepSeek API calls made from this device',
+  'tokens.total': 'Total Tokens',
+  'tokens.today': 'Today',
+  'tokens.calls': 'Calls',
+  'tokens.prompt': 'Input',
+  'tokens.completion': 'Output',
+  'tokens.last7': 'Last 7 days',
+  'tokens.reset': 'Reset stats',
+  'tokens.resetConfirm': 'Clear all token usage statistics?',
+    'tokens.empty': 'No API calls yet',
+  'notify.lessonsDoneTitle': 'Lessons ready',
+  'notify.lessonsDoneBody': '{count} lessons for "{course}" are ready — start learning',
+  'notify.newNotice': 'New notice',
 }
 
 const ru: Record<TranslationKey, string> = {
@@ -633,6 +786,57 @@ const ru: Record<TranslationKey, string> = {
   'athena.flowMemory': 'Текущая память',
   'athena.export': 'Экспортировать Athena',
   'athena.import': 'Импортировать Athena',
+  'onboarding.welcomeTitle': 'Добро пожаловать в ChillPass',
+  'onboarding.welcomeSubtitle': 'Ваш ИИ-помощник в учёбе — от подготовки к экзаменам до написания работ',
+  'onboarding.privacyNote': 'Все данные хранятся только на вашем устройстве. Полностью офлайн, без регистрации и слежки',
+  'onboarding.languageLabel': 'Язык интерфейса',
+  'onboarding.overviewTitle': 'Три шага до старта',
+  'onboarding.step1Title': 'Настройте API-ключ',
+  'onboarding.step1Desc': 'Введите ваш ключ DeepSeek, чтобы открыть все ИИ-возможности',
+  'onboarding.step2Title': 'Импортируйте материалы',
+  'onboarding.step2Desc': 'Загрузите учебные материалы в формате PDF / PPTX / TXT / MD',
+  'onboarding.step3Title': 'ИИ создаст курс-квест',
+  'onboarding.step3Desc': 'Темы экзамена будут извлечены и превращены в уровни, примеры и тесты',
+  'onboarding.startTitle': 'Готовы начать?',
+  'onboarding.startDesc': 'Первый шаг — настройка ключа DeepSeek, это займёт около 2 минут',
+  'onboarding.goConfig': 'Настроить API',
+  'onboarding.prev': 'Назад',
+  'onboarding.next': 'Далее',
+  'onboarding.skip': 'Пропустить',
+  'guide.cardTitle': 'Первые шаги',
+  'guide.stepApiTitle': 'Настройте API-ключ',
+  'guide.stepApiDesc': 'Введите ключ DeepSeek в Настройки → API',
+  'guide.stepUploadTitle': 'Импортируйте материалы',
+  'guide.stepUploadDesc': 'Выберите учебные материалы — ИИ разберёт их и извлечёт темы',
+  'guide.stepGenerateTitle': 'Дождитесь генерации уровней',
+  'guide.stepGenerateDesc': 'ИИ создаёт объяснения, примеры и тесты для каждой темы',
+  'guide.generating': 'Генерация уровней {current}/{total}...',
+  'guide.goConfig': 'Настроить',
+  'guide.goUpload': 'Импортировать',
+  'guide.doneTitle': 'Всё готово!',
+  'guide.doneDesc': 'Ваш курс-квест создан — начинайте учиться',
+  'guide.featureLessons': 'Уровни: проходите урок за уроком, зарабатывайте чилл-монеты',
+  'guide.featureWrongbook': 'Ошибки: неправильные ответы сохраняются автоматически',
+  'guide.featureAthena': 'Athena: вопросы, работы, отчёты и планы подготовки',
+  'guide.startQuest': 'Начать первый уровень',
+  'guide.collapse': 'Свернуть',
+  'guide.expand': 'Развернуть подсказки',
+  'settings.reviewGuide': 'Пройти обучение заново',
+  'settings.reviewGuideDesc': 'Снова пройти путь: настройка → импорт → генерация',
+  'tokens.title': 'Расход токенов',
+  'tokens.desc': 'Вызовы DeepSeek API с этого устройства',
+  'tokens.total': 'Всего токенов',
+  'tokens.today': 'Сегодня',
+  'tokens.calls': 'Вызовы',
+  'tokens.prompt': 'Ввод',
+  'tokens.completion': 'Вывод',
+  'tokens.last7': 'За 7 дней',
+  'tokens.reset': 'Сбросить статистику',
+  'tokens.resetConfirm': 'Очистить всю статистику расхода токенов?',
+    'tokens.empty': 'Вызовов пока не было',
+  'notify.lessonsDoneTitle': 'Уровни готовы',
+  'notify.lessonsDoneBody': '{count} уровней для «{course}» готовы — начинайте учиться',
+  'notify.newNotice': 'Новое уведомление',
 }
 
 const ja: Record<TranslationKey, string> = {
@@ -792,6 +996,57 @@ const ja: Record<TranslationKey, string> = {
   'athena.flowMemory': 'フローメモリ',
   'athena.export': 'Athenaをエクスポート',
   'athena.import': 'Athenaをインポート',
+  'onboarding.welcomeTitle': 'ChillPassへようこそ',
+  'onboarding.welcomeSubtitle': 'あなたのAI学習パートナー — 試験対策から論文執筆まで',
+  'onboarding.privacyNote': 'すべてのデータは端末内に保存されます。完全オフライン、登録不要、トラッキングなし',
+  'onboarding.languageLabel': '表示言語',
+  'onboarding.overviewTitle': '3ステップでスタート',
+  'onboarding.step1Title': 'APIキーを設定',
+  'onboarding.step1Desc': 'DeepSeekのAPIキーを入力して、すべてのAI機能を解放',
+  'onboarding.step2Title': '教材をインポート',
+  'onboarding.step2Desc': 'PDF / PPTX / TXT / MD の講義資料をアップロード',
+  'onboarding.step3Title': 'AIがクエストコースを生成',
+  'onboarding.step3Desc': '試験ポイントを抽出し、優先度に応じてレベル・例題・クイズを生成',
+  'onboarding.startTitle': '準備はいいですか？',
+  'onboarding.startDesc': '最初のステップはDeepSeek APIキーの設定です。約2分で完了します',
+  'onboarding.goConfig': 'APIを設定',
+  'onboarding.prev': '戻る',
+  'onboarding.next': '次へ',
+  'onboarding.skip': 'スキップ',
+  'guide.cardTitle': 'はじめてガイド',
+  'guide.stepApiTitle': 'APIキーを設定',
+  'guide.stepApiDesc': '設定 → API からDeepSeekのAPIキーを入力してください',
+  'guide.stepUploadTitle': '教材をインポート',
+  'guide.stepUploadDesc': '講義資料を選ぶと、AIが解析して試験ポイントを抽出します',
+  'guide.stepGenerateTitle': 'AIのレベル生成を待つ',
+  'guide.stepGenerateDesc': 'AIが各試験ポイントの解説・例題・クイズを生成中です',
+  'guide.generating': 'レベルを生成中 {current}/{total}...',
+  'guide.goConfig': '設定へ',
+  'guide.goUpload': 'インポートへ',
+  'guide.doneTitle': 'ガイド完了！',
+  'guide.doneDesc': 'クエストコースの準備ができました。学習を始めましょう',
+  'guide.featureLessons': 'クエスト：レベルごとに学習してChillコインを獲得',
+  'guide.featureWrongbook': '間違い帳：間違えた問題を自動で記録',
+  'guide.featureAthena': 'Athena：質問・論文・レポート・復習計画',
+  'guide.startQuest': '最初のクエストへ',
+  'guide.collapse': '折りたたむ',
+  'guide.expand': 'ガイドを表示',
+  'settings.reviewGuide': 'はじめてガイドをもう一度見る',
+  'settings.reviewGuideDesc': '設定 → インポート → 生成 の流れをもう一度確認',
+  'tokens.title': 'トークン使用量',
+  'tokens.desc': 'この端末からのDeepSeek API呼び出しの統計',
+  'tokens.total': '累計トークン',
+  'tokens.today': '今日',
+  'tokens.calls': '呼び出し回数',
+  'tokens.prompt': '入力',
+  'tokens.completion': '出力',
+  'tokens.last7': '過去7日間',
+  'tokens.reset': '統計をリセット',
+  'tokens.resetConfirm': 'すべてのトークン統計を消去しますか？',
+    'tokens.empty': '呼び出し記録はまだありません',
+  'notify.lessonsDoneTitle': 'レベル生成完了',
+  'notify.lessonsDoneBody': '「{course}」の{count}個のレベルが生成されました。学習を始めましょう',
+  'notify.newNotice': '新着通知',
 }
 
 const ko: Record<TranslationKey, string> = {
@@ -951,6 +1206,57 @@ const ko: Record<TranslationKey, string> = {
   'athena.flowMemory': '흐름 메모리',
   'athena.export': 'Athena 내보내기',
   'athena.import': 'Athena 가져오기',
+  'onboarding.welcomeTitle': 'ChillPass에 오신 것을 환영합니다',
+  'onboarding.welcomeSubtitle': '당신의 AI 학습 파트너 — 기말고사 대비부터 논문 작성까지',
+  'onboarding.privacyNote': '모든 데이터는 이 기기에만 저장됩니다. 완전 오프라인, 회원가입 불필요, 추적 없음',
+  'onboarding.languageLabel': '인터페이스 언어',
+  'onboarding.overviewTitle': '3단계로 시작하기',
+  'onboarding.step1Title': 'API 키 설정',
+  'onboarding.step1Desc': 'DeepSeek API 키를 입력하면 모든 AI 기능이 열립니다',
+  'onboarding.step2Title': '강의자료 가져오기',
+  'onboarding.step2Desc': 'PDF / PPTX / TXT / MD 강의자료를 업로드하세요',
+  'onboarding.step3Title': 'AI가 퀘스트 코스 생성',
+  'onboarding.step3Desc': '시험 포인트를 추출해 우선순위에 따라 레벨·예제·퀴즈를 만듭니다',
+  'onboarding.startTitle': '준비되셨나요?',
+  'onboarding.startDesc': '첫 단계는 DeepSeek API 키 설정입니다. 약 2분 걸립니다',
+  'onboarding.goConfig': 'API 설정하기',
+  'onboarding.prev': '이전',
+  'onboarding.next': '다음',
+  'onboarding.skip': '건너뛰기',
+  'guide.cardTitle': '시작 가이드',
+  'guide.stepApiTitle': 'API 키 설정',
+  'guide.stepApiDesc': '설정 → API에서 DeepSeek API 키를 입력하세요',
+  'guide.stepUploadTitle': '강의자료 가져오기',
+  'guide.stepUploadDesc': '강의자료를 선택하면 AI가 분석해 시험 포인트를 추출합니다',
+  'guide.stepGenerateTitle': 'AI 레벨 생성 대기',
+  'guide.stepGenerateDesc': 'AI가 각 시험 포인트의 해설·예제·퀴즈를 생성하고 있습니다',
+  'guide.generating': '레벨 생성 중 {current}/{total}...',
+  'guide.goConfig': '설정으로',
+  'guide.goUpload': '가져오기로',
+  'guide.doneTitle': '가이드 완료!',
+  'guide.doneDesc': '퀘스트 코스가 준비되었습니다. 학습을 시작하세요',
+  'guide.featureLessons': '퀘스트: 레벨별로 학습하고 Chill 코인 획득',
+  'guide.featureWrongbook': '오답노트: 틀린 문제 자동 수집',
+  'guide.featureAthena': 'Athena: 질문·논문·보고서·복습 계획',
+  'guide.startQuest': '첫 퀘스트 시작',
+  'guide.collapse': '접기',
+  'guide.expand': '가이드 펼치기',
+  'settings.reviewGuide': '시작 가이드 다시 보기',
+  'settings.reviewGuideDesc': '설정 → 가져오기 → 생성 과정을 다시 확인',
+  'tokens.title': '토큰 사용량',
+  'tokens.desc': '이 기기에서 보낸 DeepSeek API 호출 통계',
+  'tokens.total': '누적 토큰',
+  'tokens.today': '오늘',
+  'tokens.calls': '호출 횟수',
+  'tokens.prompt': '입력',
+  'tokens.completion': '출력',
+  'tokens.last7': '최근 7일',
+  'tokens.reset': '통계 지우기',
+  'tokens.resetConfirm': '모든 토큰 통계를 삭제할까요?',
+    'tokens.empty': '아직 호출 기록이 없습니다',
+  'notify.lessonsDoneTitle': '레벨 생성 완료',
+  'notify.lessonsDoneBody': '"{course}"의 {count}개 레벨이 생성되었습니다. 학습을 시작하세요',
+  'notify.newNotice': '새 알림',
 }
 
 const translations: Record<Language, Record<TranslationKey, string>> = {

@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://img.shields.io/badge/version-0.0.7-blue?style=flat-square" alt="版本" />
+  <img src="https://img.shields.io/badge/version-0.0.8-blue?style=flat-square" alt="版本" />
   <img src="https://img.shields.io/badge/Node.js-SEA-339933?style=flat-square&logo=node.js" alt="Node.js SEA" />
   <img src="https://img.shields.io/badge/React-18-61DAFB?style=flat-square&logo=react" alt="React" />
   <img src="https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript" alt="TypeScript" />
@@ -29,7 +29,7 @@
 
 <p align="center">
   <a href="https://github.com/Koipoppy/ChillPass-Web/releases/latest">
-    <img src="https://img.shields.io/badge/%E4%B8%8B%E8%BD%BD-ChillPass%20Setup%200.0.7.exe-blue?style=for-the-badge" alt="下载" />
+    <img src="https://img.shields.io/badge/%E4%B8%8B%E8%BD%BD-ChillPass%20Setup%200.0.8.exe-blue?style=for-the-badge" alt="下载" />
   </a>
 </p>
 
@@ -154,13 +154,14 @@ Athena 不只是聊天机器人，而是拥有**能力**、**记忆**和**任务
 | **代理回退** | 直连下载失败时自动回退到 GitHub 代理 |
 | **应用内更新检查** | 设置页一键检查更新；是最新版时提示"无需更新"，有新版本时弹窗确认自动下载并安装 |
 
-### 主题（3 种）
+### 主题（4 种）
 
 | 主题 | 风格 |
 |-------|-------|
 | **浅色** | 半透明液态玻璃，干净简约 |
 | **深色** | 高对比（#0d0d0f 底），纯白文字，阅读优化 |
-| **Win95** | 复古经典——青色桌面、斜面灰窗、MS Sans Serif |
+| **Vista** | 半透明玻璃窗口，经典 Aero 质感 |
+| **Codex** | 终端极简风，等宽字体 |
 
 ### 5 种语言
 
@@ -179,7 +180,7 @@ Athena 不只是聊天机器人，而是拥有**能力**、**记忆**和**任务
 
 ### 下载安装（推荐）
 
-前往 [Releases](https://github.com/Koipoppy/ChillPass-Web/releases) → 下载 `ChillPass-Setup-0.0.7.exe` → 安装。
+前往 [Releases](https://github.com/Koipoppy/ChillPass-Web/releases) → 下载 `ChillPass-Setup-0.0.8.exe` → 安装。
 
 > Windows 10/11（64 位）。按用户安装（无需管理员权限）。安装后自动在桌面创建快捷方式。更新时数据自动保留。
 
@@ -320,6 +321,17 @@ tray.ps1                     系统托盘图标（WinForms NotifyIcon）
 ---
 
 ## 更新日志
+
+<details>
+<summary><strong>v0.0.8</strong> — 2026-09-05</summary>
+
+- **新手引导流程**：首次使用自动弹出欢迎向导（内含界面语言切换），引导完成「配置 API Key → 导入课件 → AI 生成关卡」全流程；右下角常驻任务卡实时显示引导进度
+- **通知中心**：任务卡常驻为通知窗口，后台关卡生成完成后自动推送通知；有未读通知时收起图标变为黄色感叹号
+- **Token 用量统计**：API 配置页新增累计/今日消耗、调用次数与近 7 日趋势图
+- **智谱 GLM 模型支持**：API 配置新增接口提供商切换，支持 glm-5.3-flash / glm-5.3
+- **移除 Win95 主题**：原 Win95 主题用户启动时自动迁移到浅色主题
+- **界面修正**：主页「导入课件/导入课程」按钮对齐、欢迎弹窗与任务卡背景遮蔽加强、关闭按钮移至左上角等
+</details>
 
 <details>
 <summary><strong>v0.0.7</strong> — 2026-08-25</summary>

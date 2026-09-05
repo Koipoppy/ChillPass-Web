@@ -11,16 +11,17 @@ import {
   Sparkles,
   Sun,
   Moon,
-  Monitor,
   Globe,
   Check,
   Briefcase,
   Info as InfoIcon,
+  GraduationCap,
 } from 'lucide-react'
 import { useCourseStore } from '@stores/courseStore'
 import { useThemeStore } from '@stores/themeStore'
 import { useLanguageStore, LANGUAGES } from '@stores/languageStore'
 import { useSettingsStore } from '@stores/settingsStore'
+import { useOnboardingStore } from '@stores/onboardingStore'
 import type { Language } from '@stores/languageStore'
 import { useT } from '../i18n'
 import type { TranslationKey } from '../i18n'
@@ -37,6 +38,7 @@ export default function SettingsPage() {
   const setLanguage = useLanguageStore(s => s.setLanguage)
   const isTeacher = useSettingsStore(s => s.isTeacher)
   const setIsTeacher = useSettingsStore(s => s.setIsTeacher)
+  const restartGuide = useOnboardingStore(s => s.restartGuide)
   const t = useT()
 
   const [appVersion, setAppVersion] = useState('1.0.0')
@@ -258,14 +260,6 @@ export default function SettingsPage() {
               <Moon size={14} strokeWidth={2} />
               {t('settings.themeDark')}
             </button>
-            <button
-              type="button"
-              className={`${styles.themeOption} ${theme === 'win95' ? styles.themeOptionActive : ''}`}
-              onClick={() => setTheme('win95')}
-            >
-              <Monitor size={14} strokeWidth={2} />
-              Win95
-            </button>
           </div>
         </div>
 
@@ -306,7 +300,28 @@ export default function SettingsPage() {
         )}
       </section>
 
-      {/* 4. 导航卡片网格 */}
+      {/* 4. 新手引导重看入口 */}
+      <section className={`liquid-glass ${styles.card}`}>
+        <div className={styles.localInfoContent}>
+          <GraduationCap size={20} strokeWidth={1.8} className={styles.localInfoIcon} />
+          <div className={styles.localInfoText}>
+            <span className={styles.localInfoTitle}>{t('settings.reviewGuide')}</span>
+            <span className={styles.localInfoDesc}>{t('settings.reviewGuideDesc')}</span>
+          </div>
+          <button
+            className={styles.localInfoBtn}
+            onClick={() => {
+              restartGuide()
+              navigate('/')
+            }}
+          >
+            {t('guide.cardTitle')}
+            <ChevronRight size={16} strokeWidth={2} />
+          </button>
+        </div>
+      </section>
+
+      {/* 5. 导航卡片网格 */}
       <section className={styles.navGrid}>
         {navCards.map(item => {
           const Icon = item.icon

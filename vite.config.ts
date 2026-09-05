@@ -17,6 +17,13 @@ export default defineConfig({
     }
   },
   base: './',
+  server: {
+    watch: {
+      // Windows 环境下默认文件监听可能漏事件，导致 HMR/刷新拿到过期模块，改用轮询
+      usePolling: true,
+      interval: 300
+    }
+  },
   build: {
     outDir: 'dist',
     emptyOutDir: true

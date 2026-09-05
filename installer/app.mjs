@@ -25,7 +25,7 @@ const DIST_DIR = join(BASE_DIR, 'dist')
 const TRAY_SCRIPT = join(BASE_DIR, 'tray.ps1')
 const ICON_PATH = join(BASE_DIR, 'icon.ico')
 const PORT = 5174
-const APP_VERSION = '0.0.7'
+const APP_VERSION = '0.0.8'
 
 const MIME_TYPES = {
   '.html': 'text/html; charset=utf-8',

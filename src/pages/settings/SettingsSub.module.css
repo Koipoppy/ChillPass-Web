@@ -882,3 +882,174 @@
   font-size: 12px;
   color: var(--text-tertiary);
 }
+
+/* ===== Token 用量统计 ===== */
+.tokensEmpty {
+  font-size: 13px;
+  color: var(--text-tertiary);
+  padding: 8px 0;
+}
+
+.tokensGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.tokenStat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 16px 18px;
+  border-radius: var(--radius-md);
+  background: rgba(0, 113, 227, 0.04);
+  border: 1px solid rgba(0, 113, 227, 0.1);
+}
+
+.tokenNum {
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  font-family: "SF Mono", "Menlo", "Consolas", monospace;
+}
+
+.tokenLabel {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.tokenDetail {
+  font-size: 11.5px;
+  color: var(--text-tertiary);
+  font-family: "SF Mono", "Menlo", "Consolas", monospace;
+}
+
+.tokenChart {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.tokenChartTitle {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 10px;
+}
+
+.tokenChartBars {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  height: 86px;
+}
+
+.tokenBarCol {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  height: 100%;
+}
+
+.tokenBar {
+  flex: 1;
+  width: 100%;
+  max-width: 34px;
+  display: flex;
+  align-items: flex-end;
+  border-radius: 6px 6px 2px 2px;
+  background: rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+.tokenBarFill {
+  width: 100%;
+  border-radius: 6px 6px 0 0;
+  background: linear-gradient(180deg, var(--accent-text), rgba(0, 113, 227, 0.55));
+  transition: height 0.4s cubic-bezier(0.32, 0.72, 0, 1);
+  min-height: 2px;
+}
+
+.tokenBarLabel {
+  font-size: 10.5px;
+  color: var(--text-tertiary);
+  white-space: nowrap;
+}
+
+/* Token 统计主题覆盖 */
+[data-theme="dark"] .tokenStat {
+  background: rgba(0, 113, 227, 0.1);
+  border-color: rgba(0, 113, 227, 0.22);
+}
+
+[data-theme="dark"] .tokenBar {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+[data-theme="dark"] .tokenChart {
+  border-top-color: rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="vista"] .tokenStat {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.45);
+}
+
+[data-theme="vista"] .tokenBar {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+/* ===== 接口提供商切换 ===== */
+.providerGroup {
+  display: flex;
+  gap: 8px;
+}
+
+.providerOption {
+  flex: 1;
+  padding: 11px 16px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.4);
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: border-color 0.25s ease, background 0.25s ease, box-shadow 0.25s ease, color 0.25s ease;
+}
+
+.providerOption:hover {
+  background: rgba(255, 255, 255, 0.7);
+  color: var(--text-primary);
+}
+
+.providerOptionActive {
+  border-color: var(--accent-text);
+  background: rgba(0, 113, 227, 0.08);
+  color: var(--accent-text);
+  box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.12);
+}
+
+/* 提供商切换主题覆盖 */
+[data-theme="dark"] .providerOption {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+[data-theme="dark"] .providerOption:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+[data-theme="dark"] .providerOptionActive {
+  background: rgba(0, 113, 227, 0.18);
+}
+
+[data-theme="vista"] .providerOption {
+  background: rgba(255, 255, 255, 0.35);
+  border-color: rgba(255, 255, 255, 0.5);
+}

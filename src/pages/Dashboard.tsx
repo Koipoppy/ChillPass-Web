@@ -205,11 +205,11 @@ export default function Dashboard() {
             <button
               onClick={() => handleImportClick(welcomeFileInputRef)}
               style={{
-                marginTop: 12,
+                marginTop: 0,
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: 8,
-                padding: '14px 28px',
+                padding: '13px 27px',
                 border: '1px solid rgba(0, 0, 0, 0.12)',
                 borderRadius: 'var(--radius-pill)',
                 background: 'transparent',

@@ -1,11 +1,36 @@
 import type { ExamPoint, LessonContent, QuizQuestion, ExamQuestion } from '@types/index'
 import { useSettingsStore } from '@stores/settingsStore'
+import { useTokenStore } from '@stores/tokenStore'
 
-const API_URL = 'https://api.deepseek.com/chat/completions'
+const DEEPSEEK_API_URL = 'https://api.deepseek.com/chat/completions'
+const ZHIPU_API_URL = 'https://open.bigmodel.cn/api/paas/v4/chat/completions'
 
 interface ChatMessage {
   role: 'system' | 'user' | 'assistant'
   content: string
+}
+
+/** 根据当前提供商解析请求地址与密钥 */
+function resolveProviderConfig() {
+  const { provider, apiKey, zhipuApiKey, model } = useSettingsStore.getState()
+  const isZhipu = provider === 'zhipu'
+  return {
+    isZhipu,
+    url: isZhipu ? ZHIPU_API_URL : DEEPSEEK_API_URL,
+    apiKey: (isZhipu ? zhipuApiKey : apiKey).trim(),
+    model,
+  }
+}
+
+/** DeepSeek 兼容 OpenAI 的 usage 字段；防御式解析，缺失时跳过记账 */
+function recordTokenUsage(usage: any) {
+  if (usage && typeof usage.total_tokens === 'number') {
+    useTokenStore.getState().recordUsage({
+      prompt: typeof usage.prompt_tokens === 'number' ? usage.prompt_tokens : 0,
+      completion: typeof usage.completion_tokens === 'number' ? usage.completion_tokens : 0,
+      total: usage.total_tokens,
+    })
+  }
 }
 
 /**
@@ -15,7 +40,7 @@ async function callDeepSeek(
   messages: ChatMessage[],
   options?: { temperature?: number; maxTokens?: number; retries?: number }
 ): Promise<string> {
-  const { apiKey, model } = useSettingsStore.getState()
+  const { url, apiKey, model } = resolveProviderConfig()
   if (!apiKey) throw new Error('未设置 API Key，请在设置中配置')
 
   const maxRetries = options?.retries ?? 3
@@ -26,7 +51,7 @@ async function callDeepSeek(
     const timeoutId = setTimeout(() => controller.abort(), timeoutMs)
 
     try {
-      const response = await fetch(API_URL, {
+      const response = await fetch(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -49,6 +74,7 @@ async function callDeepSeek(
       }
 
       const data = await response.json()
+      recordTokenUsage(data?.usage)
       return data.choices[0].message.content
     } catch (err: any) {
       clearTimeout(timeoutId)
@@ -83,10 +109,10 @@ export async function* callDeepSeekStream(
   messages: ChatMessage[],
   options?: { temperature?: number }
 ): AsyncGenerator<string> {
-  const { apiKey, model } = useSettingsStore.getState()
+  const { url, apiKey, model, isZhipu } = resolveProviderConfig()
   if (!apiKey) throw new Error('未设置 API Key，请在设置中配置')
 
-  const response = await fetch(API_URL, {
+  const response = await fetch(url, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -97,6 +123,8 @@ export async function* callDeepSeekStream(
       messages,
       temperature: options?.temperature ?? 0.7,
       stream: true,
+      // DeepSeek 需显式请求在最后一个 chunk 返回 usage；智谱兼容接口未确认支持，缺省即可
+      ...(isZhipu ? {} : { stream_options: { include_usage: true } }),
     }),
   })
 
@@ -123,6 +151,7 @@ export async function* callDeepSeekStream(
         if (data === '[DONE]') return
         try {
           const parsed = JSON.parse(data)
+          if (parsed.usage) recordTokenUsage(parsed.usage)
           const content = parsed.choices[0]?.delta?.content
           if (content) yield content
         } catch {

@@ -1,5 +1,8 @@
 import { generateLessonContent } from './deepseek'
 import { useCourseStore } from '@stores/courseStore'
+import { useNotificationStore } from '@stores/notificationStore'
+import { translate } from '../i18n'
+import { useLanguageStore } from '@stores/languageStore'
 
 /**
  * 在后台为课程的所有关卡生成学习内容
@@ -37,4 +40,13 @@ export async function generateAllLessonsInBackground(courseId: string): Promise<
   }
 
   useCourseStore.getState().setGeneratingLessons(false)
+
+  // 生成完成 → 推送通知（任务卡收起时图标变为黄色感叹号）
+  const lang = useLanguageStore.getState().language
+  useNotificationStore.getState().addNotification({
+    title: translate(lang, 'notify.lessonsDoneTitle'),
+    body: translate(lang, 'notify.lessonsDoneBody')
+      .replace('{course}', bundle.course.name)
+      .replace('{count}', String(total)),
+  })
 }

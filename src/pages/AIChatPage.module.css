@@ -753,12 +753,7 @@
   background: rgba(255, 255, 255, 0.08);
 }
 
-[data-theme="win95"] .taskCard {
-  border-radius: 0;
-  border: 2px solid;
-  border-color: #ffffff #808080 #808080 #ffffff;
-  background: #c0c0c0;
-}
+
 
 .taskIcon {
   display: flex;
@@ -872,14 +867,7 @@
   border-radius: 8px;
 }
 
-[data-theme="win95"] .modal {
-  background: #c0c0c0;
-  border-radius: 0;
-  border: 2px solid;
-  border-color: #ffffff #808080 #808080 #ffffff;
-  backdrop-filter: none;
-  box-shadow: none;
-}
+
 
 .modalHeader {
   display: flex;
@@ -895,15 +883,7 @@
   background: rgba(255, 255, 255, 0.03);
 }
 
-[data-theme="win95"] .modalHeader {
-  background: #000080;
-  border-bottom: none;
-}
 
-[data-theme="win95"] .modalHeader h3,
-[data-theme="win95"] .modalHeader svg {
-  color: #ffffff !important;
-}
 
 .modalTitle {
   display: flex;
@@ -941,13 +921,7 @@
   background: rgba(255, 255, 255, 0.1);
 }
 
-[data-theme="win95"] .modalClose {
-  border-radius: 0;
-  border: 1px solid;
-  border-color: #ffffff #808080 #808080 #ffffff;
-  background: #c0c0c0;
-  color: #000;
-}
+
 
 .modalBody {
   flex: 1;
@@ -998,12 +972,7 @@
   background: rgba(255, 255, 255, 0.08);
 }
 
-[data-theme="win95"] .panelInput {
-  border-radius: 0;
-  border: 2px solid;
-  border-color: #808080 #ffffff #ffffff #808080;
-  background: #ffffff;
-}
+
 
 .panelTextarea {
   padding: 10px 14px;
@@ -1028,12 +997,7 @@
   background: rgba(255, 255, 255, 0.05);
 }
 
-[data-theme="win95"] .panelTextarea {
-  border-radius: 0;
-  border: 2px solid;
-  border-color: #808080 #ffffff #ffffff #808080;
-  background: #ffffff;
-}
+
 
 .panelAddBtn {
   display: flex;
@@ -1057,11 +1021,7 @@
   transform: translateY(-1px);
 }
 
-[data-theme="win95"] .panelAddBtn {
-  border-radius: 0;
-  border: 2px solid;
-  border-color: #ffffff #808080 #808080 #ffffff;
-}
+
 
 .itemList {
   display: flex;
@@ -1099,12 +1059,7 @@
   background: rgba(255, 255, 255, 0.08);
 }
 
-[data-theme="win95"] .abilityItem {
-  border-radius: 0;
-  border: 1px solid;
-  border-color: #ffffff #808080 #808080 #ffffff;
-  background: #c0c0c0;
-}
+
 
 .abilityInfo {
   display: flex;
@@ -1225,12 +1180,7 @@
   background: rgba(255, 255, 255, 0.08);
 }
 
-[data-theme="win95"] .memoryItem {
-  border-radius: 0;
-  border: 1px solid;
-  border-color: #ffffff #808080 #808080 #ffffff;
-  background: #c0c0c0;
-}
+
 
 .memoryCategory {
   font-size: 11px;
@@ -1335,13 +1285,7 @@
   background: rgba(255, 255, 255, 0.05);
 }
 
-[data-theme="win95"] .dataBtn {
-  border-radius: 0;
-  border: 2px solid;
-  border-color: #ffffff #808080 #808080 #ffffff;
-  background: #c0c0c0;
-  color: #000;
-}
+
 
 /* ===== Athena: Status indicator ===== */
 .statusIndicator {

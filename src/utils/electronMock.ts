@@ -36,7 +36,7 @@ function compareVersions(v1: string, v2: string): number {
   return 0
 }
 
-const APP_VERSION = '0.0.7'
+const APP_VERSION = '0.0.8'
 const UPDATE_CHECK_URL =
   'https://api.github.com/repos/Koipoppy/ChillPass-Web/releases/latest'
 
