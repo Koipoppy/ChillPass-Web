@@ -22,12 +22,14 @@ import {
 } from '@services/deepseek'
 import type { Priority, QuizQuestion, QuizType } from '@types/index'
 import { renderMarkdown, renderInlineMarkdown } from '../utils/markdown'
+import { useT } from '../i18n'
+import type { TranslationKey } from '../i18n'
 import styles from './LessonDetailPage.module.css'
 
-const priorityLabel: Record<Priority, string> = {
-  must: '必考',
-  high: '高频',
-  know: '了解',
+const priorityLabel: Record<Priority, TranslationKey> = {
+  must: 'dashboard.priorityMust',
+  high: 'dashboard.priorityHigh',
+  know: 'dashboard.priorityKnow',
 }
 
 /** 去除选项文本中已有的 A. B. C. D. 前缀，避免重复 */
@@ -62,6 +64,7 @@ function shuffleOptions(q: QuizQuestion): QuizQuestion {
 type Tab = 'points' | 'examples' | 'quiz'
 
 export default function LessonDetailPage() {
+  const t = useT()
   const { lessonId } = useParams<{ lessonId: string }>()
   const navigate = useNavigate()
 
@@ -126,13 +129,13 @@ export default function LessonDetailPage() {
     return (
       <div className={styles.page}>
         <div className={`${styles.notFound} liquid-glass`}>
-          <p className={styles.notFoundText}>关卡不存在或已被移除</p>
+          <p className={styles.notFoundText}>{t('lesson.notFound')}</p>
           <button
             className={styles.backButton}
             onClick={() => navigate('/lessons')}
           >
             <ArrowLeft size={16} strokeWidth={2} />
-            <span>返回关卡列表</span>
+            <span>{t('lesson.backToList')}</span>
           </button>
         </div>
       </div>
@@ -145,7 +148,7 @@ export default function LessonDetailPage() {
   /** 手动重新生成关卡内容 */
   const handleRegenerate = async () => {
     if (!examPoint) {
-      setError('找不到对应考点信息')
+      setError(t('lesson.noExamPoint'))
       return
     }
     setRegenerating(true)
@@ -155,7 +158,7 @@ export default function LessonDetailPage() {
       setLessonContent(lesson.id, c)
       setTab('points')
     } catch (err) {
-      setError(err instanceof Error ? err.message : '内容生成失败，请重试')
+      setError(err instanceof Error ? err.message : t('lesson.genFailedRetry'))
     } finally {
       setRegenerating(false)
     }
@@ -293,7 +296,7 @@ export default function LessonDetailPage() {
         })
       }
     } catch {
-      setFeedback({ correct: false, text: '评阅失败，请重试' })
+      setFeedback({ correct: false, text: t('lesson.gradeFailed') })
     } finally {
       setGrading(false)
     }
@@ -320,7 +323,7 @@ export default function LessonDetailPage() {
       setMultiSubmitted(false)
       setRevealed(false)
     } catch {
-      setFeedback({ correct: false, text: '题目重新生成失败，请重试' })
+      setFeedback({ correct: false, text: t('lesson.regenerateFailed') })
     } finally {
       setGrading(false)
     }
@@ -331,7 +334,7 @@ export default function LessonDetailPage() {
     const SKIP_COST = 10
     const ok = spendCoins(SKIP_COST)
     if (!ok) {
-      setError('Chill币不足，跳过需要 10 枚')
+      setError(t('lesson.coinsInsufficientSkip'))
       return
     }
     setError(null)
@@ -384,7 +387,7 @@ export default function LessonDetailPage() {
           onClick={() => navigate('/lessons')}
         >
           <ArrowLeft size={18} strokeWidth={2} />
-          <span>返回关卡列表</span>
+          <span>{t('lesson.backToList')}</span>
         </button>
       </div>
 
@@ -394,14 +397,14 @@ export default function LessonDetailPage() {
           <span
             className={`${styles.priorityTag} ${styles[`priority_${lesson.priority}`]}`}
           >
-            {priorityLabel[lesson.priority]}
+            {t(priorityLabel[lesson.priority])}
           </span>
-          <span className={styles.order}>第 {lesson.order} 关</span>
-          <span className={styles.coins}>{lesson.coins} Chill币</span>
+          <span className={styles.order}>{t('lesson.orderLabel').replace('{n}', String(lesson.order))}</span>
+          <span className={styles.coins}>{lesson.coins} {t('dashboard.coins')}</span>
           {isCompleted && (
             <span className={styles.completedBadge}>
               <CheckCircle size={14} strokeWidth={2.2} />
-              已完成
+              {t('lessons.statusDone')}
             </span>
           )}
         </div>
@@ -412,7 +415,7 @@ export default function LessonDetailPage() {
       {regenerating && (
         <div className={`${styles.loadingCard} liquid-glass`}>
           <Loader size={32} className={styles.spinnerIcon} />
-          <p className={styles.loadingText}>正在重新生成学习内容...</p>
+          <p className={styles.loadingText}>{t('lesson.regenerating')}</p>
         </div>
       )}
 
@@ -426,14 +429,14 @@ export default function LessonDetailPage() {
               onClick={() => setTab('points')}
             >
               <Lightbulb size={16} strokeWidth={2} />
-              <span>知识点</span>
+              <span>{t('lesson.tabPoints')}</span>
             </button>
             <button
               className={`${styles.tab} ${tab === 'examples' ? styles.tabActive : ''}`}
               onClick={() => setTab('examples')}
             >
               <PenTool size={16} strokeWidth={2} />
-              <span>例题</span>
+              <span>{t('lesson.examples')}</span>
             </button>
             {content.quiz.length > 0 && (
               <button
@@ -441,7 +444,7 @@ export default function LessonDetailPage() {
                 onClick={() => setTab('quiz')}
               >
                 <HelpCircle size={16} strokeWidth={2} />
-                <span>小测</span>
+                <span>{t('lesson.quiz')}</span>
               </button>
             )}
           </div>
@@ -451,7 +454,7 @@ export default function LessonDetailPage() {
             <div className={`${styles.contentCard} liquid-glass`}>
               <h2 className={styles.sectionTitle}>
                 <Lightbulb size={18} strokeWidth={2} />
-                核心知识点
+                {t('lesson.keyPoints')}
               </h2>
               <ul className={styles.keyPoints}>
                 {content.keyPoints.map((point, i) => (
@@ -467,7 +470,7 @@ export default function LessonDetailPage() {
 
               <h2 className={styles.sectionTitle}>
                 <PenTool size={18} strokeWidth={2} />
-                详细解释
+                {t('lesson.explanationTitle')}
               </h2>
               <div
                 className={`${styles.explanation} ${styles.markdownContent}`}
@@ -481,19 +484,19 @@ export default function LessonDetailPage() {
             <div className={styles.contentList}>
               {content.examples.length === 0 && (
                 <div className={`${styles.emptyHint} liquid-glass`}>
-                  本关暂无例题
+                  {t('lesson.noExamples')}
                 </div>
               )}
               {content.examples.map((ex, i) => (
                 <div key={i} className={`${styles.exampleCard} liquid-glass`}>
-                  <div className={styles.exampleHeader}>例题 {i + 1}</div>
+                  <div className={styles.exampleHeader}>{t('lesson.exampleN').replace('{n}', String(i + 1))}</div>
                   <div
                     className={`${styles.exampleQuestion} ${styles.markdownContent}`}
                     dangerouslySetInnerHTML={{ __html: renderMarkdown(ex.question) }}
                   />
                   {ex.steps && ex.steps.length > 0 && (
                     <div className={styles.exampleSteps}>
-                      <div className={styles.stepsLabel}>解题步骤</div>
+                      <div className={styles.stepsLabel}>{t('lesson.stepsLabel')}</div>
                       {ex.steps.map((step, j) => (
                         <div key={j} className={styles.step}>
                           <span className={styles.stepIndex}>{j + 1}</span>
@@ -506,7 +509,7 @@ export default function LessonDetailPage() {
                     </div>
                   )}
                   <div className={styles.exampleAnswer}>
-                    <span className={styles.answerLabel}>答案</span>
+                    <span className={styles.answerLabel}>{t('lesson.answerLabel')}</span>
                     <span
                       className={`${styles.answerText} ${styles.markdownContent}`}
                       dangerouslySetInnerHTML={{ __html: renderInlineMarkdown(ex.answer) }}
@@ -522,7 +525,7 @@ export default function LessonDetailPage() {
             <div className={styles.contentList}>
               {quizQuestions.length === 0 ? (
                 <div className={`${styles.emptyHint} liquid-glass`}>
-                  本关暂无小测题
+                  {t('lesson.noQuiz')}
                 </div>
               ) : (
                 <>
@@ -563,9 +566,9 @@ export default function LessonDetailPage() {
                     return (
                       <div className={`${styles.quizPageCard} liquid-glass`}>
                         <div className={styles.quizHeader}>
-                          <span>问题 {quizPage + 1} / {quizQuestions.length}</span>
+                          <span>{t('lesson.questionN').replace('{cur}', String(quizPage + 1)).replace('{total}', String(quizQuestions.length))}</span>
                           <span className={styles.quizTypeTag}>
-                            {qType === 'choice' ? '单选题' : qType === 'multi' ? '多选题' : qType === 'fill' ? '填空题' : '简答题'}
+                            {qType === 'choice' ? t('lesson.qTypeChoice') : qType === 'multi' ? t('lesson.qTypeMulti') : qType === 'fill' ? t('lesson.qTypeFill') : t('lesson.qTypeShort')}
                           </span>
                         </div>
                         <div
@@ -671,8 +674,8 @@ export default function LessonDetailPage() {
                                 <span className={styles.explanationLabel}>
                                   {multiSelected.size === q.correctIndices?.length &&
                                   [...multiSelected].every(i => q.correctIndices?.includes(i))
-                                    ? '回答正确'
-                                    : '回答错误'}
+                                    ? t('lesson.answerCorrect')
+                                    : t('lesson.answerWrong')}
                                 </span>
                                 <span
                                   className={styles.markdownContent}
@@ -692,7 +695,7 @@ export default function LessonDetailPage() {
                             className={styles.textInput}
                             value={textAnswer}
                             onChange={e => setTextAnswer(e.target.value)}
-                            placeholder="请输入你的答案"
+                            placeholder={t('lesson.yourAnswerPlaceholder')}
                             disabled={feedback?.correct === true}
                             onKeyDown={e => {
                               if (e.key === 'Enter' && !grading && feedback?.correct !== true) {
@@ -708,7 +711,7 @@ export default function LessonDetailPage() {
                             className={styles.textareaInput}
                             value={textAnswer}
                             onChange={e => setTextAnswer(e.target.value)}
-                            placeholder="请输入你的答案"
+                            placeholder={t('lesson.yourAnswerPlaceholder')}
                             disabled={feedback?.correct === true}
                             rows={4}
                           />
@@ -722,24 +725,24 @@ export default function LessonDetailPage() {
                               className={styles.regenerateBtn}
                               onClick={handleRegenerateQuestion}
                               disabled={grading}
-                              title="生成同知识点的新题目（不消耗 Chill币）"
+                              title={t('lesson.regenerateTitle')}
                             >
                               {grading ? (
                                 <Loader size={14} className={styles.submitSpinner} />
                               ) : (
                                 <RefreshCw size={14} strokeWidth={2} />
                               )}
-                              <span>重新生成</span>
+                              <span>{t('lesson.regenerate')}</span>
                             </button>
                             {/* 跳过：消耗 10 Chill币 直接进入下一题 */}
                             <button
                               className={styles.skipBtn}
                               onClick={handleSkipQuestion}
                               disabled={grading}
-                              title="消耗 10 Chill币 跳到下一题"
+                              title={t('lesson.skipTitle')}
                             >
                               <SkipForward size={14} strokeWidth={2} />
-                              <span>跳过 (10币)</span>
+                              <span>{t('lesson.skipCost')}</span>
                             </button>
                             {/* 答错后的再试一次 */}
                             {qType === 'choice' &&
@@ -750,7 +753,7 @@ export default function LessonDetailPage() {
                                   onClick={handleRetryChoice}
                                 >
                                   <RefreshCw size={14} strokeWidth={2} />
-                                  <span>再试一次</span>
+                                  <span>{t('lesson.tryAgain')}</span>
                                 </button>
                               )}
                             {qType === 'multi' &&
@@ -760,7 +763,7 @@ export default function LessonDetailPage() {
                                   onClick={handleRetryMulti}
                                 >
                                   <RefreshCw size={14} strokeWidth={2} />
-                                  <span>再试一次</span>
+                                  <span>{t('lesson.tryAgain')}</span>
                                 </button>
                               )}
                           </div>
@@ -772,7 +775,7 @@ export default function LessonDetailPage() {
                                 onClick={handleMultiSubmit}
                                 disabled={multiSelected.size === 0}
                               >
-                                提交答案（已选 {multiSelected.size} 项）
+                                {t('lesson.submitWithCount').replace('{count}', String(multiSelected.size))}
                               </button>
                             )}
                             {/* 填空/简答提交 */}
@@ -786,7 +789,7 @@ export default function LessonDetailPage() {
                                   {grading && (
                                     <Loader size={16} className={styles.submitSpinner} />
                                   )}
-                                  {grading ? '评阅中...' : '提交'}
+                                  {grading ? t('lesson.grading') : t('lesson.submit')}
                                 </button>
                               )}
                           </div>
@@ -802,7 +805,7 @@ export default function LessonDetailPage() {
                             }`}
                           >
                             <span className={styles.explanationLabel}>
-                              {feedback.correct ? '回答正确' : '回答错误'}
+                              {feedback.correct ? t('lesson.answerCorrect') : t('lesson.answerWrong')}
                             </span>
                             <span>{feedback.text}</span>
                           </div>
@@ -811,7 +814,7 @@ export default function LessonDetailPage() {
                         {/* 标准答案（填空/简答题判定后始终显示） */}
                         {feedback && q.answer && (
                           <div className={styles.feedback}>
-                            <span className={styles.explanationLabel}>标准答案</span>
+                            <span className={styles.explanationLabel}>{t('lesson.standardAnswer')}</span>
                             <span
                               className={styles.markdownContent}
                               dangerouslySetInnerHTML={{
@@ -831,7 +834,7 @@ export default function LessonDetailPage() {
                             }`}
                           >
                             <span className={styles.explanationLabel}>
-                              {choiceSelected === q.correctIndex ? '回答正确' : '回答错误'}
+                              {choiceSelected === q.correctIndex ? t('lesson.answerCorrect') : t('lesson.answerWrong')}
                             </span>
                             <span
                               className={styles.markdownContent}
@@ -851,7 +854,7 @@ export default function LessonDetailPage() {
                                 className={styles.quizNavBtn}
                                 onClick={handleNextPage}
                               >
-                                <span>下一题</span>
+                                <span>{t('lesson.nextPage')}</span>
                               </button>
                             )}
                             {isSolved && isLastPage && allSolved && !isCompleted && (
@@ -860,13 +863,13 @@ export default function LessonDetailPage() {
                                 onClick={handleComplete}
                               >
                                 <CheckCircle size={16} strokeWidth={2} />
-                                <span>完成关卡</span>
+                                <span>{t('lesson.finish')}</span>
                               </button>
                             )}
                             {isSolved && isLastPage && allSolved && isCompleted && (
                               <div className={styles.alreadyCompleted}>
                                 <CheckCircle size={16} strokeWidth={2} />
-                                <span>本关已完成</span>
+                                <span>{t('lesson.completed')}</span>
                               </div>
                             )}
                           </div>
@@ -885,7 +888,7 @@ export default function LessonDetailPage() {
       {!regenerating && !content && generatingLessons && (
         <div className={`${styles.loadingCard} liquid-glass`}>
           <Loader size={32} className={styles.spinnerIcon} />
-          <p className={styles.loadingText}>内容正在生成中，请稍候...</p>
+          <p className={styles.loadingText}>{t('lesson.generatingWait')}</p>
         </div>
       )}
 
@@ -902,11 +905,11 @@ export default function LessonDetailPage() {
             <AlertCircle size={40} strokeWidth={1.5} />
           </div>
           <p className={styles.startText}>
-            关卡内容生成失败，你可以尝试手动重新生成。
+            {t('lesson.genFailedManual')}
           </p>
           <button className={styles.startButton} onClick={handleRegenerate}>
             <RefreshCw size={18} strokeWidth={2} />
-            <span>重新生成</span>
+            <span>{t('lesson.regenerate')}</span>
           </button>
         </div>
       )}
