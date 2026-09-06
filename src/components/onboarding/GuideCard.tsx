@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
   Target,
@@ -13,12 +13,14 @@ import {
   BookOpen,
   BookX,
   MessageCircle,
+  Download,
 } from 'lucide-react'
 import { useOnboardingStore } from '@stores/onboardingStore'
 import { useSettingsStore } from '@stores/settingsStore'
 import { useCourseStore } from '@stores/courseStore'
 import { useNotificationStore } from '@stores/notificationStore'
 import { useT } from '../../i18n'
+import type { UpdateInfo } from '../../types/index'
 import styles from './GuideCard.module.css'
 
 /**
@@ -37,6 +39,54 @@ export default function GuideCard() {
   const courses = useCourseStore(s => s.courses)
   const notifications = useNotificationStore(s => s.notifications)
   const markAllRead = useNotificationStore(s => s.markAllRead)
+
+  // ── 新版本检测：启动时检查一次，发现新版本常驻提示并支持一键下载 ──
+  const [updateInfo, setUpdateInfo] = useState<UpdateInfo | null>(null)
+  const [updateDownloading, setUpdateDownloading] = useState(false)
+
+  useEffect(() => {
+    let cancelled = false
+    window.electronAPI
+      ?.checkForUpdates()
+      .then(info => {
+        if (!info || cancelled) return
+        setUpdateInfo(info)
+        // 每个新版本只推送一次通知，避免重复打扰
+        try {
+          const noticeKey = 'chillpass-update-notice-version'
+          if (localStorage.getItem(noticeKey) !== info.version) {
+            useNotificationStore.getState().addNotification({
+              title: t('upd.availableTitle').replace('{version}', info.version),
+              body: t('upd.availableBody').replace('{current}', info.currentVersion),
+            })
+            localStorage.setItem(noticeKey, info.version)
+          }
+        } catch {
+          // localStorage 不可用时仅保留卡片内提示
+        }
+      })
+      .catch(() => {
+        // 网络不可用等情况静默忽略
+      })
+    return () => {
+      cancelled = true
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  /** 一键下载：安装版走自动更新，失败时回退到系统浏览器下载 */
+  const handleUpdateDownload = async () => {
+    if (!updateInfo) return
+    setUpdateDownloading(true)
+    try {
+      if (!window.electronAPI?.startUpdate) throw new Error('unavailable')
+      await window.electronAPI.startUpdate()
+    } catch {
+      window.electronAPI?.openExternalUrl(updateInfo.downloadUrl)
+    } finally {
+      setUpdateDownloading(false)
+    }
+  }
 
   // ── 步骤完成状态：全部从真实状态推导，任何页面的操作都能实时打勾 ──
   const stepDone = [
@@ -160,6 +210,26 @@ export default function GuideCard() {
       <div className={styles.progressTrack}>
         <div className={styles.progressFill} style={{ width: `${(doneCount / 3) * 100}%` }} />
       </div>
+
+      {/* 新版本提示：发现新版本时常驻展示，支持一键下载 */}
+      {updateInfo && (
+        <div className={styles.updateBanner}>
+          <div className={styles.updateMeta}>
+            <Download size={14} strokeWidth={2.2} className={styles.updateMetaIcon} />
+            <span className={styles.updateVersion}>
+              {t('upd.availableTitle').replace('{version}', updateInfo.version)}
+            </span>
+          </div>
+          {updateDownloading ? (
+            <span className={styles.updateDownloading}>{t('upd.downloading')}</span>
+          ) : (
+            <button type="button" className={styles.updateBtn} onClick={handleUpdateDownload}>
+              <Download size={13} strokeWidth={2.2} />
+              <span>{t('upd.downloadNow')}</span>
+            </button>
+          )}
+        </div>
+      )}
 
       {/* 通知列表：有新通知时置顶展示 */}
       {recentNotifications.length > 0 && (

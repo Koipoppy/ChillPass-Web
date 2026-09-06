@@ -1,18 +1,19 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
+import type { TranslationKey } from '../i18n/translations'
 
 /** AI 服务提供商 */
 export type AIProvider = 'deepseek' | 'zhipu'
 
 /** 各提供商的可用模型 */
-export const PROVIDER_MODELS: Record<AIProvider, { id: string; label: string }[]> = {
+export const PROVIDER_MODELS: Record<AIProvider, { id: string; labelKey: TranslationKey }[]> = {
   deepseek: [
-    { id: 'deepseek-chat', label: 'deepseek-chat（通用对话，速度快）' },
-    { id: 'deepseek-reasoner', label: 'deepseek-reasoner（深度推理，更精准）' },
+    { id: 'deepseek-chat', labelKey: 'model.deepseekChat' },
+    { id: 'deepseek-reasoner', labelKey: 'model.deepseekReasoner' },
   ],
   zhipu: [
-    { id: 'glm-5.3-flash', label: 'glm-5.3-flash（高速响应，性价比高）' },
-    { id: 'glm-5.3', label: 'glm-5.3（旗舰模型，能力更强）' },
+    { id: 'glm-5.3-flash', labelKey: 'model.glmFlash' },
+    { id: 'glm-5.3', labelKey: 'model.glm53' },
   ],
 }
 

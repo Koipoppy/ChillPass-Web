@@ -474,3 +474,69 @@
   background: var(--warning-text);
   color: #ffffff;
 }
+
+/* ===== 新版本提示：常驻横幅 + 一键下载 ===== */
+.updateBanner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 12px;
+  padding: 9px 12px;
+  border-radius: var(--radius-md);
+  background: rgba(0, 113, 227, 0.08);
+  border: 1px solid rgba(0, 113, 227, 0.18);
+}
+
+.updateMeta {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+}
+
+.updateMetaIcon {
+  color: var(--accent-text);
+  flex-shrink: 0;
+}
+
+.updateVersion {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.updateDownloading {
+  font-size: 11.5px;
+  color: var(--accent-text);
+  flex-shrink: 0;
+}
+
+.updateBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 12px;
+  border: none;
+  border-radius: var(--radius-pill);
+  background: var(--btn-primary-bg);
+  color: var(--btn-primary-fg);
+  font-size: 12px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1), box-shadow 0.3s ease;
+}
+
+.updateBtn:hover {
+  transform: translateY(-1px) scale(1.02);
+  box-shadow: var(--shadow-hover);
+}
+
+.updateBtn:active {
+  transform: translateY(0) scale(1);
+}

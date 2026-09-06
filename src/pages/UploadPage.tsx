@@ -465,7 +465,7 @@ export default function UploadPage() {
           <div className={styles.dropzoneText}>
             {mode === 'append' ? t('upload.dropAppend') : t('upload.dropCreate')}
           </div>
-          <div className={styles.dropzoneHint}>支持 PDF、Word（doc/docx）、PPTX、TXT、Markdown</div>
+          <div className={styles.dropzoneHint}>{t('upload.dropzoneHint')}</div>
         </div>
 
         {/* 文件列表 */}

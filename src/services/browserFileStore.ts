@@ -3,6 +3,8 @@
  * 使用 IndexedDB 持久化用户上传的课件文件内容
  * 替代 Electron 的文件系统访问能力
  */
+import { translate } from '../i18n'
+import { useLanguageStore } from '@stores/languageStore'
 
 const DB_NAME = 'chillpass-files'
 const DB_VERSION = 1
@@ -89,7 +91,7 @@ export async function readFileBuffer(id: string): Promise<ArrayBuffer> {
       if (result) {
         resolve(result.buffer)
       } else {
-        reject(new Error(`文件未找到: ${id}`))
+        reject(new Error(translate(useLanguageStore.getState().language, 'service.fileNotFound').replace('{id}', id)))
       }
     }
     request.onerror = () => reject(request.error)

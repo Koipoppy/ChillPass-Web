@@ -11,6 +11,15 @@ import {
   getFileSize,
   getStorageSize as getIDBStorageSize,
 } from '@services/browserFileStore'
+import { translate, type TranslationKey } from '../i18n'
+import { useLanguageStore } from '@stores/languageStore'
+
+/** 浏览器 Mock 提示文案（当前语言） */
+function mockText(key: TranslationKey, map?: Record<string, string>): string {
+  let msg = translate(useLanguageStore.getState().language, key)
+  for (const [k, v] of Object.entries(map ?? {})) msg = msg.replace(`{${k}}`, v)
+  return msg
+}
 
 /** 生成唯一文件 ID */
 function generateFileId(): string {
@@ -36,7 +45,7 @@ function compareVersions(v1: string, v2: string): number {
   return 0
 }
 
-const APP_VERSION = '0.0.8'
+const APP_VERSION = '0.0.9'
 const UPDATE_CHECK_URL =
   'https://api.github.com/repos/Koipoppy/ChillPass-Web/releases/latest'
 
@@ -95,7 +104,7 @@ export function setupElectronMock() {
 
     openDirectoryDialog: async () => {
       // 浏览器无法选择目录，返回提示性路径
-      window.prompt('浏览器模式下不支持选择目录，文件将存储在浏览器 IndexedDB 中')
+      window.prompt(mockText('mock.dirDialogPrompt'))
       return null
     },
 
@@ -110,7 +119,7 @@ export function setupElectronMock() {
 
     // ===== 用户数据路径 =====
     getUserDataPath: async () => {
-      return '浏览器 IndexedDB 存储'
+      return mockText('mock.userDataPath')
     },
 
     // ===== 窗口控制（浏览器中为空操作） =====
@@ -122,7 +131,7 @@ export function setupElectronMock() {
     },
     windowClose: () => {
       // 浏览器中不关闭窗口，可以提示用户
-      if (window.confirm('确定要关闭应用吗？')) {
+      if (window.confirm(mockText('mock.closeConfirm'))) {
         window.close()
       }
     },
@@ -141,7 +150,7 @@ export function setupElectronMock() {
       }
     },
     focusExitConfirm: () => {
-      if (window.confirm('退出专注模式？')) {
+      if (window.confirm(mockText('mock.focusExitConfirm'))) {
         if (document.fullscreenElement) {
           document.exitFullscreen?.().catch(() => {})
         }
@@ -172,9 +181,9 @@ export function setupElectronMock() {
         // 忽略，走回退
       }
       return {
-        installPath: '未安装（网页预览模式）',
-        userDataPath: '浏览器 IndexedDB / localStorage',
-        tempPath: '浏览器内存',
+        installPath: mockText('mock.installPath'),
+        userDataPath: mockText('mock.userDataBrowser'),
+        tempPath: mockText('mock.tempPath'),
       }
     },
 
@@ -186,7 +195,7 @@ export function setupElectronMock() {
       } catch {
         // 忽略，走回退
       }
-      window.alert('当前为网页预览模式，未安装应用，无法定位安装位置')
+      window.alert(mockText('mock.installPathAlert'))
     },
 
     getStorageSize: async () => {
@@ -207,7 +216,7 @@ export function setupElectronMock() {
           if (!data.updateAvailable) return null
           return {
             version: data.latestVersion,
-            releaseNotes: data.releaseNotes || '暂无更新说明',
+            releaseNotes: data.releaseNotes || mockText('mock.noReleaseNotes'),
             downloadUrl: data.downloadUrl || '',
             releaseDate: data.releaseDate || '',
             currentVersion: data.currentVersion || APP_VERSION,
@@ -232,7 +241,7 @@ export function setupElectronMock() {
           )
           const downloadUrl =
             exeAsset?.browser_download_url || release.html_url || ''
-          const releaseNotes = release.body || '暂无更新说明'
+          const releaseNotes = release.body || mockText('mock.noReleaseNotes')
           const releaseDate = release.published_at || new Date().toISOString()
 
           if (compareVersions(latestVersion, APP_VERSION) > 0) {
@@ -247,7 +256,9 @@ export function setupElectronMock() {
           return null
         } catch (err) {
           throw new Error(
-            `无法连接更新服务器，请检查网络后重试（${err instanceof Error ? err.message : '未知错误'}）`,
+            mockText('mock.updateServerUnreachable', {
+              msg: err instanceof Error ? err.message : mockText('common.unknownError'),
+            }),
           )
         }
       }

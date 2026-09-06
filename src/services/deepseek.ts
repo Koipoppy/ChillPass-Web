@@ -1,6 +1,8 @@
 import type { ExamPoint, LessonContent, QuizQuestion, ExamQuestion } from '@types/index'
 import { useSettingsStore } from '@stores/settingsStore'
 import { useTokenStore } from '@stores/tokenStore'
+import { translate, type TranslationKey } from '../i18n'
+import { useLanguageStore } from '@stores/languageStore'
 
 const DEEPSEEK_API_URL = 'https://api.deepseek.com/chat/completions'
 const ZHIPU_API_URL = 'https://open.bigmodel.cn/api/paas/v4/chat/completions'
@@ -8,6 +10,23 @@ const ZHIPU_API_URL = 'https://open.bigmodel.cn/api/paas/v4/chat/completions'
 interface ChatMessage {
   role: 'system' | 'user' | 'assistant'
   content: string
+}
+
+/** 服务层抛错的本地化文本 */
+function serviceError(key: TranslationKey): Error {
+  return new Error(serviceText(key))
+}
+
+/** 服务层提示文案（当前语言） */
+function serviceText(key: TranslationKey, map?: Record<string, string>): string {
+  let msg = translate(useLanguageStore.getState().language, key)
+  for (const [k, v] of Object.entries(map ?? {})) msg = msg.replace(`{${k}}`, v)
+  return msg
+}
+
+/** 服务层抛错的本地化文本（带占位符） */
+function serviceErrorFmt(key: TranslationKey, map: Record<string, string>): Error {
+  return new Error(serviceText(key, map))
 }
 
 /** 根据当前提供商解析请求地址与密钥 */
@@ -41,7 +60,7 @@ async function callDeepSeek(
   options?: { temperature?: number; maxTokens?: number; retries?: number }
 ): Promise<string> {
   const { url, apiKey, model } = resolveProviderConfig()
-  if (!apiKey) throw new Error('未设置 API Key，请在设置中配置')
+  if (!apiKey) throw serviceError('service.noApiKey')
 
   const maxRetries = options?.retries ?? 3
   const timeoutMs = 90000 // 90 秒超时
@@ -70,7 +89,7 @@ async function callDeepSeek(
 
       if (!response.ok) {
         const error = await response.text()
-        throw new Error(`DeepSeek API 错误: ${response.status} - ${error}`)
+        throw serviceErrorFmt('service.apiError', { code: String(response.status), msg: error })
       }
 
       const data = await response.json()
@@ -84,7 +103,7 @@ async function callDeepSeek(
           await new Promise(r => setTimeout(r, 1000 * attempt))
           continue
         }
-        throw new Error('请求超时，请检查网络连接后重试')
+        throw serviceError('service.timeout')
       }
 
       if (err.message?.includes('Failed to fetch')) {
@@ -92,14 +111,14 @@ async function callDeepSeek(
           await new Promise(r => setTimeout(r, 1500 * attempt))
           continue
         }
-        throw new Error('网络连接失败，请检查网络后重试')
+        throw serviceError('service.network')
       }
 
       throw err
     }
   }
 
-  throw new Error('请求失败，已重试 ' + maxRetries + ' 次')
+  throw serviceErrorFmt('service.retriesExhausted', { count: String(maxRetries) })
 }
 
 /**
@@ -110,7 +129,7 @@ export async function* callDeepSeekStream(
   options?: { temperature?: number }
 ): AsyncGenerator<string> {
   const { url, apiKey, model, isZhipu } = resolveProviderConfig()
-  if (!apiKey) throw new Error('未设置 API Key，请在设置中配置')
+  if (!apiKey) throw serviceError('service.noApiKey')
 
   const response = await fetch(url, {
     method: 'POST',
@@ -130,7 +149,7 @@ export async function* callDeepSeekStream(
 
   if (!response.ok) {
     const error = await response.text()
-    throw new Error(`DeepSeek API 错误: ${response.status} - ${error}`)
+    throw serviceErrorFmt('service.apiError', { code: String(response.status), msg: error })
   }
 
   const reader = response.body!.getReader()
@@ -501,7 +520,7 @@ ${courseText.slice(0, 6000)}`
     }
     return parsed
   } catch {
-    throw new Error('关卡内容生成失败，请重试')
+    throw serviceError('service.genLessonFailed')
   }
 }
 
@@ -524,7 +543,7 @@ export async function gradeAnswer(
   const normalizedCorrect = correctAnswer.trim().toLowerCase()
 
   if (normalizedUser === normalizedCorrect) {
-    return { correct: true, feedback: '回答完全正确！' }
+    return { correct: true, feedback: serviceText('service.answerCorrectAll') }
   }
 
   // 检查是否包含所有关键词
@@ -533,7 +552,7 @@ export async function gradeAnswer(
       kw => normalizedUser.includes(kw.trim().toLowerCase())
     )
     if (allKeywordsPresent) {
-      return { correct: true, feedback: '回答正确，包含了所有关键点！' }
+      return { correct: true, feedback: serviceText('service.answerCorrect') }
     }
     // 检查是否包含部分关键词（至少50%）
     const matchedCount = acceptableAnswers.filter(
@@ -542,7 +561,11 @@ export async function gradeAnswer(
     if (matchedCount >= Math.ceil(acceptableAnswers.length * 0.5)) {
       return {
         correct: false,
-        feedback: `部分正确（命中 ${matchedCount}/${acceptableAnswers.length} 个关键点），但还不够完整。参考答案：${correctAnswer}`,
+        feedback: serviceText('service.answerPartial', {
+          matched: String(matchedCount),
+          total: String(acceptableAnswers.length),
+          answer: correctAnswer,
+        }),
       }
     }
   }
@@ -578,13 +601,13 @@ export async function gradeAnswer(
     const parsed = JSON.parse(json)
     return {
       correct: !!parsed.correct,
-      feedback: parsed.feedback || (parsed.correct ? '回答正确！' : '回答不正确'),
+      feedback: parsed.feedback || serviceText(parsed.correct ? 'service.answerFeedbackOk' : 'service.answerFeedbackBad'),
     }
   } catch {
     // AI 评阅失败时，保守判断为错误
     return {
       correct: false,
-      feedback: `无法自动评阅，参考答案：${correctAnswer}`,
+      feedback: serviceText('service.answerUngradeable', { answer: correctAnswer }),
     }
   }
 }
@@ -636,7 +659,7 @@ export async function regenerateQuizQuestion(
       examPointTitle,
     }
   } catch {
-    throw new Error('题目重新生成失败，请重试')
+    throw serviceError('service.regenQuestionFailed')
   }
 }
 

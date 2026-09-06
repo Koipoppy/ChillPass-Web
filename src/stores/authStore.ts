@@ -1,6 +1,8 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import type { LocalAccount } from '@types/index'
+import { translate } from '../i18n'
+import { useLanguageStore } from '@stores/languageStore'
 
 /** 导出的账号数据包（用于跨设备迁移） */
 export interface AccountExportBundle {
@@ -25,7 +27,7 @@ interface AuthState {
 function createDefaultAccount(): LocalAccount {
   const now = Date.now()
   return {
-    name: '学习者',
+    name: translate(useLanguageStore.getState().language, 'account.defaultName'),
     avatar: '🦊',
     createdAt: now,
     lastActiveAt: now,

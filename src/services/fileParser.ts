@@ -2,6 +2,15 @@
  * 文件解析服务
  * 支持 PDF、PPTX、DOCX、DOC、TXT、MD
  */
+import { translate, type TranslationKey } from '../i18n'
+import { useLanguageStore } from '@stores/languageStore'
+
+/** 解析服务抛错的本地化文本 */
+function parseError(key: TranslationKey, map?: Record<string, string>): Error {
+  let msg = translate(useLanguageStore.getState().language, key)
+  for (const [k, v] of Object.entries(map ?? {})) msg = msg.replace(`{${k}}`, v)
+  return new Error(msg)
+}
 
 /**
  * 解析文件，返回文本内容
@@ -21,7 +30,7 @@ export async function parseFile(filePath: string, ext: string): Promise<string> 
     case '.md':
       return parseText(filePath)
     default:
-      throw new Error(`不支持的文件格式: ${ext}`)
+      throw parseError('parse.unsupportedFormat', { ext })
   }
 }
 
@@ -30,7 +39,7 @@ export async function parseFile(filePath: string, ext: string): Promise<string> 
  */
 async function parsePDF(filePath: string): Promise<string> {
   const w = globalThis as any
-  if (!w.electronAPI) throw new Error('文件 API 不可用')
+  if (!w.electronAPI) throw parseError('parse.apiUnavailable')
 
   const buffer = await w.electronAPI.readFileBuffer(filePath)
   const uint8Array = new Uint8Array(buffer)
@@ -64,7 +73,7 @@ async function parsePDF(filePath: string): Promise<string> {
  */
 async function parsePPT(filePath: string): Promise<string> {
   const w = globalThis as any
-  if (!w.electronAPI) throw new Error('文件 API 不可用')
+  if (!w.electronAPI) throw parseError('parse.apiUnavailable')
 
   const buffer = await w.electronAPI.readFileBuffer(filePath)
   const arrayBuffer = buffer instanceof ArrayBuffer ? buffer : new Uint8Array(buffer).buffer
@@ -101,7 +110,7 @@ async function parsePPT(filePath: string): Promise<string> {
  */
 async function parseText(filePath: string): Promise<string> {
   const w = globalThis as any
-  if (!w.electronAPI) throw new Error('文件 API 不可用')
+  if (!w.electronAPI) throw parseError('parse.apiUnavailable')
   return await w.electronAPI.readTextFile(filePath)
 }
 
@@ -122,7 +131,7 @@ function decodeXmlEntities(text: string): string {
  */
 async function parseDocx(filePath: string): Promise<string> {
   const w = globalThis as any
-  if (!w.electronAPI) throw new Error('文件 API 不可用')
+  if (!w.electronAPI) throw parseError('parse.apiUnavailable')
 
   const buffer = await w.electronAPI.readFileBuffer(filePath)
   const arrayBuffer = buffer instanceof ArrayBuffer ? buffer : new Uint8Array(buffer).buffer
@@ -131,7 +140,7 @@ async function parseDocx(filePath: string): Promise<string> {
   const zip = await JSZip.loadAsync(arrayBuffer)
 
   const docXml = await zip.file('word/document.xml')?.async('text')
-  if (!docXml) throw new Error('无法读取 Word 文档内容（缺少 document.xml），请确认文件为有效的 .docx')
+  if (!docXml) throw parseError('parse.docxNoXml')
 
   // 按段落 <w:p> 切分；段内 <w:t> 为文本，<w:tab> 转空格，<w:br>/<w:cr> 转换行
   const paragraphs = docXml.match(/<w:p[\s>][\s\S]*?<\/w:p>|<w:p\/>/g) || []
@@ -146,7 +155,7 @@ async function parseDocx(filePath: string): Promise<string> {
   )
 
   const text = decodeXmlEntities(lines.join('\n'))
-  if (text.trim().length < 5) throw new Error('未能从 Word 文档中提取到文本内容')
+  if (text.trim().length < 5) throw parseError('parse.docxNoText')
   return text.trim()
 }
 
@@ -157,22 +166,22 @@ async function parseDocx(filePath: string): Promise<string> {
  */
 async function parseDoc(filePath: string): Promise<string> {
   const w = globalThis as any
-  if (!w.electronAPI) throw new Error('文件 API 不可用')
+  if (!w.electronAPI) throw parseError('parse.apiUnavailable')
 
   const buffer = await w.electronAPI.readFileBuffer(filePath)
   const bytes = new Uint8Array(buffer instanceof ArrayBuffer ? buffer : new Uint8Array(buffer).buffer)
 
   // 魔数识别：部分"doc"实际是改了扩展名的 docx/RTF
   if (bytes[0] === 0x50 && bytes[1] === 0x4b) return parseDocx(filePath)
-  if (bytes[0] === 0x7b && bytes[1] === 0x5c) throw new Error('该文件实为 RTF 格式，请用 Word 另存为 .docx 后重新导入')
+  if (bytes[0] === 0x7b && bytes[1] === 0x5c) throw parseError('parse.docIsRtf')
 
   const cfb = new CfbReader(bytes)
   const wordDoc = cfb.readStream('WordDocument')
-  if (!wordDoc) throw new Error('无法读取 Word 文档内容（WordDocument 流缺失）')
+  if (!wordDoc) throw parseError('parse.docNoStream')
 
   // FIB 标志位 bit9 决定表流名：1Table 或 0Table
   const dv = new DataView(wordDoc.buffer, wordDoc.byteOffset, wordDoc.byteLength)
-  if (dv.getUint16(0, true) !== 0xa5ec) throw new Error('该文件不是有效的 Word 97-2003 文档')
+  if (dv.getUint16(0, true) !== 0xa5ec) throw parseError('parse.docInvalid')
   const flags = dv.getUint16(0x0a, true)
   const tableStream = cfb.readStream(flags & 0x0200 ? '1Table' : '0Table')
 
@@ -223,7 +232,7 @@ async function parseDoc(filePath: string): Promise<string> {
     .replace(/[\x00-\x08\x0e-\x1f]/g, '')
 
   if (text.replace(/\s/g, '').length < 10) {
-    throw new Error('未能从 DOC 文件中提取到有效文本，建议用 Word 将文件另存为 .docx 后重新导入')
+    throw parseError('parse.docNoText')
   }
   return text.trim()
 }
@@ -296,7 +305,7 @@ class CfbReader {
   constructor(data: Uint8Array) {
     const magic = [0xd0, 0xcf, 0x11, 0xe0, 0xa1, 0xb1, 0x1a, 0xe1]
     if (data.length < 512 || magic.some((b, i) => data[i] !== b)) {
-      throw new Error('该文件不是有效的 Word 97-2003 文档（缺少 OLE 复合文档头）')
+      throw parseError('parse.docInvalidOle')
     }
     this.data = data
     this.view = new DataView(data.buffer, data.byteOffset, data.byteLength)

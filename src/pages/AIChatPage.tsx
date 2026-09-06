@@ -5,6 +5,8 @@ import { Send, Trash2, Sparkles, ImageIcon, Loader, X, Brain, Zap, Download, Upl
 import { useChatStore } from '@stores/chatStore'
 import { useCurrentBundle } from '@stores/courseStore'
 import { useAthenaStore } from '@stores/athenaStore'
+import { useT } from '../i18n'
+import type { TranslationKey } from '../i18n'
 import { chatWithAthena, executeTask, summarizeAthenaInsights } from '@services/deepseek'
 import { recognizeImageText, fileToDataURL } from '@services/imageService'
 import type { ChatMessage, AthenaAbility, AthenaMemory, AthenaTaskType } from '@types/index'
@@ -12,38 +14,38 @@ import { renderMarkdown } from '../utils/markdown'
 import styles from './AIChatPage.module.css'
 
 // Athena 任务定义
-const TASKS = [
-  { type: 'qa' as AthenaTaskType, icon: MessageCircle, title: '自由提问', desc: '随时问任何问题', color: '#0078D4' },
-  { type: 'paper' as AthenaTaskType, icon: FileText, title: '论文代写', desc: '学术论文结构化撰写', color: '#8B5CF6' },
-  { type: 'report' as AthenaTaskType, icon: BookOpen, title: '报告代写', desc: '格式规范的报告撰写', color: '#10B981' },
-  { type: 'summary' as AthenaTaskType, icon: Sparkles, title: '知识总结', desc: '系统梳理核心知识点', color: '#F59E0B' },
-  { type: 'plan' as AthenaTaskType, icon: Calendar, title: '复习计划', desc: '制定可执行的复习安排', color: '#EF4444' },
+const TASKS: { type: AthenaTaskType; icon: typeof MessageCircle; titleKey: TranslationKey; descKey: TranslationKey; color: string }[] = [
+  { type: 'qa' as AthenaTaskType, icon: MessageCircle, titleKey: 'athena.taskQa', descKey: 'athena.taskQaDesc', color: '#0078D4' },
+  { type: 'paper' as AthenaTaskType, icon: FileText, titleKey: 'athena.taskPaper', descKey: 'athena.taskPaperDesc', color: '#8B5CF6' },
+  { type: 'report' as AthenaTaskType, icon: BookOpen, titleKey: 'athena.taskReport', descKey: 'athena.taskReportDesc', color: '#10B981' },
+  { type: 'summary' as AthenaTaskType, icon: Sparkles, titleKey: 'athena.taskSummary', descKey: 'athena.taskSummaryDesc', color: '#F59E0B' },
+  { type: 'plan' as AthenaTaskType, icon: Calendar, titleKey: 'athena.taskPlan', descKey: 'athena.taskPlanDesc', color: '#EF4444' },
 ]
 
 // Athena 任务信息收集表单定义
-const TASK_FORMS: Record<string, { label: string; placeholder: string; required: boolean }[]> = {
+const TASK_FORMS: Record<string, { labelKey: string; placeholderKey: string; required: boolean }[]> = {
   paper: [
-    { label: '论文主题', placeholder: '例如：论人工智能对高等教育的影响', required: true },
-    { label: '字数要求', placeholder: '例如：3000字', required: true },
-    { label: '学术级别', placeholder: '例如：本科 / 硕士 / 课程论文', required: false },
-    { label: '特殊要求', placeholder: '例如：需要参考文献、特定格式等', required: false },
+    { labelKey: 'athena.fTopic', placeholderKey: 'athena.fTopicPh', required: true },
+    { labelKey: 'athena.fWords', placeholderKey: 'athena.fWordsPh', required: true },
+    { labelKey: 'athena.fLevel', placeholderKey: 'athena.fLevelPh', required: false },
+    { labelKey: 'athena.fSpecial', placeholderKey: 'athena.fSpecialPh', required: false },
   ],
   report: [
-    { label: '报告主题', placeholder: '例如：实验报告 / 调研报告', required: true },
-    { label: '报告类型', placeholder: '例如：实验报告 / 调研报告 / 读书报告', required: true },
-    { label: '字数要求', placeholder: '例如：2000字', required: false },
-    { label: '特殊要求', placeholder: '例如：需要数据图表等', required: false },
+    { labelKey: 'athena.fReportTopic', placeholderKey: 'athena.fReportTopicPh', required: true },
+    { labelKey: 'athena.fReportType', placeholderKey: 'athena.fReportTypePh', required: true },
+    { labelKey: 'athena.fWords', placeholderKey: 'athena.fWordsReportPh', required: false },
+    { labelKey: 'athena.fSpecial', placeholderKey: 'athena.fSpecialReportPh', required: false },
   ],
   summary: [
-    { label: '总结范围', placeholder: '例如：第一章到第三章 / 全部课件', required: true },
-    { label: '总结重点', placeholder: '例如：重点公式、核心概念', required: false },
-    { label: '输出格式', placeholder: '例如：表格 / 思维导图 / 列表', required: false },
+    { labelKey: 'athena.fSummaryScope', placeholderKey: 'athena.fSummaryScopePh', required: true },
+    { labelKey: 'athena.fSummaryFocus', placeholderKey: 'athena.fSummaryFocusPh', required: false },
+    { labelKey: 'athena.fOutputFormat', placeholderKey: 'athena.fOutputFormatPh', required: false },
   ],
   plan: [
-    { label: '考试日期', placeholder: '例如：2026-07-01', required: true },
-    { label: '每日可学习时间', placeholder: '例如：3小时', required: true },
-    { label: '薄弱环节', placeholder: '例如：第3-5章比较难', required: false },
-    { label: '已掌握内容', placeholder: '例如：第1-2章已复习完', required: false },
+    { labelKey: 'athena.fExamDate', placeholderKey: 'athena.fExamDatePh', required: true },
+    { labelKey: 'athena.fDailyTime', placeholderKey: 'athena.fDailyTimePh', required: true },
+    { labelKey: 'athena.fWeakAreas', placeholderKey: 'athena.fWeakAreasPh', required: false },
+    { labelKey: 'athena.fMastered', placeholderKey: 'athena.fMasteredPh', required: false },
   ],
 }
 
@@ -89,6 +91,7 @@ function MessageBubble({
 
 /** AI 助教聊天页面 */
 export default function AIChatPage() {
+  const t = useT()
   const messages = useChatStore(s => s.messages)
   const isStreaming = useChatStore(s => s.isStreaming)
   const addMessage = useChatStore(s => s.addMessage)
@@ -131,7 +134,7 @@ export default function AIChatPage() {
   const [showMemoryPanel, setShowMemoryPanel] = useState(false)
   const [athenaStatus, setAthenaStatus] = useState<'idle' | 'thinking' | 'tasking'>('idle')
   const [showTaskForm, setShowTaskForm] = useState(false)
-  const [taskFormFields, setTaskFormFields] = useState<{ label: string; placeholder: string; required: boolean }[]>([])
+  const [taskFormFields, setTaskFormFields] = useState<{ labelKey: TranslationKey; placeholderKey: TranslationKey; required: boolean }[]>([])
   const [taskFormValues, setTaskFormValues] = useState<Record<string, string>>({})
 
   // 从错题本跳转过来时，预填内容并自动聚焦
@@ -202,16 +205,16 @@ export default function AIChatPage() {
 
         setRecognizedText(null)
         setImageRecognizing(true)
-        setOcrProgress('正在加载识别引擎...')
+        setOcrProgress(t('athena.ocrLoadingEngine'))
 
         // OCR 识别：在渲染进程中使用 tesseract.js（CDN 加载资源）
         const text = await recognizeImageText(imageBuffer ?? file!, (status, progress) => {
           const statusMap: Record<string, string> = {
-            'loading tesseract core': '加载识别核心...',
-            'initializing tesseract': '初始化引擎...',
-            'loading language traineddata': '加载语言包...',
-            'initializing api': '准备识别...',
-            'recognizing text': `识别中... ${Math.round(progress * 100)}%`,
+            'loading tesseract core': t('athena.ocrLoadingCore'),
+            'initializing tesseract': t('athena.ocrInitializing'),
+            'loading language traineddata': t('athena.ocrLoadingLang'),
+            'initializing api': t('athena.ocrPreparing'),
+            'recognizing text': t('athena.ocrRecognizing').replace('{percent}', String(Math.round(progress * 100))),
           }
           setOcrProgress(statusMap[status] || status)
         })
@@ -219,7 +222,7 @@ export default function AIChatPage() {
       } catch (err) {
         console.error('图片识别失败', err)
         setRecognizedText(null)
-        alert(err instanceof Error ? err.message : '图片识别失败，请重试')
+        alert(err instanceof Error ? err.message : t('athena.ocrFailed'))
       } finally {
         setImageRecognizing(false)
       }
@@ -242,7 +245,7 @@ export default function AIChatPage() {
 
       // 若有图片识别结果，将其拼接到消息前面
       const content = recognizedText
-        ? `[图片识别内容]\n${recognizedText}\n\n${rawContent}`
+        ? `${t('athena.ocrPrefix')}\n${recognizedText}\n\n${rawContent}`
         : rawContent
 
       setInput('')
@@ -286,7 +289,7 @@ export default function AIChatPage() {
 
         // 没有收到任何内容时给出提示
         if (!accumulated) {
-          updateMessage(assistantId, '抱歉，我没有收到回复内容，请重试。')
+          updateMessage(assistantId, t('athena.noReply'))
         } else {
           // After receiving the full reply, auto-summarize insights (non-blocking)
           summarizeAthenaInsights(content, accumulated, abilities.map(a => a.name))
@@ -297,8 +300,8 @@ export default function AIChatPage() {
             .catch(() => {})
         }
       } catch (err) {
-        const errorMsg = err instanceof Error ? err.message : '发生未知错误'
-        updateMessage(assistantId, `出错了：${errorMsg}`)
+        const errorMsg = err instanceof Error ? err.message : t('athena.unknownError')
+        updateMessage(assistantId, t('athena.errorPrefix').replace('{msg}', errorMsg))
       } finally {
         setStreaming(false)
         setAthenaStatus('idle')
@@ -365,33 +368,33 @@ export default function AIChatPage() {
             <h1 className={styles.title}>Athena</h1>
             <p className={styles.subtitle}>
               {isStreaming
-                ? '正在思考...'
+                ? t('athena.thinking')
                 : currentCourse
-                  ? `基于「${currentCourse.name}」课件`
-                  : '你的智能学伴'}
+                  ? t('athena.basedOn').replace('{course}', currentCourse.name)
+                  : t('athena.subtitle')}
             </p>
           </div>
         </div>
         <div className={styles.statusIndicator}>
           <span className={`${styles.statusDot} ${styles[`status_${athenaStatus}`]}`} />
           <span className={styles.statusText}>
-            {athenaStatus === 'thinking' ? '思考中' : athenaStatus === 'tasking' ? '执行任务中' : '待命'}
+            {athenaStatus === 'thinking' ? t('athena.statusThinking') : athenaStatus === 'tasking' ? t('athena.statusTasking') : t('athena.idle')}
           </span>
         </div>
         <div className={styles.headerActions}>
           {messages.length > 0 && activeTask !== 'qa' && (
             <div className={styles.headerTaskBadge}>
-              {TASKS.find(t => t.type === activeTask)?.title}
+              {t(TASKS.find(tk => tk.type === activeTask)?.titleKey || 'athena.taskQa' as TranslationKey)}
               <button onClick={() => setActiveTask('qa')}>
                 <X size={10} strokeWidth={2.5} />
               </button>
             </div>
           )}
-          <button className={styles.headerBtn} onClick={() => setShowAbilityPanel(true)} title="技能管理">
+          <button className={styles.headerBtn} onClick={() => setShowAbilityPanel(true)} title={t('athena.abilities')}>
             <Zap size={16} strokeWidth={1.8} />
             <span className={styles.headerBtnLabel}>{abilities.length}</span>
           </button>
-          <button className={styles.headerBtn} onClick={() => setShowMemoryPanel(true)} title="记忆管理">
+          <button className={styles.headerBtn} onClick={() => setShowMemoryPanel(true)} title={t('athena.memories')}>
             <Brain size={16} strokeWidth={1.8} />
             <span className={styles.headerBtnLabel}>{memories.length}</span>
           </button>
@@ -399,7 +402,7 @@ export default function AIChatPage() {
             className={`${styles.clearBtn} ${!canClear ? styles.clearBtnDisabled : ''}`}
             onClick={handleClear}
             disabled={!canClear}
-            title="清空对话"
+            title={t('athena.clearChat')}
           >
             <Trash2 size={18} strokeWidth={1.8} />
           </button>
@@ -416,7 +419,7 @@ export default function AIChatPage() {
               </div>
               <h2 className={styles.welcomeTitle}>Athena</h2>
               <p className={styles.welcomeSubtitle}>
-                我是你的智能学伴，选择一个任务开始吧
+                {t('athena.welcomeMsg')}
               </p>
               <div className={styles.taskGrid}>
                 {TASKS.map(task => {
@@ -430,7 +433,7 @@ export default function AIChatPage() {
                         if (task.type === 'qa') {
                           textareaRef.current?.focus()
                         } else {
-                          setTaskFormFields(TASK_FORMS[task.type] || [])
+                          setTaskFormFields(TASK_FORMS[task.type] as { labelKey: TranslationKey; placeholderKey: TranslationKey; required: boolean }[])
                           setTaskFormValues({})
                           setShowTaskForm(true)
                         }
@@ -440,8 +443,8 @@ export default function AIChatPage() {
                         <Icon size={20} strokeWidth={1.8} />
                       </div>
                       <div className={styles.taskInfo}>
-                        <span className={styles.taskTitle}>{task.title}</span>
-                        <span className={styles.taskDesc}>{task.desc}</span>
+                        <span className={styles.taskTitle}>{t(task.titleKey)}</span>
+                        <span className={styles.taskDesc}>{t(task.descKey)}</span>
                       </div>
                     </button>
                   )
@@ -449,7 +452,7 @@ export default function AIChatPage() {
               </div>
               {activeTask !== 'qa' && (
                 <div className={styles.activeTaskBadge}>
-                  当前任务：{TASKS.find(t => t.type === activeTask)?.title}
+                  {t('athena.currentTask').replace('{task}', t(TASKS.find(tk => tk.type === activeTask)?.titleKey || 'athena.taskQa' as TranslationKey))}
                   <button onClick={() => setActiveTask('qa')}>
                     <X size={12} strokeWidth={2.5} />
                   </button>
@@ -486,29 +489,29 @@ export default function AIChatPage() {
             <div className={styles.imagePreviewInner}>
               <img
                 src={attachedImage}
-                alt="附加图片"
+                alt={t('athena.attachedImage')}
                 className={styles.imageThumb}
               />
               <div className={styles.imagePreviewInfo}>
                 {imageRecognizing ? (
                   <div className={styles.imageRecognizing}>
                     <Loader size={14} className={styles.spin} />
-                    <span>{ocrProgress || '识别中...'}</span>
+                    <span>{ocrProgress || t('athena.ocrFallback')}</span>
                   </div>
                 ) : recognizedText ? (
                   <div className={styles.imagePreviewHint}>
-                    已识别图片文字
+                    {t('athena.ocrResult')}
                   </div>
                 ) : (
                   <div className={styles.imagePreviewHint}>
-                    识别失败，可移除后重试
+                    {t('athena.ocrFailedRetry')}
                   </div>
                 )}
               </div>
               <button
                 className={styles.removeImageBtn}
                 onClick={handleRemoveImage}
-                title="移除图片"
+                title={t('athena.removeImage')}
               >
                 <X size={14} strokeWidth={2.2} />
               </button>
@@ -528,7 +531,7 @@ export default function AIChatPage() {
               }
             }}
             disabled={!canAttachImage}
-            title="插入图片"
+            title={t('athena.insertImage')}
           >
             <ImageIcon size={18} strokeWidth={1.8} />
           </button>
@@ -547,10 +550,10 @@ export default function AIChatPage() {
             onKeyDown={handleKeyDown}
             placeholder={
               isStreaming
-                ? 'Athena 正在思考...'
+                ? t('athena.thinkingPlaceholder')
                 : activeTask !== 'qa'
-                  ? `${TASKS.find(t => t.type === activeTask)?.title} - 输入内容，Enter 发送`
-                  : '输入你的问题，Enter 发送，Shift+Enter 换行'
+                  ? t('athena.taskInputHint').replace('{task}', t(TASKS.find(tk => tk.type === activeTask)?.titleKey || 'athena.taskQa' as TranslationKey))
+                  : t('athena.chatInputHint')
             }
             disabled={isStreaming}
             rows={1}
@@ -572,7 +575,7 @@ export default function AIChatPage() {
             className={`${styles.sendBtn} ${!canSend ? styles.sendBtnDisabled : ''}`}
             onClick={() => handleSend()}
             disabled={!canSend}
-            title="发送"
+            title={t('athena.send')}
           >
             <Send size={18} strokeWidth={2} />
           </button>
@@ -586,7 +589,7 @@ export default function AIChatPage() {
             <div className={styles.modalHeader}>
               <div className={styles.modalTitle}>
                 <Zap size={18} strokeWidth={2} />
-                <h3>技能管理</h3>
+                <h3>{t('athena.abilities')}</h3>
               </div>
               <button className={styles.modalClose} onClick={() => setShowAbilityPanel(false)}>
                 <X size={18} strokeWidth={2} />
@@ -606,7 +609,7 @@ export default function AIChatPage() {
             <div className={styles.modalHeader}>
               <div className={styles.modalTitle}>
                 <Brain size={18} strokeWidth={2} />
-                <h3>记忆管理</h3>
+                <h3>{t('athena.memories')}</h3>
               </div>
               <button className={styles.modalClose} onClick={() => setShowMemoryPanel(false)}>
                 <X size={18} strokeWidth={2} />
@@ -626,7 +629,7 @@ export default function AIChatPage() {
             <div className={styles.modalHeader}>
               <div className={styles.modalTitle}>
                 {(() => { const Icon = TASKS.find(t => t.type === activeTask)?.icon || Sparkles; return <Icon size={18} strokeWidth={2} /> })()}
-                <h3>{TASKS.find(t => t.type === activeTask)?.title} - 信息收集</h3>
+                <h3>{t(TASKS.find(tk => tk.type === activeTask)?.titleKey || 'athena.taskQa' as TranslationKey)} - {t('athena.infoCollect')}</h3>
               </div>
               <button className={styles.modalClose} onClick={() => setShowTaskForm(false)}>
                 <X size={18} strokeWidth={2} />
@@ -637,14 +640,14 @@ export default function AIChatPage() {
                 {taskFormFields.map((field, i) => (
                   <div key={i} className={styles.formField}>
                     <label className={styles.formLabel}>
-                      {field.label}
+                      {t(field.labelKey)}
                       {field.required && <span className={styles.requiredMark}>*</span>}
                     </label>
                     <input
                       className={styles.panelInput}
-                      placeholder={field.placeholder}
-                      value={taskFormValues[field.label] || ''}
-                      onChange={e => setTaskFormValues(prev => ({ ...prev, [field.label]: e.target.value }))}
+                      placeholder={t(field.placeholderKey)}
+                      value={taskFormValues[field.labelKey] || ''}
+                      onChange={e => setTaskFormValues(prev => ({ ...prev, [field.labelKey]: e.target.value }))}
                     />
                   </div>
                 ))}
@@ -653,15 +656,15 @@ export default function AIChatPage() {
                   onClick={() => {
                     // Build the prompt from form values
                     const prompt = taskFormFields
-                      .map(f => `${f.label}：${taskFormValues[f.label] || '未指定'}`)
+                      .map(f => `${t(f.labelKey)}：${taskFormValues[t(f.labelKey)] || t('athena.unspecified')}`)
                       .join('\n')
-                    setInput(`请根据以下信息执行任务：\n${prompt}`)
+                    setInput(`${t('athena.taskPromptPrefix')}\n${prompt}`)
                     setShowTaskForm(false)
                     setTimeout(() => textareaRef.current?.focus(), 100)
                   }}
                 >
                   <Sparkles size={16} strokeWidth={2} />
-                  开始执行
+                  {t('athena.startTask')}
                 </button>
               </div>
             </div>
@@ -674,6 +677,7 @@ export default function AIChatPage() {
 
 /** 技能管理面板 */
 function AbilityPanel() {
+  const t = useT()
   const abilities = useAthenaStore(s => s.abilities)
   const addAbility = useAthenaStore(s => s.addAbility)
   const removeAbility = useAthenaStore(s => s.removeAbility)
@@ -685,13 +689,13 @@ function AbilityPanel() {
       <div className={styles.addForm}>
         <input
           className={styles.panelInput}
-          placeholder="技能名称（如：论文写作）"
+          placeholder={t('athena.abilityNamePlaceholder')}
           value={name}
           onChange={e => setName(e.target.value)}
         />
         <input
           className={styles.panelInput}
-          placeholder="技能描述"
+          placeholder={t('athena.abilityDescPlaceholder')}
           value={desc}
           onChange={e => setDesc(e.target.value)}
         />
@@ -706,19 +710,19 @@ function AbilityPanel() {
           }}
         >
           <Plus size={16} strokeWidth={2} />
-          添加
+          {t('athena.add')}
         </button>
       </div>
       <div className={styles.itemList}>
         {abilities.length === 0 ? (
-          <p className={styles.emptyHint}>暂无技能，Athena 会在对话中自动发现新技能</p>
+          <p className={styles.emptyHint}>{t('athena.noAbilitiesHint')}</p>
         ) : (
           abilities.map(a => (
             <div key={a.id} className={styles.abilityItem}>
               <div className={styles.abilityInfo}>
                 <span className={styles.abilityName}>{a.name}</span>
                 <span className={styles.abilityDesc}>{a.description}</span>
-                {a.autoGenerated && <span className={styles.autoTag}>自动发现</span>}
+                {a.autoGenerated && <span className={styles.autoTag}>{t('athena.autoTag')}</span>}
               </div>
               <button className={styles.itemRemoveBtn} onClick={() => removeAbility(a.id)}>
                 <Trash2 size={14} strokeWidth={1.8} />
@@ -733,6 +737,7 @@ function AbilityPanel() {
 
 /** 记忆管理面板 */
 function MemoryPanel() {
+  const t = useT()
   const memories = useAthenaStore(s => s.memories)
   const addMemory = useAthenaStore(s => s.addMemory)
   const removeMemory = useAthenaStore(s => s.removeMemory)
@@ -767,9 +772,9 @@ function MemoryPanel() {
       try {
         const data = JSON.parse(reader.result as string)
         importAthena(data)
-        alert('Athena 配置导入成功！')
+        alert(t('athena.importSuccess'))
       } catch {
-        alert('导入失败：文件格式不正确')
+        alert(t('dashboard.importFailedFormat'))
       }
     }
     reader.readAsText(file)
@@ -782,11 +787,11 @@ function MemoryPanel() {
       <div className={styles.dataActions}>
         <button className={styles.dataBtn} onClick={handleExport}>
           <Download size={14} strokeWidth={2} />
-          导出 Athena
+          {t('athena.export')}
         </button>
         <button className={styles.dataBtn} onClick={() => fileInputRef.current?.click()}>
           <Upload size={14} strokeWidth={2} />
-          导入 Athena
+          {t('athena.import')}
         </button>
         <input ref={fileInputRef} type="file" accept=".json" style={{ display: 'none' }} onChange={handleImport} />
       </div>
@@ -795,14 +800,14 @@ function MemoryPanel() {
       <div className={styles.memorySection}>
         <div className={styles.memorySectionHeader}>
           <Shield size={14} strokeWidth={2} />
-          <h4>宪章记忆</h4>
+          <h4>{t('athena.charterMemory')}</h4>
           <span className={styles.memoryCount}>{charterMemories.length}</span>
         </div>
-        <p className={styles.memoryHint}>用户管理，Athena 必须遵守，不能自行修改</p>
+        <p className={styles.memoryHint}>{t('athena.charterMemoryHint')}</p>
         <div className={styles.addForm}>
           <textarea
             className={styles.panelTextarea}
-            placeholder="添加新的宪章记忆..."
+            placeholder={t('athena.addCharterMemory')}
             value={newCharter}
             onChange={e => setNewCharter(e.target.value)}
             rows={2}
@@ -817,7 +822,7 @@ function MemoryPanel() {
             }}
           >
             <Plus size={16} strokeWidth={2} />
-            添加
+            {t('athena.add')}
           </button>
         </div>
         <div className={styles.itemList}>
@@ -832,17 +837,17 @@ function MemoryPanel() {
                     rows={3}
                   />
                   <div className={styles.editActions}>
-                    <button onClick={() => { updateMemory(m.id, editText); setEditingId(null) }}>保存</button>
-                    <button onClick={() => setEditingId(null)}>取消</button>
+                    <button onClick={() => { updateMemory(m.id, editText); setEditingId(null) }}>{t('common.save')}</button>
+                    <button onClick={() => setEditingId(null)}>{t('common.cancel')}</button>
                   </div>
                 </div>
               ) : (
                 <>
-                  <span className={styles.memoryCategory}>{m.category || '自定义'}</span>
+                  <span className={styles.memoryCategory}>{m.category || t('athena.memCategoryCustom')}</span>
                   <p className={styles.memoryContent}>{m.content}</p>
                   <div className={styles.memoryActions}>
                     <button onClick={() => { setEditingId(m.id); setEditText(m.content) }}>
-                      编辑
+                      {t('athena.edit')}
                     </button>
                     <button onClick={() => removeMemory(m.id)}>
                       <Trash2 size={12} strokeWidth={1.8} />
@@ -859,18 +864,18 @@ function MemoryPanel() {
       <div className={styles.memorySection}>
         <div className={styles.memorySectionHeader}>
           <Waves size={14} strokeWidth={2} />
-          <h4>流动记忆</h4>
+          <h4>{t('athena.flowMemory')}</h4>
           <span className={styles.memoryCount}>{flowMemories.length}</span>
           {flowMemories.length > 0 && (
             <button className={styles.clearFlowBtn} onClick={clearFlowMemories}>
-              清空
+              {t('wrongbook.clear')}
             </button>
           )}
         </div>
-        <p className={styles.memoryHint}>Athena 自动管理，记录用户偏好和学习习惯</p>
+        <p className={styles.memoryHint}>{t('athena.flowMemoryHint')}</p>
         <div className={styles.itemList}>
           {flowMemories.length === 0 ? (
-            <p className={styles.emptyHint}>暂无流动记忆，Athena 会在对话中自动积累</p>
+            <p className={styles.emptyHint}>{t('athena.noFlowMemoriesHint')}</p>
           ) : (
             flowMemories.map(m => (
               <div key={m.id} className={styles.memoryItem}>

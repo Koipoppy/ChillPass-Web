@@ -42,12 +42,6 @@ const statusColor: Record<CourseStatus, string> = {
   ready: 'var(--success-text)',
 }
 
-const priorityLabel: Record<Priority, string> = {
-  must: '必考',
-  high: '高频',
-  know: '了解',
-}
-
 const priorityColor: Record<Priority, string> = {
   must: 'var(--danger-text)',
   high: 'var(--warning-text)',
@@ -220,7 +214,7 @@ export default function Dashboard() {
                 cursor: 'pointer',
                 transition: 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
               }}
-              title="从 JSON 文件导入已导出的课程"
+              title={t('dashboard.importCourseTip')}
             >
               <Download size={18} strokeWidth={2} />
               <span>{t('dashboard.importCourse')}</span>

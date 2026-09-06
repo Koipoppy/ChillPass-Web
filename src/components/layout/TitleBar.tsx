@@ -219,11 +219,11 @@ export default function TitleBar() {
                   </div>
                   <div className={styles.helpContactRow}>
                     <span className={styles.helpContactLabel}>{t('titlebar.helpVersionLabel')}</span>
-                    <span className={styles.helpContactValue}>v0.0.8</span>
+                    <span className={styles.helpContactValue}>v0.0.9</span>
                   </div>
                 </div>
                 <div className={styles.helpQr}>
-                  <img src="qrcode.jpg" alt="ChillPass 用户交流群二维码" />
+                  <img src="qrcode.jpg" alt={t('titlebar.helpQrAlt')} />
                   <span>{t('titlebar.helpQrText')}</span>
                 </div>
               </section>

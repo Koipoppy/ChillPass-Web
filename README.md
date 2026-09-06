@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://img.shields.io/badge/version-0.0.8-blue?style=flat-square" alt="版本" />
+  <img src="https://img.shields.io/badge/version-0.0.9-blue?style=flat-square" alt="版本" />
   <img src="https://img.shields.io/badge/Node.js-SEA-339933?style=flat-square&logo=node.js" alt="Node.js SEA" />
   <img src="https://img.shields.io/badge/React-18-61DAFB?style=flat-square&logo=react" alt="React" />
   <img src="https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript" alt="TypeScript" />
@@ -29,7 +29,7 @@
 
 <p align="center">
   <a href="https://github.com/Koipoppy/ChillPass-Web/releases/latest">
-    <img src="https://img.shields.io/badge/%E4%B8%8B%E8%BD%BD-ChillPass%20Setup%200.0.8.exe-blue?style=for-the-badge" alt="下载" />
+    <img src="https://img.shields.io/badge/%E4%B8%8B%E8%BD%BD-ChillPass%20Setup%200.0.9.exe-blue?style=for-the-badge" alt="下载" />
   </a>
 </p>
 
@@ -180,7 +180,7 @@ Athena 不只是聊天机器人，而是拥有**能力**、**记忆**和**任务
 
 ### 下载安装（推荐）
 
-前往 [Releases](https://github.com/Koipoppy/ChillPass-Web/releases) → 下载 `ChillPass-Setup-0.0.8.exe` → 安装。
+前往 [Releases](https://github.com/Koipoppy/ChillPass-Web/releases) → 下载 `ChillPass-Setup-0.0.9.exe` → 安装。
 
 > Windows 10/11（64 位）。按用户安装（无需管理员权限）。安装后自动在桌面创建快捷方式。更新时数据自动保留。
 
@@ -321,6 +321,14 @@ tray.ps1                     系统托盘图标（WinForms NotifyIcon）
 ---
 
 ## 更新日志
+
+<details>
+<summary><strong>v0.0.9</strong> — 2026-09-06</summary>
+
+- **界面语言全局化**：全部页面、组件与服务层提示文案接入中/英/俄/日/韩五语言（累计 629 个翻译键），AI 报错、文件解析、更新弹窗等服务层文案同步本地化
+- **新版本提醒与一键下载**：任务卡启动时自动检查更新，发现新版本常驻提示横幅并支持一键下载（自动更新不可用时自动回退浏览器下载）
+- **模型选项本地化**：API 配置页模型下拉描述随界面语言切换
+</details>
 
 <details>
 <summary><strong>v0.0.8</strong> — 2026-09-05</summary>

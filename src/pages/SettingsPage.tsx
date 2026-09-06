@@ -78,7 +78,9 @@ export default function SettingsPage() {
   const handleUpdateNow = async () => {
     if (!updateInfo) return
     const confirmed = window.confirm(
-      `发现新版本 v${updateInfo.version}（当前 v${updateInfo.currentVersion}），是否立即下载并更新？\n\n更新过程中应用将自动关闭，完成后自动重新启动。`,
+      t('settings.updateConfirm')
+        .replace('{version}', updateInfo.version)
+        .replace('{current}', updateInfo.currentVersion),
     )
     if (!confirmed) return
     try {

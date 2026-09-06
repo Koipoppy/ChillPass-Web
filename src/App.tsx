@@ -21,6 +21,7 @@ import StorageSettings from './pages/settings/StorageSettings'
 import DataSettings from './pages/settings/DataSettings'
 import AboutSettings from './pages/settings/AboutSettings'
 import styles from './App.module.css'
+import { useT } from './i18n'
 
 /**
  * 页面切换动画变体
@@ -67,12 +68,13 @@ function AnimatedPage({ children }: { children: React.ReactNode }) {
 export default function App() {
   const location = useLocation()
   const ensureAccount = useAuthStore(s => s.ensureAccount)
+  const t = useT()
 
   useEffect(() => {
-    document.title = 'ChillPass — 期末冲刺助手'
+    document.title = t('app.docTitle')
     // 首次使用自动创建本地账号
     ensureAccount()
-  }, [])
+  }, [t])
 
   return (
     <>

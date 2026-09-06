@@ -1,4 +1,7 @@
 import { useState, useMemo } from 'react'
+import { useT, translate } from '../i18n'
+import type { TranslationKey } from '../i18n'
+import { useLanguageStore } from '@stores/languageStore'
 import {
   Briefcase,
   Plus,
@@ -20,19 +23,19 @@ type QuestionType = 'choice' | 'multi' | 'fill' | 'short' | 'calculation' | 'ess
 type Difficulty = 'easy' | 'medium' | 'hard'
 type PaperLanguage = 'zh' | 'en' | 'ja' | 'ko' | 'ru'
 
-const QUESTION_TYPE_LABELS: Record<QuestionType, string> = {
-  choice: '单选题',
-  multi: '多选题',
-  fill: '填空题',
-  short: '简答题',
-  calculation: '计算题',
-  essay: '论述题',
+const QUESTION_TYPE_LABELS: Record<QuestionType, TranslationKey> = {
+  choice: 'lesson.qTypeChoice',
+  multi: 'lesson.qTypeMulti',
+  fill: 'lesson.qTypeFill',
+  short: 'lesson.qTypeShort',
+  calculation: 'teacher.qTypeCalculation',
+  essay: 'teacher.qTypeEssay',
 }
 
-const DIFFICULTY_LABELS: Record<Difficulty, string> = {
-  easy: '简单',
-  medium: '中等',
-  hard: '困难',
+const DIFFICULTY_LABELS: Record<Difficulty, TranslationKey> = {
+  easy: 'teacher.diffEasy',
+  medium: 'teacher.diffMedium',
+  hard: 'teacher.diffHard',
 }
 
 const QUESTION_TYPE_ORDER: QuestionType[] = ['choice', 'multi', 'fill', 'short', 'calculation', 'essay']
@@ -361,7 +364,7 @@ function exportToPDF(paper: {
   const doc = iframe.contentWindow?.document
   if (!doc) {
     document.body.removeChild(iframe)
-    alert('无法创建打印窗口')
+    alert(translate(useLanguageStore.getState().language, 'teacher.errPrintWindow'))
     return
   }
 
@@ -406,6 +409,7 @@ function exportToPDF(paper: {
 }
 
 export default function TeacherWorkspace() {
+  const t = useT()
   const courses = useCourseStore(s => s.courses)
   const switchCourse = useCourseStore(s => s.switchCourse)
 
@@ -439,11 +443,11 @@ export default function TeacherWorkspace() {
 
   const handleGenerate = async () => {
     if (!currentBundle) {
-      setError('请先选择一个课程')
+      setError(t('teacher.errSelectCourse'))
       return
     }
     if (!courseText.trim()) {
-      setError('该课程没有课件文本，请先导入并分析课件')
+      setError(t('teacher.errNoCourseware'))
       return
     }
 
@@ -459,12 +463,12 @@ export default function TeacherWorkspace() {
         questions, // 传入已有题目，让 AI 避免重复
       )
       if (newQuestions.length === 0) {
-        setError('生成失败，请重试（可能是网络问题或课件内容不足）')
+        setError(t('teacher.errGenerate'))
       } else {
         setQuestions(prev => [...prev, ...newQuestions])
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : '生成失败，请重试')
+      setError(err instanceof Error ? err.message : t('teacher.errGenerateShort'))
     } finally {
       setGenerating(false)
     }
@@ -476,7 +480,7 @@ export default function TeacherWorkspace() {
 
   const handleClearAll = () => {
     if (questions.length === 0) return
-    if (window.confirm('确定要清空所有已生成的题目吗？')) {
+    if (window.confirm(t('teacher.clearConfirm'))) {
       setQuestions([])
     }
   }
@@ -507,7 +511,7 @@ export default function TeacherWorkspace() {
 
   const handleExportPDF = async () => {
     if (questions.length === 0) {
-      setError('请先生成题目再导出')
+      setError(t('teacher.errExportEmpty'))
       return
     }
 
@@ -520,14 +524,14 @@ export default function TeacherWorkspace() {
       try {
         questionsToExport = await translateExamQuestions(questions, paperLanguage)
       } catch {
-        setError('翻译失败，将使用中文内容导出')
+        setError(t('teacher.errTranslate'))
         questionsToExport = questions
       } finally {
         setTranslating(false)
       }
     }
 
-    const title = paperTitle.trim() || `${courseName}期末考试试卷`
+    const title = paperTitle.trim() || t('teacher.defaultPaperTitle').replace('{course}', courseName || t('teacher.courseFallback'))
     exportToPDF({
       title,
       courseName,
@@ -561,8 +565,8 @@ export default function TeacherWorkspace() {
             <Briefcase size={24} strokeWidth={1.8} />
           </div>
           <div>
-            <h1 className={styles.title}>教师工作台</h1>
-            <p className={styles.subtitle}>从课件生成试题，组装试卷并导出 PDF</p>
+            <h1 className={styles.title}>{t('teacher.title')}</h1>
+            <p className={styles.subtitle}>{t('teacher.subtitle')}</p>
           </div>
         </div>
       </header>
@@ -570,13 +574,13 @@ export default function TeacherWorkspace() {
       {/* 课程选择 */}
       <section className={`liquid-glass ${styles.card}`}>
         <div className={styles.cardHeader}>
-          <h2 className={styles.cardTitle}>选择课程</h2>
-          <p className={styles.cardDesc}>选择已导入课件内容的课程作为出题来源</p>
+          <h2 className={styles.cardTitle}>{t('teacher.selectCourse')}</h2>
+          <p className={styles.cardDesc}>{t('teacher.selectCourseDesc')}</p>
         </div>
         {courses.length === 0 ? (
           <div className={styles.emptyHint}>
             <AlertCircle size={20} strokeWidth={2} />
-            <span>暂无课程，请先导入课件</span>
+            <span>{t('teacher.noCourses')}</span>
           </div>
         ) : (
           <div className={styles.courseList}>
@@ -593,7 +597,7 @@ export default function TeacherWorkspace() {
               >
                 {b.course.name}
                 <span className={styles.courseChipMeta}>
-                  {b.rawText ? `${b.rawText.length} 字` : '无文本'}
+                  {b.rawText ? t('teacher.charsCount').replace('{n}', String(b.rawText.length)) : t('teacher.noText')}
                 </span>
               </button>
             ))}
@@ -604,12 +608,12 @@ export default function TeacherWorkspace() {
       {/* 题目生成 */}
       <section className={`liquid-glass ${styles.card}`}>
         <div className={styles.cardHeader}>
-          <h2 className={styles.cardTitle}>生成题目</h2>
-          <p className={styles.cardDesc}>选择题型、难度和数量，AI 根据课件内容生成试题</p>
+          <h2 className={styles.cardTitle}>{t('teacher.generate')}</h2>
+          <p className={styles.cardDesc}>{t('teacher.generateDesc')}</p>
         </div>
 
         <div className={styles.fieldGroup}>
-          <label className={styles.fieldLabel}>题型</label>
+          <label className={styles.fieldLabel}>{t('teacher.fieldQType')}</label>
           <div className={styles.optionRow}>
             {QUESTION_TYPE_ORDER.map(type => (
               <button
@@ -619,14 +623,14 @@ export default function TeacherWorkspace() {
                 }`}
                 onClick={() => setQuestionType(type)}
               >
-                {QUESTION_TYPE_LABELS[type]}
+                {t(QUESTION_TYPE_LABELS[type])}
               </button>
             ))}
           </div>
         </div>
 
         <div className={styles.fieldGroup}>
-          <label className={styles.fieldLabel}>难度</label>
+          <label className={styles.fieldLabel}>{t('teacher.fieldDifficulty')}</label>
           <div className={styles.optionRow}>
             {(['easy', 'medium', 'hard'] as Difficulty[]).map(d => (
               <button
@@ -636,14 +640,14 @@ export default function TeacherWorkspace() {
                 }`}
                 onClick={() => setDifficulty(d)}
               >
-                {DIFFICULTY_LABELS[d]}
+                {t(DIFFICULTY_LABELS[d])}
               </button>
             ))}
           </div>
         </div>
 
         <div className={styles.fieldGroup}>
-          <label className={styles.fieldLabel}>数量</label>
+          <label className={styles.fieldLabel}>{t('teacher.fieldCount')}</label>
           <div className={styles.countRow}>
             <button
               type="button"
@@ -672,7 +676,7 @@ export default function TeacherWorkspace() {
             >
               +
             </button>
-            <span className={styles.countHint}>题（1-50）</span>
+            <span className={styles.countHint}>{t('teacher.countHint')}</span>
           </div>
         </div>
 
@@ -691,12 +695,12 @@ export default function TeacherWorkspace() {
           {generating ? (
             <>
               <Loader2 size={18} strokeWidth={2} className={styles.spinIcon} />
-              正在生成...
+              {t('teacher.generating')}
             </>
           ) : (
             <>
               <Plus size={18} strokeWidth={2} />
-              生成题目
+              {t('teacher.generateBtn')}
             </>
           )}
         </button>
@@ -707,14 +711,14 @@ export default function TeacherWorkspace() {
         <section className={`liquid-glass ${styles.card}`}>
           <div className={styles.listHeader}>
             <div>
-              <h2 className={styles.cardTitle}>题目列表</h2>
+              <h2 className={styles.cardTitle}>{t('teacher.listTitle')}</h2>
               <p className={styles.cardDesc}>
-                共 {questions.length} 题，合计 {totalPoints} 分
+                {t('teacher.listSummary').replace('{count}', String(questions.length)).replace('{points}', String(totalPoints))}
               </p>
             </div>
             <button className={styles.clearBtn} onClick={handleClearAll}>
               <Trash2 size={15} strokeWidth={2} />
-              清空
+              {t('wrongbook.clear')}
             </button>
           </div>
 
@@ -740,7 +744,7 @@ export default function TeacherWorkspace() {
                       </span>
                     </div>
                     <span className={styles.groupMeta}>
-                      {group.questions.length} 题 · {groupPoints} 分
+                      {t('teacher.groupSummary').replace('{count}', String(group.questions.length)).replace('{points}', String(groupPoints))}
                     </span>
                   </div>
 
@@ -767,7 +771,7 @@ export default function TeacherWorkspace() {
                                 <span className={styles.questionDifficulty}>
                                   {DIFFICULTY_LABELS[q.difficulty]}
                                 </span>
-                                <span className={styles.questionPoints}>{q.points}分</span>
+                                <span className={styles.questionPoints}>{q.points} {t('teacher.pointsUnit')}</span>
                               </div>
                               <button
                                 className={styles.deleteBtn}
@@ -793,7 +797,7 @@ export default function TeacherWorkspace() {
                                 {(q.type === 'choice' || q.type === 'multi') &&
                                   q.options && q.options.length > 0 && (
                                   <div className={styles.detailSection}>
-                                    <span className={styles.detailLabel}>选项：</span>
+                                    <span className={styles.detailLabel}>{t('teacher.labelOptions')}</span>
                                     <div className={styles.optionsList}>
                                       {q.options.map((opt, i) => {
                                         const isCorrect =
@@ -815,7 +819,7 @@ export default function TeacherWorkspace() {
                                               }}
                                             />
                                             {isCorrect && (
-                                              <span className={styles.correctTag}>正确</span>
+                                              <span className={styles.correctTag}>{t('teacher.labelCorrect')}</span>
                                             )}
                                           </div>
                                         )
@@ -826,7 +830,7 @@ export default function TeacherWorkspace() {
 
                                 {q.answer && (
                                   <div className={styles.detailSection}>
-                                    <span className={styles.detailLabel}>答案：</span>
+                                    <span className={styles.detailLabel}>{t('teacher.labelAnswer')}</span>
                                     <span
                                       className={styles.detailValue}
                                       dangerouslySetInnerHTML={{
@@ -838,7 +842,7 @@ export default function TeacherWorkspace() {
 
                                 {q.steps && q.steps.length > 0 && (
                                   <div className={styles.detailSection}>
-                                    <span className={styles.detailLabel}>解题步骤：</span>
+                                    <span className={styles.detailLabel}>{t('teacher.labelSteps')}</span>
                                     <div className={styles.stepsList}>
                                       {q.steps.map((step, i) => (
                                         <div key={i} className={styles.stepItem}>
@@ -856,7 +860,7 @@ export default function TeacherWorkspace() {
 
                                 {q.acceptableAnswers && q.acceptableAnswers.length > 0 && (
                                   <div className={styles.detailSection}>
-                                    <span className={styles.detailLabel}>可接受答案：</span>
+                                    <span className={styles.detailLabel}>{t('teacher.labelAcceptable')}</span>
                                     <span
                                       className={styles.detailValue}
                                       dangerouslySetInnerHTML={{
@@ -868,7 +872,7 @@ export default function TeacherWorkspace() {
 
                                 {q.explanation && (
                                   <div className={styles.detailSection}>
-                                    <span className={styles.detailLabel}>解析：</span>
+                                    <span className={styles.detailLabel}>{t('teacher.labelExplanation')}</span>
                                     <span
                                       className={styles.detailValue}
                                       dangerouslySetInnerHTML={{
@@ -894,19 +898,19 @@ export default function TeacherWorkspace() {
       {/* 试卷组装与导出 */}
       <section className={`liquid-glass ${styles.card}`}>
         <div className={styles.cardHeader}>
-          <h2 className={styles.cardTitle}>组装试卷并导出</h2>
+          <h2 className={styles.cardTitle}>{t('teacher.assemble')}</h2>
           <p className={styles.cardDesc}>
-            设置试卷标题、考试时长和出题语言，导出为 PDF 打印
-            {paperLanguage !== 'zh' && '（非中文将自动翻译全部内容后导出）'}
+            {t('teacher.assembleDesc')}
+            {paperLanguage !== 'zh' && t('teacher.assembleTranslateHint')}
           </p>
         </div>
 
         <div className={styles.fieldGroup}>
-          <label className={styles.fieldLabel}>试卷标题</label>
+          <label className={styles.fieldLabel}>{t('teacher.fieldPaperTitle')}</label>
           <input
             type="text"
             className={styles.textInput}
-            placeholder={`${courseName || '课程'}期末考试试卷`}
+            placeholder={t('teacher.defaultPaperTitle').replace('{course}', courseName || t('teacher.courseFallback'))}
             value={paperTitle}
             onChange={e => setPaperTitle(e.target.value)}
           />
@@ -914,7 +918,7 @@ export default function TeacherWorkspace() {
 
         <div className={styles.fieldRow}>
           <div className={styles.fieldGroup}>
-            <label className={styles.fieldLabel}>考试时长（分钟）</label>
+            <label className={styles.fieldLabel}>{t('teacher.fieldDuration')}</label>
             <input
               type="number"
               className={styles.textInput}
@@ -927,7 +931,7 @@ export default function TeacherWorkspace() {
           <div className={styles.fieldGroup}>
             <label className={styles.fieldLabel}>
               <Globe size={13} strokeWidth={2} style={{ display: 'inline', marginRight: 4 }} />
-              出题语言
+              {t('teacher.fieldLanguage')}
             </label>
             <select
               className={styles.textInput}
@@ -945,15 +949,15 @@ export default function TeacherWorkspace() {
 
         <div className={styles.exportSummary}>
           <div className={styles.summaryItem}>
-            <span>{questions.length} 道题目</span>
+            <span>{t('teacher.summaryQuestions').replace('{count}', String(questions.length))}</span>
           </div>
           <div className={styles.summaryItem}>
             <span className={styles.summaryDot} />
-            <span>{totalPoints} 分</span>
+            <span>{totalPoints} {t('teacher.pointsUnit')}</span>
           </div>
           <div className={styles.summaryItem}>
             <span className={styles.summaryDot} />
-            <span>{paperDuration} 分钟</span>
+            <span>{t('teacher.summaryDuration').replace('{count}', String(paperDuration))}</span>
           </div>
           <div className={styles.summaryItem}>
             <Globe size={14} strokeWidth={2} />
@@ -969,12 +973,12 @@ export default function TeacherWorkspace() {
           {translating ? (
             <>
               <Loader2 size={18} strokeWidth={2} className={styles.spinIcon} />
-              正在翻译并导出...
+              {t('teacher.translatingExport')}
             </>
           ) : (
             <>
               <Download size={18} strokeWidth={2} />
-              导出为 PDF
+              {t('teacher.exportPdf')}
             </>
           )}
         </button>

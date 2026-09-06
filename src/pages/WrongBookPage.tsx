@@ -118,8 +118,8 @@ export default function WrongBookPage() {
     return (
       <div className={styles.page}>
         <header className={styles.header}>
-          <h1 className={styles.title}>错题本</h1>
-          <p className={styles.subtitle}>按课程归类，逐个击破</p>
+          <h1 className={styles.title}>{t('wrongbook.title')}</h1>
+          <p className={styles.subtitle}>{t('wrongbook.subtitle')}</p>
         </header>
         <div className={`liquid-glass ${styles.empty}`}>
           <div className={styles.emptyIcon}>

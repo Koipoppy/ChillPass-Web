@@ -86,26 +86,26 @@ export default function ApiSettings() {
           type="button"
           className={styles.backBtn}
           onClick={() => navigate('/settings')}
-          aria-label="返回设置"
+          aria-label={t('common.back')}
         >
           <ArrowLeft size={18} strokeWidth={2} />
         </button>
         <div className={styles.headerText}>
-          <h1 className={styles.title}>API 配置</h1>
-          <p className={styles.subtitle}>接入 DeepSeek 大模型，用于提炼考点与生成课程</p>
+          <h1 className={styles.title}>{t('settings.api')}</h1>
+          <p className={styles.subtitle}>{t('api.subtitle')}</p>
         </div>
       </header>
 
       <section className={`liquid-glass ${styles.card}`}>
         <div className={styles.cardHeader}>
-          <h2 className={styles.cardTitle}>模型接入</h2>
+          <h2 className={styles.cardTitle}>{t('api.cardTitle')}</h2>
           <p className={styles.cardDesc}>
-            配置 DeepSeek API Key 与模型，所有数据仅保存在本地，不会上传至任何第三方服务
+            {t('api.cardDesc')}
           </p>
         </div>
 
         <div className={styles.field}>
-          <label className={styles.label}>接口提供商</label>
+          <label className={styles.label}>{t('api.provider')}</label>
           <div className={styles.providerGroup}>
             <button
               type="button"
@@ -119,25 +119,25 @@ export default function ApiSettings() {
               className={`${styles.providerOption} ${isZhipu ? styles.providerOptionActive : ''}`}
               onClick={() => handleProviderChange('zhipu')}
             >
-              智谱 GLM
+              {t('api.providerZhipu')}
             </button>
           </div>
           <p className={styles.hint}>
             {isZhipu
-              ? '使用智谱 AI 开放平台，国内访问友好，glm-5.3-flash 适合快速生成'
-              : '使用 DeepSeek 大模型，适合考点推理与内容生成'}
+              ? t('api.hintZhipu')
+              : t('api.hintDeepseek')}
           </p>
         </div>
 
         <div className={styles.field}>
-          <label className={styles.label}>API Key</label>
+          <label className={styles.label}>{t('api.keyLabel')}</label>
           <div className={styles.inputWrap}>
             <input
               className={styles.input}
               type={showKey ? 'text' : 'password'}
               value={apiKey}
               onChange={e => setApiKeyInput(e.target.value)}
-              placeholder={isZhipu ? '请输入智谱 API Key' : '请输入 DeepSeek API Key'}
+              placeholder={isZhipu ? t('api.keyPhZhipu') : t('api.keyPhDeepseek')}
               spellCheck={false}
               autoComplete="off"
             />
@@ -145,13 +145,13 @@ export default function ApiSettings() {
               type="button"
               className={styles.toggleBtn}
               onClick={() => setShowKey(s => !s)}
-              aria-label={showKey ? '隐藏 API Key' : '显示 API Key'}
+              aria-label={showKey ? t('api.hideKey') : t('api.showKey')}
             >
               {showKey ? <EyeOff size={18} strokeWidth={2} /> : <Eye size={18} strokeWidth={2} />}
             </button>
           </div>
           <p className={styles.hint}>
-            {isZhipu ? '可在智谱开放平台获取，数据仅保存在本地' : '可在 DeepSeek 开放平台获取，数据仅保存在本地'}
+            {isZhipu ? t('api.keyHintZhipu') : t('api.keyHintDeepseek')}
           </p>
           <a
             href={isZhipu ? 'https://open.bigmodel.cn' : 'https://platform.deepseek.com/api_keys'}
@@ -161,12 +161,12 @@ export default function ApiSettings() {
             style={{ marginTop: '8px', display: 'inline-flex' }}
           >
             <ExternalLink size={14} strokeWidth={2} />
-            <span>{isZhipu ? '前往智谱开放平台获取 API Key' : '前往 DeepSeek 开放平台获取 API Key'}</span>
+            <span>{isZhipu ? t('api.linkZhipu') : t('api.linkDeepseek')}</span>
           </a>
         </div>
 
         <div className={styles.field}>
-          <label className={styles.label}>模型</label>
+          <label className={styles.label}>{t('api.modelLabel')}</label>
           <div className={styles.selectWrap}>
             <select
               className={styles.select}
@@ -174,26 +174,26 @@ export default function ApiSettings() {
               onChange={e => setModelInput(e.target.value)}
             >
               {PROVIDER_MODELS[provider].map(m => (
-                <option key={m.id} value={m.id}>{m.label}</option>
+                <option key={m.id} value={m.id}>{t(m.labelKey)}</option>
               ))}
             </select>
           </div>
           <p className={styles.hint}>
             {isZhipu
-              ? 'glm-5.3-flash 适合快速生成，glm-5.3 适合复杂考点推理'
-              : 'deepseek-chat 适合快速生成，deepseek-reasoner 适合复杂考点推理'}
+              ? t('api.modelHintZhipu')
+              : t('api.modelHintDeepseek')}
           </p>
         </div>
 
         <div className={styles.actions}>
           <button className={styles.primaryBtn} onClick={handleSave}>
             <Save size={16} strokeWidth={2} />
-            保存设置
+            {t('api.save')}
           </button>
           {saved && (
             <span className={styles.savedTip}>
               <Check size={14} strokeWidth={2.5} />
-              已保存
+              {t('common.saved')}
             </span>
           )}
         </div>

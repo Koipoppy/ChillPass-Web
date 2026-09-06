@@ -3,6 +3,15 @@
  * 在渲染进程中使用 tesseract.js，所有资源（worker、core、lang）从 CDN 加载
  * 彻底避免 Electron 打包后本地 worker 路径找不到的问题
  */
+import { translate, type TranslationKey } from '../i18n'
+import { useLanguageStore } from '@stores/languageStore'
+
+/** 图片识别抛错的本地化文本 */
+function imgError(key: TranslationKey, map?: Record<string, string>): Error {
+  let msg = translate(useLanguageStore.getState().language, key)
+  for (const [k, v] of Object.entries(map ?? {})) msg = msg.replace(`{${k}}`, v)
+  return new Error(msg)
+}
 
 // tesseract.js CDN 资源路径
 const TESSERACT_CDN = {
@@ -50,7 +59,7 @@ export async function recognizeImageText(
   // 60 秒超时
   const timeoutPromise = new Promise<never>((_, reject) => {
     setTimeout(() => {
-      reject(new Error('图片识别超时（60秒），请检查网络连接后重试'))
+      reject(imgError('img.ocrTimeout'))
     }, 60000)
   })
 
@@ -69,7 +78,7 @@ export async function recognizeImageText(
   } catch (err) {
     // 如果 worker 出错，重置以便下次重新创建
     workerPromise = null
-    throw new Error(`图片识别失败: ${err instanceof Error ? err.message : '未知错误'}`)
+    throw imgError('img.ocrFailed', { msg: err instanceof Error ? err.message : translate(useLanguageStore.getState().language, 'common.unknownError') })
   }
 }
 
@@ -97,5 +106,5 @@ export async function readImageFromPath(filePath: string): Promise<ArrayBuffer> 
   if (window.electronAPI?.readFileBuffer) {
     return window.electronAPI.readFileBuffer(filePath)
   }
-  throw new Error('无法读取文件，文件 API 不可用')
+  throw imgError('img.apiUnavailable')
 }

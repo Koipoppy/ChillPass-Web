@@ -1,6 +1,8 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { nanoid } from 'nanoid'
+import { translate } from '../i18n'
+import { useLanguageStore } from '@stores/languageStore'
 import type { Course, CourseFile, ExamPoint, Lesson, LessonContent, Progress, Priority, CourseBundle } from '@types/index'
 
 const emptyProgress: Progress = {
@@ -350,7 +352,7 @@ export const useCourseStore = create<CourseState>()(
         const cost = typeof lesson.coins === 'number' ? lesson.coins : 30
         const currentCoins = typeof bundle.progress.chillCoins === 'number' ? bundle.progress.chillCoins : 0
         if (currentCoins < cost) {
-          throw new Error('Chill币不足，需要 ' + cost + ' 枚')
+          throw new Error(translate(useLanguageStore.getState().language, 'store.insufficientCoins').replace('{cost}', String(cost)))
         }
 
         set(s => updateCurrentBundle(s, b => {

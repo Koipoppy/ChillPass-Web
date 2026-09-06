@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { User, X, Info } from 'lucide-react'
 import { useAuthStore } from '@stores/authStore'
+import { useT } from '../i18n'
 import type { LocalAccount } from '@types/index'
 import styles from './AccountLogin.module.css'
 
@@ -13,6 +14,7 @@ const PRESET_AVATARS = ['🦊', '🐱', '🐼', '🐧', '🦄', '🐯', '🐻', 
 
 export default function AccountLogin({ onClose }: AccountLoginProps) {
   const login = useAuthStore(s => s.login)
+  const t = useT()
 
   const [name, setName] = useState('')
   const [avatar, setAvatar] = useState<string>('🦊')
@@ -23,7 +25,7 @@ export default function AccountLogin({ onClose }: AccountLoginProps) {
     e.preventDefault()
 
     if (!name.trim()) {
-      setError('请输入昵称')
+      setError(t('account.nameRequired'))
       return
     }
 
@@ -51,11 +53,11 @@ export default function AccountLogin({ onClose }: AccountLoginProps) {
               <User size={22} strokeWidth={1.8} />
             </div>
             <div>
-              <h2 className={styles.modalTitle}>创建本地账号</h2>
-              <p className={styles.modalSubtitle}>账号信息仅保存在本机，离线运行，无需联网</p>
+              <h2 className={styles.modalTitle}>{t('account.createTitle')}</h2>
+              <p className={styles.modalSubtitle}>{t('account.modalSubtitle')}</p>
             </div>
           </div>
-          <button className={styles.closeBtn} onClick={onClose} aria-label="关闭">
+          <button className={styles.closeBtn} onClick={onClose} aria-label={t('account.close')}>
             <X size={20} strokeWidth={2} />
           </button>
         </div>
@@ -64,24 +66,24 @@ export default function AccountLogin({ onClose }: AccountLoginProps) {
           <div className={styles.hint}>
             <Info size={14} strokeWidth={2} />
             <span>
-              当前为本地离线账号，所有信息仅保存在本机浏览器中，不会上传到任何服务器。
+              {t('account.offlineHintLogin')}
             </span>
           </div>
 
           <div className={styles.field}>
-            <label className={styles.label}>昵称 *</label>
+            <label className={styles.label}>{t('account.nameLabel')}</label>
             <input
               className={styles.input}
               type="text"
               value={name}
               onChange={e => setName(e.target.value)}
-              placeholder="请输入昵称"
+              placeholder={t('account.namePlaceholder')}
               autoFocus
             />
           </div>
 
           <div className={styles.field}>
-            <label className={styles.label}>头像</label>
+            <label className={styles.label}>{t('account.avatarLabel')}</label>
             <div className={styles.avatarPicker}>
               {PRESET_AVATARS.map(emoji => (
                 <button
@@ -89,7 +91,7 @@ export default function AccountLogin({ onClose }: AccountLoginProps) {
                   type="button"
                   className={`${styles.avatarOption} ${avatar === emoji ? styles.avatarOptionActive : ''}`}
                   onClick={() => setAvatar(emoji)}
-                  aria-label={`选择头像 ${emoji}`}
+                  aria-label={t('account.pickAvatar').replace('{emoji}', emoji)}
                 >
                   {emoji}
                 </button>
@@ -98,12 +100,12 @@ export default function AccountLogin({ onClose }: AccountLoginProps) {
           </div>
 
           <div className={styles.field}>
-            <label className={styles.label}>个性签名</label>
+            <label className={styles.label}>{t('account.bioLabel')}</label>
             <textarea
               className={styles.input}
               value={bio}
               onChange={e => setBio(e.target.value)}
-              placeholder="一句话介绍自己（可选）"
+              placeholder={t('account.bioPlaceholder')}
               rows={2}
             />
           </div>
@@ -112,10 +114,10 @@ export default function AccountLogin({ onClose }: AccountLoginProps) {
 
           <div className={styles.actions}>
             <button type="button" className={styles.cancelBtn} onClick={onClose}>
-              取消
+              {t('common.cancel')}
             </button>
             <button type="submit" className={styles.submitBtn}>
-              创建账号
+              {t('account.createBtn')}
             </button>
           </div>
         </form>

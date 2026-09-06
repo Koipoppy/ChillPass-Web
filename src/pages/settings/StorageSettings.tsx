@@ -15,6 +15,7 @@ import {
 import { useSettingsStore } from '@stores/settingsStore'
 import { useCourseStore } from '@stores/courseStore'
 import type { MigrationResult } from '@types/index'
+import { useT } from '../../i18n'
 import styles from './SettingsSub.module.css'
 
 /** 格式化文件大小 */
@@ -34,6 +35,7 @@ interface MigrationFileEntry {
 }
 
 export default function StorageSettings() {
+  const t = useT()
   const navigate = useNavigate()
 
   // ===== 存储路径 =====
@@ -198,7 +200,7 @@ export default function StorageSettings() {
         success: false,
         migratedFiles: 0,
         totalSize: 0,
-        errors: [err instanceof Error ? err.message : '迁移失败，请重试'],
+        errors: [err instanceof Error ? err.message : t('storage.migrateFailedRetry')],
         pathMap: {},
       })
     } finally {
@@ -238,14 +240,14 @@ export default function StorageSettings() {
         <button
           className={styles.backBtn}
           onClick={() => navigate('/settings')}
-          aria-label="返回设置"
+          aria-label={t('common.back')}
         >
           <ArrowLeft size={18} strokeWidth={2} />
         </button>
         <div className={styles.headerText}>
-          <h1 className={styles.title}>存储与迁移</h1>
+          <h1 className={styles.title}>{t('settings.storage')}</h1>
           <p className={styles.subtitle}>
-            配置资源存储位置，迁移课件文件以释放 C 盘空间
+            {t('storage.cardDesc')}
           </p>
         </div>
       </header>
@@ -253,9 +255,9 @@ export default function StorageSettings() {
       {/* ===== Section 1: 资源存储位置 ===== */}
       <section className={`liquid-glass ${styles.card}`}>
         <div className={styles.cardHeader}>
-          <h2 className={styles.cardTitle}>资源存储位置</h2>
+          <h2 className={styles.cardTitle}>{t('storage.resLocation')}</h2>
           <p className={styles.cardDesc}>
-            课件解析后的文本、生成的关卡内容等资源将存储在此目录。建议选择非系统盘以节省 C 盘空间。
+            {t('storage.dirHint')}
           </p>
         </div>
 
@@ -265,10 +267,10 @@ export default function StorageSettings() {
           </div>
           <div className={styles.pathContent}>
             <div className={styles.pathValue} title={displayPath}>
-              {displayPath || '正在获取默认路径...'}
+              {displayPath || t('storage.gettingPath')}
             </div>
             {isUsingDefault && defaultPath && (
-              <span className={styles.pathBadge}>默认</span>
+              <span className={styles.pathBadge}>{t('storage.defaultBadge')}</span>
             )}
           </div>
         </div>
@@ -280,14 +282,14 @@ export default function StorageSettings() {
             disabled={selecting}
           >
             <Folder size={16} strokeWidth={2} />
-            {selecting ? '选择中...' : '选择目录'}
+            {selecting ? t('storage.selecting') : t('storage.selectDir')}
           </button>
           <button
             className={styles.ghostBtn}
             onClick={handleRestoreDefault}
             disabled={isUsingDefault}
           >
-            恢复默认
+            {t('storage.resetDefault')}
           </button>
         </div>
       </section>
@@ -295,34 +297,34 @@ export default function StorageSettings() {
       {/* ===== Section 2: 资源迁移 ===== */}
       <section className={`liquid-glass ${styles.card}`}>
         <div className={styles.cardHeader}>
-          <h2 className={styles.cardTitle}>资源迁移</h2>
+          <h2 className={styles.cardTitle}>{t('storage.migration')}</h2>
           <p className={styles.cardDesc}>
-            将所有课程的课件文件统一迁移到目标目录，释放 C 盘空间。迁移完成后，应用内的文件路径将自动更新。
+            {t('storage.migrateDesc')}
           </p>
         </div>
 
         {/* 文件汇总 */}
         <div className={styles.field}>
-          <label className={styles.label}>课件文件清单</label>
+          <label className={styles.label}>{t('storage.fileList')}</label>
           <div style={summaryStyle}>
             <div style={summaryItemStyle}>
               <FileText size={16} strokeWidth={2} style={{ color: 'var(--accent-text)' }} />
-              <span>共 {allFiles.length} 个文件</span>
+              <span>{t('storage.totalFiles').replace('{count}', String(allFiles.length))}</span>
             </div>
             <div style={summaryItemStyle}>
               <HardDrive size={16} strokeWidth={2} style={{ color: 'var(--accent-text)' }} />
-              <span>总大小 {formatSize(totalSize)}</span>
+              <span>{t('storage.totalSizeLabel').replace('{size}', formatSize(totalSize))}</span>
             </div>
             {missingCount > 0 && (
               <div style={{ ...summaryItemStyle, color: 'var(--danger-text)' }}>
                 <AlertCircle size={16} strokeWidth={2} />
-                <span>{missingCount} 个文件缺失</span>
+                <span>{t('storage.filesMissing').replace('{count}', String(missingCount))}</span>
               </div>
             )}
             {checkingFiles && (
               <div style={{ ...summaryItemStyle, color: 'var(--text-tertiary)' }}>
                 <Loader size={14} strokeWidth={2} style={spinStyle} />
-                <span>正在检查文件...</span>
+                <span>{t('storage.checkingFiles')}</span>
               </div>
             )}
           </div>
@@ -357,20 +359,20 @@ export default function StorageSettings() {
           </div>
         ) : (
           <div style={emptyStyle}>
-            暂无课件文件，请先在「导入课件」页面上传课程资料
+            {t('storage.noFiles')}
           </div>
         )}
 
         {/* 目标目录 */}
         <div className={styles.field}>
-          <label className={styles.label}>目标目录</label>
+          <label className={styles.label}>{t('storage.targetDir')}</label>
           <div className={styles.pathBox}>
             <div className={styles.pathIcon}>
               <FolderInput size={20} strokeWidth={1.8} />
             </div>
             <div className={styles.pathContent}>
               <div className={styles.pathValue} title={targetDir}>
-                {targetDir || '未选择目标目录'}
+                {targetDir || t('storage.noTarget')}
               </div>
             </div>
           </div>
@@ -381,14 +383,14 @@ export default function StorageSettings() {
               disabled={selectingTarget || migrating}
             >
               <FolderInput size={16} strokeWidth={2} />
-              {selectingTarget ? '选择中...' : '选择目标目录'}
+              {selectingTarget ? t('storage.selecting') : t('storage.selectTarget')}
             </button>
           </div>
         </div>
 
         {/* 迁移模式 */}
         <div className={styles.field}>
-          <label className={styles.label}>迁移模式</label>
+          <label className={styles.label}>{t('storage.modeLabel')}</label>
           <div style={modeSelectorStyle}>
             <button
               type="button"
@@ -397,7 +399,7 @@ export default function StorageSettings() {
               disabled={migrating}
             >
               <Copy size={16} strokeWidth={2} />
-              <span>复制</span>
+              <span>{t('storage.modeCopy')}</span>
             </button>
             <button
               type="button"
@@ -406,13 +408,13 @@ export default function StorageSettings() {
               disabled={migrating}
             >
               <Move size={16} strokeWidth={2} />
-              <span>移动</span>
+              <span>{t('storage.modeMove')}</span>
             </button>
           </div>
           <p className={styles.hint}>
             {isMove
-              ? '移动模式：将文件从原位置转移到目标目录，可最大化释放原位置空间。'
-              : '复制模式：将文件复制到目标目录，保留原文件。'}
+              ? t('storage.moveMode')
+              : t('storage.copyMode')}
           </p>
         </div>
 
@@ -421,7 +423,7 @@ export default function StorageSettings() {
           <div className={styles.migrateProgress}>
             <div className={styles.migrateProgressText}>
               <Loader size={16} strokeWidth={2} style={spinStyle} />
-              <span>正在迁移文件... {Math.round(progress)}%</span>
+              <span>{t('storage.migratingProgress').replace('{percent}', String(Math.round(progress)))}</span>
             </div>
             <div className={styles.progressBar}>
               <div className={styles.progressFill} style={{ width: `${progress}%` }} />
@@ -439,18 +441,18 @@ export default function StorageSettings() {
                 <AlertCircle size={18} strokeWidth={2.5} style={{ color: 'var(--danger-text)' }} />
               )}
               <span style={{ fontSize: 15, fontWeight: 600, color: 'var(--text-primary)' }}>
-                {migrationResult.success ? '迁移完成' : '迁移失败'}
+                {migrationResult.success ? t('storage.migrateDone') : t('storage.migrateFailed')}
               </span>
             </div>
             <div style={resultDetailStyle}>
-              <div>成功迁移：{migrationResult.migratedFiles} 个文件</div>
-              <div>迁移总量：{formatSize(migrationResult.totalSize)}</div>
+              <div>{t('storage.migratedCount').replace('{count}', String(migrationResult.migratedFiles))}</div>
+              <div>{t('storage.migratedTotalSize').replace('{size}', formatSize(migrationResult.totalSize))}</div>
               {targetDir && (
-                <div style={{ marginTop: 4 }}>目标目录：{targetDir}</div>
+                <div style={{ marginTop: 4 }}>{t('storage.targetDirResult').replace('{dir}', targetDir)}</div>
               )}
               {Object.keys(migrationResult.pathMap).length > 0 && (
                 <div style={{ marginTop: 6, color: 'var(--text-tertiary)', fontSize: 12 }}>
-                  已自动更新 {Object.keys(migrationResult.pathMap).length} 个文件路径，上方文件清单已同步为新路径。
+                  {t('storage.pathUpdated').replace('{count}', String(Object.keys(migrationResult.pathMap).length))}
                 </div>
               )}
             </div>
@@ -481,12 +483,12 @@ export default function StorageSettings() {
             {migrating ? (
               <>
                 <Loader size={16} strokeWidth={2} style={spinStyle} />
-                迁移中...
+                {t('storage.migrating')}
               </>
             ) : (
               <>
                 <Move size={16} strokeWidth={2} />
-                开始迁移
+                {t('storage.startMigrate')}
               </>
             )}
           </button>

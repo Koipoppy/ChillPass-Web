@@ -3,9 +3,11 @@ import { useNavigate } from 'react-router-dom'
 import { ArrowLeft, Trash2, HardDrive, Folder, MapPin, FolderOpen } from 'lucide-react'
 import { useCourseStore } from '@stores/courseStore'
 import { clearAllFiles } from '@services/browserFileStore'
+import { useT } from '../../i18n'
 import styles from './SettingsSub.module.css'
 
 export default function DataSettings() {
+  const t = useT()
   const navigate = useNavigate()
   const courses = useCourseStore(s => s.courses)
 
@@ -66,38 +68,38 @@ export default function DataSettings() {
           type="button"
           className={styles.backBtn}
           onClick={() => navigate('/settings')}
-          aria-label="返回设置"
+          aria-label={t('common.back')}
         >
           <ArrowLeft size={18} strokeWidth={2} />
         </button>
         <div className={styles.headerText}>
-          <h1 className={styles.title}>数据管理</h1>
-          <p className={styles.subtitle}>管理本地存储的课程与学习数据</p>
+          <h1 className={styles.title}>{t('data.title')}</h1>
+          <p className={styles.subtitle}>{t('data.subtitle')}</p>
         </div>
       </header>
 
       <section className={`liquid-glass ${styles.card}`}>
         <div className={styles.cardHeader}>
-          <h2 className={styles.cardTitle}>数据统计</h2>
-          <p className={styles.cardDesc}>查看当前本地存储的课程与课件数量</p>
+          <h2 className={styles.cardTitle}>{t('data.statsTitle')}</h2>
+          <p className={styles.cardDesc}>{t('data.statsDesc')}</p>
         </div>
 
         <div className={styles.statRow}>
           <div className={styles.statItem}>
             <span className={styles.statNum}>{courseCount}</span>
-            <span className={styles.statLabel}>课程数量</span>
+            <span className={styles.statLabel}>{t('data.courseCount')}</span>
           </div>
           <div className={styles.statItem}>
             <span className={styles.statNum}>{totalFiles}</span>
-            <span className={styles.statLabel}>课件文件</span>
+            <span className={styles.statLabel}>{t('settings.statsFiles')}</span>
           </div>
         </div>
       </section>
 
       <section className={`liquid-glass ${styles.card}`}>
         <div className={styles.cardHeader}>
-          <h2 className={styles.cardTitle}>存储信息</h2>
-          <p className={styles.cardDesc}>查看应用安装位置、数据存储位置与磁盘占用情况</p>
+          <h2 className={styles.cardTitle}>{t('data.storageTitle')}</h2>
+          <p className={styles.cardDesc}>{t('data.storageDesc')}</p>
         </div>
 
         <div className={styles.pathList}>
@@ -106,19 +108,19 @@ export default function DataSettings() {
               <MapPin size={18} strokeWidth={2} />
             </div>
             <div className={styles.pathRowContent}>
-              <span className={styles.pathLabel}>安装位置</span>
+              <span className={styles.pathLabel}>{t('data.installPath')}</span>
               <span className={styles.pathRowValue}>
-                {paths?.installPath || '加载中...'}
+                {paths?.installPath || t('data.loading')}
               </span>
             </div>
             <button
               type="button"
               className={styles.locateBtn}
               onClick={() => window.electronAPI?.openInstallPath()}
-              title="在资源管理器中定位安装位置"
+              title={t('data.locateTip')}
             >
               <FolderOpen size={14} strokeWidth={2} />
-              定位
+              {t('data.locate')}
             </button>
           </div>
 
@@ -127,9 +129,9 @@ export default function DataSettings() {
               <Folder size={18} strokeWidth={2} />
             </div>
             <div className={styles.pathRowContent}>
-              <span className={styles.pathLabel}>数据存储位置</span>
+              <span className={styles.pathLabel}>{t('data.userDataPath')}</span>
               <span className={styles.pathRowValue}>
-                {paths?.userDataPath || '加载中...'}
+                {paths?.userDataPath || t('data.loading')}
               </span>
             </div>
           </div>
@@ -139,11 +141,11 @@ export default function DataSettings() {
               <HardDrive size={18} strokeWidth={2} />
             </div>
             <div className={styles.pathRowContent}>
-              <span className={styles.pathLabel}>磁盘占用</span>
+              <span className={styles.pathLabel}>{t('data.diskUsage')}</span>
               <span className={styles.pathRowValue}>
                 {formatSize(storageSize)}
                 <span className={styles.pathValueHint}>
-                  （课程数据约 {formatSize(totalCourseSize)}）
+                  （{t('data.courseDataApprox').replace('{size}', formatSize(totalCourseSize))}）
                 </span>
               </span>
             </div>
@@ -152,7 +154,7 @@ export default function DataSettings() {
 
         {courseSizes.length > 0 && (
           <div className={styles.courseSizeList}>
-            <div className={styles.courseSizeTitle}>按课程占用</div>
+            <div className={styles.courseSizeTitle}>{t('data.byCourse')}</div>
             {courseSizes
               .slice()
               .sort((a, b) => b.size - a.size)
@@ -181,9 +183,9 @@ export default function DataSettings() {
 
       <section className={`liquid-glass ${styles.card}`}>
         <div className={styles.cardHeader}>
-          <h2 className={styles.cardTitle}>危险操作</h2>
+          <h2 className={styles.cardTitle}>{t('data.dangerTitle')}</h2>
           <p className={styles.cardDesc}>
-            清除操作将删除所有已上传的课件、考点与闯关进度，且不可恢复
+            {t('data.dangerDesc')}
           </p>
         </div>
 
@@ -194,12 +196,12 @@ export default function DataSettings() {
             onClick={() => setConfirmClear(true)}
           >
             <Trash2 size={16} strokeWidth={2} />
-            清除所有课程数据
+            {t('data.clearAll')}
           </button>
         ) : (
           <div className={styles.confirmBox}>
             <div className={styles.confirmText}>
-              确定要清除所有课程数据吗？此操作不可恢复，将删除所有已上传的课件、考点与闯关进度。
+              {t('data.clearConfirm')}
             </div>
             <div className={styles.confirmActions}>
               <button
@@ -207,7 +209,7 @@ export default function DataSettings() {
                 className={styles.ghostBtn}
                 onClick={() => setConfirmClear(false)}
               >
-                取消
+                {t('common.cancel')}
               </button>
               <button
                 type="button"
@@ -215,7 +217,7 @@ export default function DataSettings() {
                 onClick={handleClearData}
               >
                 <Trash2 size={16} strokeWidth={2} />
-                确认清除
+                {t('data.confirmClear')}
               </button>
             </div>
           </div>
