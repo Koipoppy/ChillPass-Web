@@ -7,17 +7,19 @@ import { parseFile, cleanText } from '@services/fileParser'
 import { extractExamPoints } from '@services/deepseek'
 import { generateAllLessonsInBackground } from '@services/lessonGenerator'
 import type { CourseFile, CourseStatus } from '@types/index'
+import { useT } from '../i18n'
+import type { TranslationKey } from '../i18n'
 import styles from './UploadPage.module.css'
 
 type Phase = 'idle' | 'parsing' | 'extracting' | 'done'
 type ImportMode = 'create' | 'append'
 
-/** 课程状态中文标签 */
-const STATUS_LABELS: Record<CourseStatus, string> = {
-  empty: '空',
-  uploaded: '已上传',
-  analyzing: '分析中',
-  ready: '就绪',
+/** 课程状态标签（i18n key） */
+const STATUS_LABEL_KEYS: Record<CourseStatus, TranslationKey> = {
+  empty: 'upload.stEmpty',
+  uploaded: 'upload.stUploaded',
+  analyzing: 'upload.stAnalyzing',
+  ready: 'upload.stReady',
 }
 
 /** 格式化文件大小 */
@@ -36,6 +38,7 @@ function normalizeExt(ext: string): string {
 
 export default function UploadPage() {
   const navigate = useNavigate()
+  const t = useT()
   const bundle = useCurrentBundle()
   const currentCourse = bundle?.course
   const courses = useCourseStore(s => s.courses)
@@ -134,7 +137,7 @@ export default function UploadPage() {
       })
       setError(null)
     } catch {
-      setError('选择文件失败，请重试')
+      setError(t('upload.errPickFile'))
     }
   }, [isBusy])
 
@@ -172,24 +175,24 @@ export default function UploadPage() {
   /** 新建课程模式：解析流程 */
   const handleCreateParse = async () => {
     if (!courseName.trim()) {
-      setError('请输入课程名称')
+      setError(t('upload.errNameRequired'))
       return
     }
     if (files.length === 0) {
-      setError('请至少上传一个课件文件')
+      setError(t('upload.errFilesRequired'))
       return
     }
 
     setError(null)
     setPhase('parsing')
     setProgress(0)
-    setProgressText('正在解析课件...')
+    setProgressText(t('upload.parsing'))
 
     try {
       // 创建/重置课程（课程管理系统：禁止同名课程）
       const newCourseId = createCourse(courseName.trim())
       if (!newCourseId) {
-        setError('已存在同名课程，请使用其他名称或通过"导入到已有课程"追加内容')
+        setError(t('upload.errDuplicateName'))
         setPhase('idle')
         setProgress(0)
         return
@@ -199,7 +202,7 @@ export default function UploadPage() {
       // 逐个解析文件
       const texts: string[] = []
       for (let i = 0; i < files.length; i++) {
-        setProgressText(`正在解析 ${files[i].name}（${i + 1}/${files.length}）`)
+        setProgressText(t('upload.parsingFile').replace('{name}', files[i].name).replace('{i}', String(i + 1)).replace('{n}', String(files.length)))
         const text = await parseFile(files[i].path, files[i].ext)
         texts.push(text)
         setProgress(Math.round(((i + 1) / files.length) * 100))
@@ -212,7 +215,7 @@ export default function UploadPage() {
 
       // 提炼考点
       setPhase('extracting')
-      setProgressText('正在提炼考点，生成闯关路径...')
+      setProgressText(t('upload.extracting'))
       const points = await extractExamPoints(cleaned, courseName.trim())
       setExamPoints(points) // 内部会调用 generateLessons 创建关卡骨架
 
@@ -224,11 +227,11 @@ export default function UploadPage() {
 
       // 显示完成状态后跳转到首页
       setPhase('done')
-      setProgressText('导入完成！正在跳转...')
+      setProgressText(t('upload.doneJump'))
       setProgress(100)
       setTimeout(() => navigate('/'), 1200)
     } catch (err) {
-      setError(err instanceof Error ? err.message : '解析失败，请重试')
+      setError(err instanceof Error ? err.message : t('upload.parseFailed'))
       setPhase('idle')
       setProgress(0)
     }
@@ -237,11 +240,11 @@ export default function UploadPage() {
   /** 增量导入模式：解析流程 */
   const handleAppendParse = async () => {
     if (!selectedCourseId) {
-      setError('请选择要导入的课程')
+      setError(t('upload.errSelectCourse'))
       return
     }
     if (files.length === 0) {
-      setError('请至少上传一个课件文件')
+      setError(t('upload.errFilesRequired'))
       return
     }
 
@@ -249,7 +252,7 @@ export default function UploadPage() {
       .getState()
       .courses.find(b => b.course.id === selectedCourseId)
     if (!targetBundle) {
-      setError('所选课程不存在，请重新选择')
+      setError(t('upload.errCourseMissing'))
       return
     }
     const courseNameForExtract = targetBundle.course.name
@@ -257,7 +260,7 @@ export default function UploadPage() {
     setError(null)
     setPhase('parsing')
     setProgress(0)
-    setProgressText('正在解析新增课件...')
+    setProgressText(t('upload.parsingAppend'))
 
     try {
       // 确保切换到目标课程
@@ -298,7 +301,7 @@ export default function UploadPage() {
 
       // 如果所有文件都被跳过
       if (texts.length === 0) {
-        setError('所有文件与已有内容重复率过高，已全部跳过')
+        setError(t('upload.allSkipped'))
         setPhase('idle')
         setProgress(0)
         return
@@ -315,12 +318,12 @@ export default function UploadPage() {
 
       // 3. 只从新增课件文本中提炼考点（不重新提炼全部，避免已有关卡被重置）
       setPhase('extracting')
-      setProgressText('正在从新增课件中提炼考点...')
-      const sourceFileName = validFiles.length === 1 ? validFiles[0].name : `${validFiles.length} 个新文件`
+      setProgressText(t('upload.extractingAppend'))
+      const sourceFileName = validFiles.length === 1 ? validFiles[0].name : t('upload.newFilesCount').replace('{count}', String(validFiles.length))
       const newPoints = await extractExamPoints(cleaned, courseNameForExtract, sourceFileName)
 
       // 4. 增量合并（只为新考点创建关卡，已有内容的关卡完整保留）
-      setProgressText('正在合并考点，生成新关卡...')
+      setProgressText(t('upload.merging'))
       mergeExamPoints(newPoints)
 
       // 5. 后台生成关卡内容（已有内容的关卡会自动跳过）
@@ -328,11 +331,11 @@ export default function UploadPage() {
 
       // 6. 显示完成状态后跳转到首页
       setPhase('done')
-      setProgressText('增量导入完成！正在跳转...')
+      setProgressText(t('upload.appendDone'))
       setProgress(100)
       setTimeout(() => navigate('/'), 1200)
     } catch (err) {
-      setError(err instanceof Error ? err.message : '解析失败，请重试')
+      setError(err instanceof Error ? err.message : t('upload.parseFailed'))
       setPhase('idle')
       setProgress(0)
     }
@@ -348,10 +351,10 @@ export default function UploadPage() {
   }
 
   const startButtonText = isBusy
-    ? '处理中...'
+    ? t('upload.processing')
     : mode === 'create'
-      ? '开始解析'
-      : '增量导入'
+      ? t('upload.start')
+      : t('upload.startAppend')
 
   // 当前选中的课程信息（增量模式用）
   const selectedBundle = mode === 'append' && selectedCourseId
@@ -361,9 +364,9 @@ export default function UploadPage() {
   return (
     <div className={styles.page}>
       <header className={styles.header}>
-        <h1 className={styles.title}>导入课件</h1>
+        <h1 className={styles.title}>{t('upload.title')}</h1>
         <p className={styles.subtitle}>
-          上传你的课程资料，AI 将自动提炼考点并生成闯关路径
+          {t('upload.pageSubtitle')}
         </p>
       </header>
 
@@ -377,31 +380,31 @@ export default function UploadPage() {
             disabled={isBusy}
           >
             <FileText size={16} strokeWidth={2} />
-            <span>新建课程</span>
+            <span>{t('upload.modeCreate')}</span>
           </button>
           <button
             type="button"
             style={getModeButtonStyle(mode === 'append', isBusy || !hasExistingCourses)}
             onClick={() => handleModeChange('append')}
             disabled={isBusy || !hasExistingCourses}
-            title={!hasExistingCourses ? '暂无已有课程' : '将新课件追加到已有课程'}
+            title={!hasExistingCourses ? t('upload.noExisting') : t('upload.appendTip')}
           >
             <CheckCircle size={16} strokeWidth={2} />
-            <span>导入到已有课程</span>
+            <span>{t('upload.modeAppendFull')}</span>
           </button>
         </div>
         {!hasExistingCourses && (
-          <div style={hintStyle}>暂无已有课程，无法使用增量导入</div>
+          <div style={hintStyle}>{t('upload.appendModeHint')}</div>
         )}
 
         {/* 新建课程模式：课程名称 */}
         {mode === 'create' && (
           <div className={styles.field}>
-            <label className={styles.label}>课程名称</label>
+            <label className={styles.label}>{t('upload.courseName')}</label>
             <input
               className={styles.input}
               type="text"
-              placeholder="例如：高等数学（下）"
+              placeholder={t('upload.courseNameExample')}
               value={courseName}
               onChange={e => setCourseName(e.target.value)}
               disabled={isBusy}
@@ -412,7 +415,7 @@ export default function UploadPage() {
         {/* 增量导入模式：课程选择 */}
         {mode === 'append' && (
           <div className={styles.field}>
-            <label className={styles.label}>选择已有课程</label>
+            <label className={styles.label}>{t('upload.selectExisting')}</label>
             <div style={selectWrapperStyle}>
               <select
                 style={{
@@ -426,7 +429,7 @@ export default function UploadPage() {
               >
                 {courses.filter(b => b.course.status === 'ready').map(b => (
                   <option key={b.course.id} value={b.course.id}>
-                    {b.course.name}（{STATUS_LABELS[b.course.status]}）
+                    {b.course.name}（{t(STATUS_LABEL_KEYS[b.course.status])}）
                   </option>
                 ))}
               </select>
@@ -434,9 +437,10 @@ export default function UploadPage() {
             </div>
             {selectedBundle && (
               <div style={courseInfoStyle}>
-                已选课程：{selectedBundle.course.name}
-                {' · '}考点 {selectedBundle.examPoints.length} 个
-                {' · '}关卡 {selectedBundle.lessons.length} 个
+                {t('upload.selectedInfo')
+                  .replace('{name}', selectedBundle.course.name)
+                  .replace('{points}', String(selectedBundle.examPoints.length))
+                  .replace('{lessons}', String(selectedBundle.lessons.length))}
               </div>
             )}
           </div>
@@ -459,7 +463,7 @@ export default function UploadPage() {
             <Upload size={32} strokeWidth={1.6} />
           </div>
           <div className={styles.dropzoneText}>
-            {mode === 'append' ? '选择要追加的新课件文件，或拖拽到此处' : '点击选择文件，或拖拽到此处'}
+            {mode === 'append' ? t('upload.dropAppend') : t('upload.dropCreate')}
           </div>
           <div className={styles.dropzoneHint}>支持 PDF、Word（doc/docx）、PPTX、TXT、Markdown</div>
         </div>
@@ -480,7 +484,7 @@ export default function UploadPage() {
                   className={styles.fileRemove}
                   onClick={() => handleRemoveFile(file.id)}
                   disabled={isBusy}
-                  aria-label="删除文件"
+                  aria-label={t('upload.removeFile')}
                 >
                   <X size={16} strokeWidth={2} />
                 </button>
@@ -518,7 +522,7 @@ export default function UploadPage() {
                 onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
               >
                 <Settings size={14} strokeWidth={2} />
-                去配置
+                {t('upload.goConfig')}
               </button>
             )}
           </div>
@@ -528,7 +532,7 @@ export default function UploadPage() {
         {skippedFiles.length > 0 && !isBusy && (
           <div className={styles.progress}>
             <div className={styles.progressHeader} style={{ color: 'var(--warning-text)' }}>
-              <span>已跳过 {skippedFiles.length} 个重复文件：{skippedFiles.join('、')}</span>
+              <span>{t('upload.skipped').replace('{count}', String(skippedFiles.length)).replace('{names}', skippedFiles.join('、'))}</span>
             </div>
           </div>
         )}
@@ -539,9 +543,9 @@ export default function UploadPage() {
             {/* 步骤指示器 */}
             <div className={styles.stepIndicator}>
               {([
-                { key: 'parsing', label: '解析课件', icon: '📄' },
-                { key: 'extracting', label: '提炼考点', icon: '🧠' },
-                { key: 'done', label: '生成路径', icon: '✨' },
+                { key: 'parsing', label: t('upload.stepParse'), icon: '📄' },
+                { key: 'extracting', label: t('upload.stepExtract'), icon: '🧠' },
+                { key: 'done', label: t('upload.stepPath'), icon: '✨' },
               ] as { key: Phase; label: string; icon: string }[]).map((step, i) => {
                 const stepOrder: Record<string, number> = { parsing: 1, extracting: 2, done: 3 }
                 const currentOrder = stepOrder[phase] ?? 0

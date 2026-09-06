@@ -11,14 +11,16 @@ import {
 } from 'lucide-react'
 import { useWrongQuestionStore } from '@stores/wrongQuestionStore'
 import { useCourseStore } from '@stores/courseStore'
+import { useT } from '../i18n'
+import type { TranslationKey } from '../i18n'
 import type { Priority, WrongQuestion } from '@types/index'
 import { renderMarkdown, renderInlineMarkdown } from '../utils/markdown'
 import styles from './WrongBookPage.module.css'
 
-const priorityLabel: Record<Priority, string> = {
-  must: '必考',
-  high: '高频',
-  know: '了解',
+const priorityLabel: Record<Priority, TranslationKey> = {
+  must: 'dashboard.priorityMust',
+  high: 'dashboard.priorityHigh',
+  know: 'dashboard.priorityKnow',
 }
 
 const priorityClass: Record<Priority, string> = {
@@ -33,6 +35,7 @@ interface CourseGroup {
 }
 
 export default function WrongBookPage() {
+  const t = useT()
   const navigate = useNavigate()
   const questions = useWrongQuestionStore(s => s.questions)
   const resolveQuestion = useWrongQuestionStore(s => s.resolveQuestion)
@@ -78,7 +81,7 @@ export default function WrongBookPage() {
 
   const handleClear = (courseId: string, courseName: string) => {
     if (
-      window.confirm(`确定要清空「${courseName}」的所有错题吗？此操作不可撤销。`)
+      window.confirm(t('wrongbook.clearConfirm').replace('{name}', courseName))
     ) {
       clearByCourse(courseId)
     }
@@ -87,13 +90,21 @@ export default function WrongBookPage() {
   const handleAsk = (q: WrongQuestion) => {
     let prefill: string
     if (q.quizType === 'choice' && q.options && q.correctIndex !== undefined) {
-      const myAnswer = q.selectedIndex !== undefined ? q.options[q.selectedIndex] : '未作答'
+      const myAnswer = q.selectedIndex !== undefined ? q.options[q.selectedIndex] : t('wrongbook.noAnswer')
       const correctAnswer = q.options[q.correctIndex]
-      prefill = `我在「${q.lessonTitle}」这关遇到了一道错题：\n题目：${q.question}\n我选了：${myAnswer}\n正确答案：${correctAnswer}\n请帮我理解这个知识点。`
+      prefill = t('wrongbook.prefillChoice')
+        .replace('{lesson}', q.lessonTitle)
+        .replace('{question}', q.question)
+        .replace('{my}', myAnswer)
+        .replace('{correct}', correctAnswer)
     } else {
-      const myAnswer = q.userAnswer ?? '未作答'
-      const correctAnswer = q.correctAnswer ?? '未知'
-      prefill = `我在「${q.lessonTitle}」这关遇到了一道错题：\n题目：${q.question}\n我的答案：${myAnswer}\n参考答案：${correctAnswer}\n请帮我理解这个知识点。`
+      const myAnswer = q.userAnswer ?? t('wrongbook.noAnswer')
+      const correctAnswer = q.correctAnswer ?? t('wrongbook.unknown')
+      prefill = t('wrongbook.prefillText')
+        .replace('{lesson}', q.lessonTitle)
+        .replace('{question}', q.question)
+        .replace('{my}', myAnswer)
+        .replace('{correct}', correctAnswer)
     }
     navigate('/chat', { state: { prefill } })
   }
@@ -114,8 +125,8 @@ export default function WrongBookPage() {
           <div className={styles.emptyIcon}>
             <BookX size={48} strokeWidth={1.4} />
           </div>
-          <h2 className={styles.emptyTitle}>暂无错题</h2>
-          <p className={styles.emptyText}>继续保持！</p>
+          <h2 className={styles.emptyTitle}>{t('wrongbook.empty')}</h2>
+          <p className={styles.emptyText}>{t('wrongbook.keepGoing')}</p>
         </div>
       </div>
     )
@@ -125,8 +136,8 @@ export default function WrongBookPage() {
   return (
     <div className={styles.page}>
       <header className={styles.header}>
-        <h1 className={styles.title}>错题本</h1>
-        <p className={styles.subtitle}>按课程归类，逐个击破</p>
+        <h1 className={styles.title}>{t('wrongbook.title')}</h1>
+        <p className={styles.subtitle}>{t('wrongbook.subtitle')}</p>
       </header>
 
       {Object.entries(courseGroups).map(([courseId, group]) => {
@@ -166,7 +177,7 @@ export default function WrongBookPage() {
                   }}
                 >
                   <Trash2 size={13} strokeWidth={2} />
-                  <span>清空</span>
+                  <span>{t('wrongbook.clear')}</span>
                 </button>
               </div>
             </div>
@@ -187,7 +198,7 @@ export default function WrongBookPage() {
                     <span
                       className={`${styles.priorityTag} ${priorityClass[q.priority]}`}
                     >
-                      {priorityLabel[q.priority]}
+                      {t(priorityLabel[q.priority])}
                     </span>
                     <span className={styles.lessonTitle}>{q.lessonTitle}</span>
                   </div>
@@ -201,7 +212,7 @@ export default function WrongBookPage() {
                   {/* 答案对比 */}
                   <div className={styles.answers}>
                     <div className={`${styles.answerRow} ${styles.answerWrong}`}>
-                      <span className={styles.answerLabel}>你的答案</span>
+                      <span className={styles.answerLabel}>{t('wrongbook.yourAnswer')}</span>
                       <span
                         className={styles.answerValue}
                         dangerouslySetInnerHTML={{
@@ -214,7 +225,7 @@ export default function WrongBookPage() {
                       />
                     </div>
                     <div className={`${styles.answerRow} ${styles.answerCorrect}`}>
-                      <span className={styles.answerLabel}>正确答案</span>
+                      <span className={styles.answerLabel}>{t('wrongbook.correctAnswer')}</span>
                       <span
                         className={styles.answerValue}
                         dangerouslySetInnerHTML={{
@@ -242,7 +253,7 @@ export default function WrongBookPage() {
                       onClick={() => handleAsk(q)}
                     >
                       <MessageCircle size={15} strokeWidth={2} />
-                      <span>去问助教</span>
+                      <span>{t('wrongbook.askAthena')}</span>
                     </button>
                     <button
                       type="button"
@@ -250,7 +261,7 @@ export default function WrongBookPage() {
                       onClick={() => handleResolve(q.id)}
                     >
                       <Check size={15} strokeWidth={2.4} />
-                      <span>已掌握</span>
+                      <span>{t('wrongbook.mastered')}</span>
                     </button>
                   </div>
                 </div>

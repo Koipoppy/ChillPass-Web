@@ -22,15 +22,17 @@ import {
   Pencil,
 } from 'lucide-react'
 import { useCourseStore, useCurrentBundle } from '@stores/courseStore'
+import { useT } from '../i18n'
+import type { TranslationKey } from '../i18n'
 import { useWrongQuestionStore } from '@stores/wrongQuestionStore'
 import type { Priority, CourseStatus } from '@types/index'
 import styles from './Dashboard.module.css'
 
-const statusText: Record<CourseStatus, string> = {
-  empty: '未导入',
-  uploaded: '已导入',
-  analyzing: '分析中',
-  ready: '已就绪',
+const statusTextKey: Record<CourseStatus, TranslationKey> = {
+  empty: 'dashboard.statusEmpty',
+  uploaded: 'dashboard.statusUploaded',
+  analyzing: 'dashboard.statusAnalyzing',
+  ready: 'dashboard.statusReady',
 }
 
 const statusColor: Record<CourseStatus, string> = {
@@ -54,6 +56,7 @@ const priorityColor: Record<Priority, string> = {
 
 export default function Dashboard() {
   const navigate = useNavigate()
+  const t = useT()
   const bundle = useCurrentBundle()
   const courses = useCourseStore(s => s.courses)
   const currentCourseId = useCourseStore(s => s.currentCourseId)
@@ -121,7 +124,7 @@ export default function Dashboard() {
   )
 
   const handleDelete = (id: string, name: string) => {
-    if (window.confirm(`确定要删除课程「${name}」吗？此操作不可撤销。`)) {
+    if (window.confirm(t('dashboard.deleteConfirm').replace('{name}', name))) {
       deleteCourse(id)
     }
   }
@@ -151,33 +154,33 @@ export default function Dashboard() {
       try {
         const data = JSON.parse(reader.result as string)
         if (!data.course?.name) {
-          window.alert('导入失败：文件格式不正确')
+          window.alert(t('dashboard.importFailedFormat'))
           return
         }
         // 课程管理系统：importCourse 内部会基于内容检测重复
         // 如果检测到重复课程，返回 false 并自动切换到已有课程
         const success = importCourse(data)
         if (success) {
-          window.alert('课程导入成功！')
+          window.alert(t('dashboard.importSuccess'))
           setSwitcherOpen(false)
         } else {
           // 可能是重复课程或格式错误
           // 检查是否因为重复（课程名或考点重叠）
           const hasValidData = data.course && Array.isArray(data.examPoints) && Array.isArray(data.lessons)
           if (hasValidData) {
-            window.alert('该课程已存在（名称或考点重复），已自动切换到已有课程')
+            window.alert(t('dashboard.importDuplicate'))
             setSwitcherOpen(false)
           } else {
-            window.alert('导入失败：文件格式不正确')
+            window.alert(t('dashboard.importFailedFormat'))
           }
         }
       } catch (err) {
         console.error('导入课程解析失败', err)
-        window.alert('导入失败：无法解析 JSON 文件')
+        window.alert(t('dashboard.importFailedParse'))
       }
     }
     reader.onerror = () => {
-      window.alert('导入失败：读取文件出错')
+      window.alert(t('dashboard.importFailedRead'))
     }
     reader.readAsText(file)
     // 重置 value 以便可以重复选择同一文件
@@ -191,16 +194,14 @@ export default function Dashboard() {
         <div className={`liquid-glass ${styles.hero}`}>
           <div className={styles.heroBadge}>
             <Sparkles size={18} strokeWidth={1.8} />
-            <span>ChillPass · 期末冲刺助手</span>
+            <span>{t('dashboard.badge')}</span>
           </div>
-          <h1 className={styles.heroTitle}>开始你的期末冲刺</h1>
-          <p className={styles.heroSubtitle}>
-            上传课件，AI 自动提炼考点，生成闯关式冲刺课程
-          </p>
+          <h1 className={styles.heroTitle}>{t('dashboard.heroTitle')}</h1>
+          <p className={styles.heroSubtitle}>{t('dashboard.heroSubtitle')}</p>
           <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center' }}>
             <button className={styles.primaryBtn} onClick={() => navigate('/upload')} style={{ marginTop: 0 }}>
               <Upload size={18} strokeWidth={2} />
-              <span>导入课件</span>
+              <span>{t('dashboard.importBtn')}</span>
             </button>
             <button
               onClick={() => handleImportClick(welcomeFileInputRef)}
@@ -222,7 +223,7 @@ export default function Dashboard() {
               title="从 JSON 文件导入已导出的课程"
             >
               <Download size={18} strokeWidth={2} />
-              <span>导入课程</span>
+              <span>{t('dashboard.importCourse')}</span>
             </button>
             <input
               type="file"
@@ -235,15 +236,15 @@ export default function Dashboard() {
           <div className={styles.heroSteps}>
             <div className={styles.heroStep}>
               <span className={styles.heroStepNum}>1</span>
-              <span>导入课件</span>
+              <span>{t('dashboard.importBtn')}</span>
             </div>
             <div className={styles.heroStep}>
               <span className={styles.heroStepNum}>2</span>
-              <span>提炼考点</span>
+              <span>{t('dashboard.stepExtract')}</span>
             </div>
             <div className={styles.heroStep}>
               <span className={styles.heroStepNum}>3</span>
-              <span>闯关冲刺</span>
+              <span>{t('dashboard.stepQuest')}</span>
             </div>
           </div>
         </div>
@@ -271,7 +272,10 @@ export default function Dashboard() {
   // 考试日期格式化与设置
   const formatExamDate = (dateStr: string) => {
     const d = new Date(dateStr)
-    return `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日`
+    return t('dashboard.dateFormat')
+      .replace('{y}', String(d.getFullYear()))
+      .replace('{m}', String(d.getMonth() + 1))
+      .replace('{d}', String(d.getDate()))
   }
 
   const openDatePicker = () => {
@@ -295,7 +299,7 @@ export default function Dashboard() {
   const switcher = (
     <header className={styles.header}>
       <div className={styles.switcherWrap} ref={switcherRef}>
-        <p className={styles.greeting}>欢迎回来</p>
+        <p className={styles.greeting}>{t('dashboard.welcome')}</p>
         {renaming ? (
           <div className={styles.renameBar}>
             <input
@@ -355,7 +359,7 @@ export default function Dashboard() {
                 setRenaming(true)
                 setTimeout(() => renameInputRef.current?.focus(), 0)
               }}
-              title="重命名课程"
+              title={t('dashboard.renameCourse')}
             >
               <Pencil size={14} strokeWidth={2} />
             </button>
@@ -381,14 +385,14 @@ export default function Dashboard() {
                       className={styles.dropdownItemStatus}
                       style={{ color: statusColor[b.course.status] }}
                     >
-                      {statusText[b.course.status]}
+                      {t(statusTextKey[b.course.status])}
                     </span>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 2, flexShrink: 0 }}>
                     <button
                       className={styles.deleteBtn}
                       onClick={e => handleExport(e, b.course.id)}
-                      title="导出课程"
+                      title={t('dashboard.exportCourse')}
                     >
                       <Download size={16} strokeWidth={1.8} />
                     </button>
@@ -398,7 +402,7 @@ export default function Dashboard() {
                         e.stopPropagation()
                         handleDelete(b.course.id, b.course.name)
                       }}
-                      title="删除课程"
+                      title={t('dashboard.deleteCourse')}
                     >
                       <Trash2 size={16} strokeWidth={1.8} />
                     </button>
@@ -416,16 +420,16 @@ export default function Dashboard() {
                 }}
               >
                 <Plus size={18} strokeWidth={2} />
-                <span>新建课程</span>
+                <span>{t('dashboard.newCourse')}</span>
               </button>
               <button
                 className={styles.newCourseBtn}
                 style={{ flex: 1 }}
                 onClick={() => handleImportClick(fileInputRef)}
-                title="从 JSON 文件导入课程"
+                title={t('dashboard.importCourseTip')}
               >
                 <Download size={18} strokeWidth={2} />
-                <span>导入课程</span>
+                <span>{t('dashboard.importCourse')}</span>
               </button>
             </div>
             <input
@@ -442,7 +446,7 @@ export default function Dashboard() {
       {progress.currentStreak > 0 && (
         <div className={`liquid-glass ${styles.streakBadge}`}>
           <Flame size={18} strokeWidth={2} />
-          <span>连续 {progress.currentStreak} 天</span>
+          <span>{t('dashboard.streak').replace('{days}', String(progress.currentStreak))}</span>
         </div>
       )}
     </header>
@@ -455,16 +459,16 @@ export default function Dashboard() {
         {switcher}
         <div className={`liquid-glass ${styles.preparing}`}>
           <div className={styles.spinner} />
-          <h2 className={styles.preparingTitle}>正在准备中</h2>
+          <h2 className={styles.preparingTitle}>{t('dashboard.preparing')}</h2>
           <p className={styles.preparingDesc}>
-            {course.status === 'empty' && '课程已创建，请导入课件开始分析'}
-            {course.status === 'uploaded' && '课件已导入，正在等待 AI 提炼考点…'}
-            {course.status === 'analyzing' && 'AI 正在分析课件内容，提炼考点…'}
+            {course.status === 'empty' && t('dashboard.preparingEmpty')}
+            {course.status === 'uploaded' && t('dashboard.preparingUploaded')}
+            {course.status === 'analyzing' && t('dashboard.preparingAnalyzing')}
           </p>
           {course.status === 'empty' && (
             <button className={styles.primaryBtn} onClick={() => navigate('/upload')}>
               <Upload size={18} strokeWidth={2} />
-              <span>导入课件</span>
+              <span>{t('dashboard.importBtn')}</span>
             </button>
           )}
         </div>
@@ -483,8 +487,9 @@ export default function Dashboard() {
           <Loader size={18} strokeWidth={2} className={styles.genSpinner} />
           <div className={styles.genContent}>
             <div className={styles.genText}>
-              正在后台生成关卡内容... ({bundle.generationProgress.current}/
-              {bundle.generationProgress.total})
+              {t('dashboard.genBanner')
+                .replace('{current}', String(bundle.generationProgress.current))
+                .replace('{total}', String(bundle.generationProgress.total))}
             </div>
             <div className={styles.genBar}>
               <div
@@ -502,13 +507,13 @@ export default function Dashboard() {
           <div className={styles.cardIcon}>
             <Calendar size={20} strokeWidth={1.8} />
           </div>
-          <div className={styles.cardLabel}>距期末考试</div>
+          <div className={styles.cardLabel}>{t('dashboard.untilExam')}</div>
 
           {/* 修改按钮 —— 已设置日期且未展开选择器时显示在右上角 */}
           {daysLeft !== null && !showDatePicker && (
             <button
               onClick={openDatePicker}
-              title="修改考试日期"
+              title={t('dashboard.editDate')}
               style={{
                 position: 'absolute',
                 top: '16px',
@@ -527,7 +532,7 @@ export default function Dashboard() {
               onMouseEnter={e => (e.currentTarget.style.color = 'var(--accent-text)')}
               onMouseLeave={e => (e.currentTarget.style.color = 'var(--text-tertiary)')}
             >
-              修改
+              {t('dashboard.edit')}
             </button>
           )}
 
@@ -583,7 +588,7 @@ export default function Dashboard() {
                   onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
                 >
                   <Check size={14} strokeWidth={2.4} />
-                  确认
+                  {t('common.confirm')}
                 </button>
                 <button
                   onClick={cancelDate}
@@ -611,7 +616,7 @@ export default function Dashboard() {
                   }
                 >
                   <X size={14} strokeWidth={2.4} />
-                  取消
+                  {t('common.cancel')}
                 </button>
               </div>
             </div>
@@ -636,7 +641,7 @@ export default function Dashboard() {
               onMouseLeave={e => (e.currentTarget.style.color = 'var(--text-tertiary)')}
             >
               <Calendar size={18} strokeWidth={1.8} />
-              <span>点击设置考试日期</span>
+              <span>{t('dashboard.setExamDate')}</span>
             </button>
           ) : (
             /* 已设置日期 —— 显示倒计时 */
@@ -650,7 +655,7 @@ export default function Dashboard() {
                 }
               >
                 {daysLeft > 0 ? daysLeft : 0}
-                <span className={styles.countdownUnit}>天</span>
+                <span className={styles.countdownUnit}>{t('dashboard.dayUnit')}</span>
               </div>
               <div
                 style={{
@@ -666,7 +671,7 @@ export default function Dashboard() {
                   className={styles.countdownHint}
                   style={{ color: 'var(--danger-text)' }}
                 >
-                  冲刺关键期，加油！
+                  {t('dashboard.sprintFinal')}
                 </div>
               )}
               {daysLeft <= 0 && (
@@ -674,7 +679,7 @@ export default function Dashboard() {
                   className={styles.countdownHint}
                   style={{ color: 'var(--success-text)' }}
                 >
-                  考试进行中
+                  {t('dashboard.examOngoing')}
                 </div>
               )}
             </>
@@ -686,10 +691,10 @@ export default function Dashboard() {
           <div className={styles.cardIcon}>
             <Trophy size={20} strokeWidth={1.8} />
           </div>
-          <div className={styles.cardLabel}>学习进度</div>
+          <div className={styles.cardLabel}>{t('dashboard.progress')}</div>
           <div className={styles.progressNum}>
             {progress.completedLessons}
-            <span className={styles.progressTotal}>/{progress.totalLessons} 关卡</span>
+            <span className={styles.progressTotal}>/{progress.totalLessons} {t('nav.levelUnit')}</span>
           </div>
           <div className={styles.progressBar}>
             <div
@@ -700,7 +705,7 @@ export default function Dashboard() {
           <div className={styles.progressMeta}>
             <span className={styles.coinsItem}>
               <Coins size={14} strokeWidth={2} />
-              <span style={{ color: 'var(--success-text)' }}>{progress.chillCoins ?? 0} Chill币</span>
+              <span style={{ color: 'var(--success-text)' }}>{progress.chillCoins ?? 0} {t('dashboard.coins')}</span>
             </span>
             <span className={styles.progressPercent}>{progressPercent}%</span>
           </div>
@@ -711,28 +716,28 @@ export default function Dashboard() {
           <div className={styles.cardIcon}>
             <FileText size={20} strokeWidth={1.8} />
           </div>
-          <div className={styles.cardLabel}>考点统计</div>
+          <div className={styles.cardLabel}>{t('dashboard.examStats')}</div>
           <div className={styles.pointStats}>
             <div className={styles.pointItem}>
               <span className={styles.pointNum} style={{ color: 'var(--danger-text)' }}>
                 {pointStats.must}
               </span>
-              <span className={styles.pointName}>必考</span>
+              <span className={styles.pointName}>{t('dashboard.priorityMust')}</span>
             </div>
             <div className={styles.pointItem}>
               <span className={styles.pointNum} style={{ color: 'var(--warning-text)' }}>
                 {pointStats.high}
               </span>
-              <span className={styles.pointName}>高频</span>
+              <span className={styles.pointName}>{t('dashboard.priorityHigh')}</span>
             </div>
             <div className={styles.pointItem}>
               <span className={styles.pointNum} style={{ color: 'var(--accent-text)' }}>
                 {pointStats.know}
               </span>
-              <span className={styles.pointName}>了解</span>
+              <span className={styles.pointName}>{t('dashboard.priorityKnow')}</span>
             </div>
           </div>
-          <div className={styles.pointTotal}>共 {examPoints.length} 个考点</div>
+          <div className={styles.pointTotal}>{t('dashboard.totalPoints').replace('{count}', String(examPoints.length))}</div>
         </div>
 
         {/* 快捷入口卡片 */}
@@ -740,14 +745,14 @@ export default function Dashboard() {
           <div className={styles.cardIcon}>
             <Sparkles size={20} strokeWidth={1.8} />
           </div>
-          <div className={styles.cardLabel}>快捷入口</div>
+          <div className={styles.cardLabel}>{t('dashboard.quickEntries')}</div>
           <div className={styles.quickActions}>
             <button
               className={styles.quickBtn}
               onClick={() => navigate('/lessons')}
             >
               <BookOpen size={18} strokeWidth={1.8} />
-              <span className={styles.quickBtnText}>继续学习</span>
+              <span className={styles.quickBtnText}>{t('dashboard.continueStudy')}</span>
               <ArrowRight size={16} strokeWidth={2} />
             </button>
             <button
@@ -755,7 +760,7 @@ export default function Dashboard() {
               onClick={() => navigate('/chat')}
             >
               <MessageCircle size={18} strokeWidth={1.8} />
-              <span className={styles.quickBtnText}>问 Athena</span>
+              <span className={styles.quickBtnText}>{t('dashboard.quickAsk')}</span>
               <ArrowRight size={16} strokeWidth={2} />
             </button>
           </div>

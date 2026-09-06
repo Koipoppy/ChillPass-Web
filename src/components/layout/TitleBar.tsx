@@ -122,8 +122,8 @@ export default function TitleBar() {
             className={styles.light}
             style={{ '--light-color': '#28c840' } as React.CSSProperties}
             onClick={handleMaximize}
-            title={isMaximized ? '还原' : '最大化'}
-            aria-label="最大化窗口"
+            title={isMaximized ? t('titlebar.restore') : t('titlebar.maximize')}
+            aria-label={t('titlebar.maximize')}
           >
             <svg width="8" height="8" viewBox="0 0 8 8" fill="none">
               <path d="M2 2L6 2L6 6M6 2L2 6" stroke="#000" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" opacity="0.5" />
@@ -145,8 +145,8 @@ export default function TitleBar() {
         <button
           className={styles.helpBtn}
           onClick={() => setShowHelp(true)}
-          title="帮助"
-          aria-label="帮助"
+          title={t('titlebar.help')}
+          aria-label={t('titlebar.help')}
         >
           <HelpCircle size={16} strokeWidth={2} />
         </button>
@@ -179,54 +179,52 @@ export default function TitleBar() {
           >
             <div className={styles.helpHeader}>
               <HelpCircle size={28} strokeWidth={1.8} />
-              <h2 className={styles.helpTitle}>ChillPass 使用帮助</h2>
+              <h2 className={styles.helpTitle}>{t('titlebar.helpTitle')}</h2>
             </div>
 
             <div className={styles.helpBody}>
               <section className={styles.helpSection}>
-                <h3 className={styles.helpSectionTitle}>软件介绍</h3>
+                <h3 className={styles.helpSectionTitle}>{t('titlebar.helpIntroTitle')}</h3>
                 <p className={styles.helpText}>
-                  ChillPass 是一款 AI 驱动的闯关式备考应用，专为大学生期末复习设计。
-                  导入课件后，AI 自动提炼考点、生成闯关路径，每关包含知识点讲解、例题和小测，
-                  答错自动加入错题本，完成关卡赚取 Chill 币解锁更多内容。
+                  {t('titlebar.helpIntroBody')}
                 </p>
               </section>
 
               <section className={styles.helpSection}>
-                <h3 className={styles.helpSectionTitle}>快速上手</h3>
+                <h3 className={styles.helpSectionTitle}>{t('titlebar.helpQuickTitle')}</h3>
                 <ul className={styles.helpList}>
-                  <li><b>导入课件</b>：在首页点击「导入课件」，上传 PDF / Word / 图片，AI 自动解析考点</li>
-                  <li><b>闯关学习</b>：在「闯关冲刺」中按顺序完成关卡，每关需答对小测题才能通关</li>
-                  <li><b>小测功能</b>：支持单选、多选、填空、简答四种题型，答错自动记入错题本</li>
-                  <li><b>重新生成</b>：小测中可点击「重新生成」获取同知识点的新题目（免费）</li>
-                  <li><b>跳过题目</b>：消耗 10 Chill 币跳过当前题目，直接进入下一题</li>
-                  <li><b>错题本</b>：在「错题本」中按课程查看错题，可向 AI 助教提问或标记已掌握</li>
-                  <li><b>AI 助教</b>：Athena 智能体支持论文写作、知识总结等任务工作流</li>
-                  <li><b>教师工作台</b>：在设置中开启「教师模式」，可生成试卷并导出 PDF</li>
-                  <li><b>Chill 币</b>：完成关卡获得币，学习时长自动换算（1分钟=1币），用于解锁关卡和跳过题目</li>
-                  <li><b>专注模式</b>：点击右上角按钮进入全屏专注模式，屏蔽干扰</li>
+                  <li><b>{t('titlebar.helpItem1T')}</b>：{t('titlebar.helpItem1D')}</li>
+                  <li><b>{t('titlebar.helpItem2T')}</b>：{t('titlebar.helpItem2D')}</li>
+                  <li><b>{t('titlebar.helpItem3T')}</b>：{t('titlebar.helpItem3D')}</li>
+                  <li><b>{t('titlebar.helpItem4T')}</b>：{t('titlebar.helpItem4D')}</li>
+                  <li><b>{t('titlebar.helpItem5T')}</b>：{t('titlebar.helpItem5D')}</li>
+                  <li><b>{t('titlebar.helpItem6T')}</b>：{t('titlebar.helpItem6D')}</li>
+                  <li><b>{t('titlebar.helpItem7T')}</b>：{t('titlebar.helpItem7D')}</li>
+                  <li><b>{t('titlebar.helpItem8T')}</b>：{t('titlebar.helpItem8D')}</li>
+                  <li><b>{t('titlebar.helpItem9T')}</b>：{t('titlebar.helpItem9D')}</li>
+                  <li><b>{t('titlebar.helpItem10T')}</b>：{t('titlebar.helpItem10D')}</li>
                 </ul>
               </section>
 
               <section className={styles.helpSection}>
-                <h3 className={styles.helpSectionTitle}>开发者联系方式</h3>
+                <h3 className={styles.helpSectionTitle}>{t('titlebar.helpContactTitle')}</h3>
                 <div className={styles.helpContact}>
                   <div className={styles.helpContactRow}>
                     <span className={styles.helpContactLabel}>GitHub</span>
                     <span className={styles.helpContactValue}>github.com/Koipoppy/ChillPass-Web</span>
                   </div>
                   <div className={styles.helpContactRow}>
-                    <span className={styles.helpContactLabel}>微信</span>
+                    <span className={styles.helpContactLabel}>{t('titlebar.helpWechat')}</span>
                     <span className={styles.helpContactValue}>Eikawa_Koi</span>
                   </div>
                   <div className={styles.helpContactRow}>
-                    <span className={styles.helpContactLabel}>版本</span>
+                    <span className={styles.helpContactLabel}>{t('titlebar.helpVersionLabel')}</span>
                     <span className={styles.helpContactValue}>v0.0.8</span>
                   </div>
                 </div>
                 <div className={styles.helpQr}>
                   <img src="qrcode.jpg" alt="ChillPass 用户交流群二维码" />
-                  <span>扫码加入 ChillPass 用户交流群</span>
+                  <span>{t('titlebar.helpQrText')}</span>
                 </div>
               </section>
             </div>
@@ -235,7 +233,7 @@ export default function TitleBar() {
               className={styles.helpConfirmBtn}
               onClick={() => setShowHelp(false)}
             >
-              我知道了
+              {t('titlebar.helpGotIt')}
             </button>
           </div>
         </div>

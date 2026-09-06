@@ -71,7 +71,7 @@ export default function Sidebar() {
               }
             >
               <Briefcase size={20} strokeWidth={1.8} />
-              <span>工作台</span>
+              <span>{t('sidebar.workspace')}</span>
             </NavLink>
           )}
         </nav>
@@ -97,7 +97,7 @@ export default function Sidebar() {
               />
             </div>
             <div className={`${styles.progressCoins} ${coinBounce ? styles.coinBounce : ''}`}>
-              <span style={{ color: 'var(--success-text)' }}>{progress!.chillCoins ?? 0} Chill币</span>
+              <span style={{ color: 'var(--success-text)' }}>{progress!.chillCoins ?? 0} {t('dashboard.coins')}</span>
               {bundle!.generatingLessons && (
                 <span className={styles.generatingBadge}>{t('nav.generating')}</span>
               )}

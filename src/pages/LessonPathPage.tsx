@@ -2,16 +2,19 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { CheckCircle, Lock, PlayCircle, Upload, Loader, FileText, FastForward, Coins, ChevronDown, ChevronRight } from 'lucide-react'
 import { useCourseStore, useCurrentBundle } from '@stores/courseStore'
+import { useT } from '../i18n'
+import type { TranslationKey } from '../i18n'
 import type { Lesson, Priority } from '@types/index'
 import styles from './LessonPathPage.module.css'
 
-const priorityLabel: Record<Priority, string> = {
-  must: '必考',
-  high: '高频',
-  know: '了解',
+const priorityLabelKey: Record<Priority, TranslationKey> = {
+  must: 'dashboard.priorityMust',
+  high: 'dashboard.priorityHigh',
+  know: 'dashboard.priorityKnow',
 }
 
 export default function LessonPathPage() {
+  const t = useT()
   const navigate = useNavigate()
   const bundle = useCurrentBundle()
   const skipLesson = useCourseStore(s => s.skipLesson)
@@ -60,7 +63,7 @@ export default function LessonPathPage() {
   // 按来源文件分组关卡
   const groupedLessons = useMemo(() => {
     return lessons.reduce((acc, lesson) => {
-      const key = lesson.sourceFile || '默认分组'
+      const key = lesson.sourceFile || t('lessons.defaultGroup')
       if (!acc[key]) acc[key] = []
       acc[key].push(lesson)
       return acc
@@ -95,7 +98,7 @@ export default function LessonPathPage() {
     shouldScrollRef.current = true
     const targetLesson = lessons.find(l => l.id === nextLessonId)
     if (!targetLesson) return
-    const targetGroup = targetLesson.sourceFile || '默认分组'
+    const targetGroup = targetLesson.sourceFile || t('lessons.defaultGroup')
     setCollapsedGroups(prev => {
       if (!prev.has(targetGroup)) return prev
       const next = new Set(prev)
@@ -137,16 +140,16 @@ export default function LessonPathPage() {
           <div className={styles.emptyIcon}>
             <PlayCircle size={48} strokeWidth={1.4} />
           </div>
-          <h2 className={styles.emptyTitle}>还没有闯关路径</h2>
+          <h2 className={styles.emptyTitle}>{t('lessons.emptyTitle')}</h2>
           <p className={styles.emptyText}>
-            先导入课件，AI 会自动为你生成考点闯关路径
+            {t('lessons.emptyDesc')}
           </p>
           <button
             className={styles.emptyButton}
             onClick={() => navigate('/upload')}
           >
             <Upload size={18} strokeWidth={2} />
-            <span>去导入课件</span>
+            <span>{t('lessons.goImport')}</span>
           </button>
         </div>
       </div>
@@ -193,8 +196,9 @@ export default function LessonPathPage() {
               style={{ animation: 'spin 0.8s linear infinite' }}
             />
             <span>
-              正在后台生成关卡内容... ({generationProgress.current}/
-              {generationProgress.total})
+              {t('dashboard.genBanner')
+                .replace('{current}', String(generationProgress.current))
+                .replace('{total}', String(generationProgress.total))}
             </span>
           </div>
           <div className={styles.progressBar}>
@@ -220,13 +224,13 @@ export default function LessonPathPage() {
           <div className={styles.coinsBadge}>
             <Coins size={16} strokeWidth={2} />
             <span className={styles.coinsValue}>{progress.chillCoins ?? 0}</span>
-            <span className={styles.coinsLabel}>Chill币</span>
+            <span className={styles.coinsLabel}>{t('dashboard.coins')}</span>
           </div>
         </div>
         <div className={styles.progressRow}>
           <div className={styles.progressInfo}>
             <span className={styles.progressCount}>
-              {progress.completedLessons}/{progress.totalLessons} 关卡
+              {progress.completedLessons}/{progress.totalLessons} {t('nav.levelUnit')}
             </span>
             <span className={styles.progressPercent}>{percent}%</span>
           </div>
@@ -263,8 +267,8 @@ export default function LessonPathPage() {
               <FileText size={16} strokeWidth={2} />
               <span className={styles.groupTitle}>{groupKey}</span>
               <span className={styles.groupCount}>
-                {completedCount}/{groupLessons.length} 关
-                {allDone && <span className={styles.groupDoneTag}>已完成</span>}
+                {t('lessons.groupProgress').replace('{done}', String(completedCount)).replace('{count}', String(groupLessons.length))}
+                {allDone && <span className={styles.groupDoneTag}>{t('lessons.statusDone')}</span>}
               </span>
             </div>
 
@@ -283,13 +287,13 @@ export default function LessonPathPage() {
                       const currentCoins = typeof progress?.chillCoins === 'number' ? progress.chillCoins : 0
                       const cost = typeof lesson.coins === 'number' ? lesson.coins : 30
                       if (currentCoins < cost) {
-                        alert(`Chill币不足，需要 ${cost} 枚`)
+                        alert(t('lessons.coinsInsufficient').replace('{cost}', String(cost)))
                         return
                       }
                       try {
                         skipLesson(lesson.id)
                       } catch (err) {
-                        alert(err instanceof Error ? err.message : '解锁失败')
+                        alert(err instanceof Error ? err.message : t('lessons.unlockFailed'))
                       }
                     }
 
@@ -328,34 +332,34 @@ export default function LessonPathPage() {
                           <span
                             className={`${styles.priorityTag} ${styles[`priority_${lesson.priority}`]}`}
                           >
-                            {priorityLabel[lesson.priority]}
+                            {t(priorityLabelKey[lesson.priority])}
                           </span>
-                          <span className={styles.lessonCoins}>{lesson.coins} Chill币</span>
+                          <span className={styles.lessonCoins}>{lesson.coins} {t('dashboard.coins')}</span>
                           {isNext && (
                             <span
                               className={`${styles.nextBadge} ${showNextBadge ? styles.nextBadgeVisible : styles.nextBadgeHidden}`}
                             >
-                              接下来做
+                              {t('lessons.upNext')}
                             </span>
                           )}
                         </div>
                         <div className={styles.lessonTitle}>{lesson.title}</div>
                         {lesson.status === 'completed' ? (
-                          <div className={styles.lessonStatusDone}>已完成</div>
+                          <div className={styles.lessonStatusDone}>{t('lessons.statusDone')}</div>
                         ) : isLocked ? (
                           <div className={styles.lessonStatusLocked}>
-                            <span>未解锁</span>
+                            <span>{t('lessons.statusLocked')}</span>
                             <button
                               type="button"
                               className={styles.skipBtn}
                               onClick={handleSkip}
                             >
                               <FastForward size={12} strokeWidth={2} />
-                              <span>解锁 ({lesson.coins} Chill币)</span>
+                              <span>{t('lessons.unlockWithCost').replace('{coins}', String(lesson.coins))}</span>
                             </button>
                           </div>
                         ) : (
-                          <div className={styles.lessonStatusActive}>点击开始</div>
+                          <div className={styles.lessonStatusActive}>{t('lessons.tapStart')}</div>
                         )}
                       </div>
                     )
