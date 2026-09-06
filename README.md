@@ -19,11 +19,11 @@
 </p>
 
 <p align="center">
-  <a href="#-核心功能">核心功能</a> &bull;
-  <a href="#-安装">安装</a> &bull;
-  <a href="#-加入交流群">加入交流群</a> &bull;
-  <a href="#-快速上手">快速上手</a> &bull;
-  <a href="#-技术栈">技术栈</a> &bull;
+  <a href="#核心功能">核心功能</a> &bull;
+  <a href="#安装">安装</a> &bull;
+  <a href="#加入交流群">加入交流群</a> &bull;
+  <a href="#快速上手">快速上手</a> &bull;
+  <a href="#技术栈">技术栈</a> &bull;
   <a href="https://github.com/Koipoppy/ChillPass-Web/releases">下载</a>
 </p>
 
@@ -31,6 +31,14 @@
   <a href="https://github.com/Koipoppy/ChillPass-Web/releases/latest">
     <img src="https://img.shields.io/badge/%E4%B8%8B%E8%BD%BD-ChillPass%20Setup%200.0.9.exe-blue?style=for-the-badge" alt="下载" />
   </a>
+</p>
+
+<p align="center">
+  简体中文 &bull;
+  <a href="README_EN.md">English</a> &bull;
+  <a href="README_RU.md">Русский</a> &bull;
+  <a href="README_JA.md">日本語</a> &bull;
+  <a href="README_KO.md">한국어</a>
 </p>
 
 ---
@@ -153,6 +161,7 @@ Athena 不只是聊天机器人，而是拥有**能力**、**记忆**和**任务
 | **自动更新检查** | 检查 GitHub Releases 新版本；支持静默模式（自动下载+安装）和图形界面模式（WinForms 进度对话框） |
 | **代理回退** | 直连下载失败时自动回退到 GitHub 代理 |
 | **应用内更新检查** | 设置页一键检查更新；是最新版时提示"无需更新"，有新版本时弹窗确认自动下载并安装 |
+| **新版本提醒** | 任务卡启动时自动检查更新，发现新版本常驻横幅提示并支持一键下载（自动更新不可用时回退浏览器下载） |
 
 ### 主题（4 种）
 
@@ -165,7 +174,7 @@ Athena 不只是聊天机器人，而是拥有**能力**、**记忆**和**任务
 
 ### 5 种语言
 
-中文、英文、俄文、日文、韩文——设置里一键切换。74+ 翻译键覆盖全部界面元素。
+中文、英文、俄文、日文、韩文——设置里一键切换，欢迎向导首次启动时即可选择。629 个翻译键覆盖全部界面元素与服务层提示（报错、解析、更新弹窗等），本文档同样提供五语言版本。
 
 ### 帮助系统
 
@@ -264,6 +273,7 @@ src/
 ├── components/
 │   ├── layout/          Sidebar、TitleBar、Background
 │   ├── common/          GlassFilter
+│   ├── onboarding/      WelcomeModal（欢迎向导）、GuideCard（任务卡/通知中心）
 │   ├── AccountLogin.tsx     本地账户创建弹窗
 │   └── AccountEditor.tsx    资料编辑弹窗
 ├── pages/
@@ -293,7 +303,7 @@ src/
 │   ├── lessonGenerator.ts   关卡内容生成流水线
 │   └── browserFileStore.ts  IndexedDB 文件存储
 ├── utils/                   markdown（KaTeX 占位符）、electronMock
-├── i18n/                    5 语言翻译（74+ 键）
+├── i18n/                    5 语言翻译（629 键 × 5 语言）
 ├── styles/                  全局样式 + 3 套主题变量
 └── types/                   TypeScript 接口
 
