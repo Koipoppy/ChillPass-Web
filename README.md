@@ -37,7 +37,7 @@
 
 ## 什么是 ChillPass？
 
-ChillPass 是一款**桌面应用**，把你的课程资料（PDF、PPTX、TXT、MD）转化为**闯关式学习体验**。上传课件后，AI 引擎会自动提取考试重点，生成带例题的结构化课程，并创建自适应小测——所有内容按考到的概率高低排序。
+ChillPass 是一款**桌面应用**，把你的课程资料（PDF、Word、PPTX、TXT、MD）转化为**闯关式学习体验**。上传课件后，AI 引擎会自动提取考试重点，生成带例题的结构化课程，并创建自适应小测——所有内容按考到的概率高低排序。
 
 从 **v1.2.3** 起，ChillPass 重构为**浏览器式 Web 应用**，通过 Node.js SEA（Single Executable Application）打包成独立的 Windows 可执行文件。无需 Electron、无需重型运行时——只有一个 `chillpass.exe`，启动本地 HTTP 服务并打开默认浏览器。数据 100% 本地保存（IndexedDB + localStorage），完全离线运行。
 
@@ -219,7 +219,7 @@ makensis installer/installer.nsi          # 将 exe 封装为 NSIS 安装程序
 
 **1.** 打开 **设置 → API 配置** → 填入你的 [DeepSeek API Key](https://platform.deepseek.com/api_keys)
 
-**2.** 点击 **导入课件** → 选择 PDF/PPTX 文件 → 命名课程 → 等待 AI 生成关卡
+**2.** 点击 **导入课件** → 选择 PDF/Word/PPTX 文件 → 命名课程 → 等待 AI 生成关卡
 
 **3.** 进入 **闯关冲刺** → 从第 1 关开始 → 阅读知识点 → 学习例题 → 通过小测
 
@@ -247,7 +247,7 @@ DeepSeek API      ── AI 对话、批改、考点提取、翻译
 KaTeX             ── LaTeX 公式渲染（占位符策略）
 Tesseract.js      ── OCR 文字识别（CDN 加载）
 PDF.js            ── PDF 文本提取
-JSZip             ── PPTX 解析
+JSZip             ── PPTX / DOCX 解析
 IndexedDB         ── 浏览器端文件存储（课程资料）
 CSS Modules       ── 作用域样式
 SVG Filters       ── 液态玻璃视觉效果
@@ -288,7 +288,7 @@ src/
 │   └── wrongQuestionStore.ts 错题记录
 ├── services/
 │   ├── deepseek.ts          API + 批改 + 批量提取 + 出题 + 翻译
-│   ├── fileParser.ts        PDF / PPTX / TXT / MD 文本提取
+│   ├── fileParser.ts        PDF / Word / PPTX / TXT / MD 文本提取
 │   ├── imageService.ts      通过 Tesseract.js 实现 OCR
 │   ├── lessonGenerator.ts   关卡内容生成流水线
 │   └── browserFileStore.ts  IndexedDB 文件存储
@@ -328,6 +328,7 @@ tray.ps1                     系统托盘图标（WinForms NotifyIcon）
 - **新手引导流程**：首次使用自动弹出欢迎向导（内含界面语言切换），引导完成「配置 API Key → 导入课件 → AI 生成关卡」全流程；右下角常驻任务卡实时显示引导进度
 - **通知中心**：任务卡常驻为通知窗口，后台关卡生成完成后自动推送通知；有未读通知时收起图标变为黄色感叹号
 - **Token 用量统计**：API 配置页新增累计/今日消耗、调用次数与近 7 日趋势图
+- **导入课件支持 Word**：新增 .doc / .docx 解析（浏览器端直接提取，含中文编码处理）
 - **智谱 GLM 模型支持**：API 配置新增接口提供商切换，支持 glm-5.3-flash / glm-5.3
 - **移除 Win95 主题**：原 Win95 主题用户启动时自动迁移到浅色主题
 - **界面修正**：主页「导入课件/导入课程」按钮对齐、欢迎弹窗与任务卡背景遮蔽加强、关闭按钮移至左上角等

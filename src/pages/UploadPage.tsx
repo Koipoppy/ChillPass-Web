@@ -461,7 +461,7 @@ export default function UploadPage() {
           <div className={styles.dropzoneText}>
             {mode === 'append' ? '选择要追加的新课件文件，或拖拽到此处' : '点击选择文件，或拖拽到此处'}
           </div>
-          <div className={styles.dropzoneHint}>支持 PDF、PPTX、TXT、Markdown</div>
+          <div className={styles.dropzoneHint}>支持 PDF、Word（doc/docx）、PPTX、TXT、Markdown</div>
         </div>
 
         {/* 文件列表 */}

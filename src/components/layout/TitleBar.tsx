@@ -195,7 +195,7 @@ export default function TitleBar() {
               <section className={styles.helpSection}>
                 <h3 className={styles.helpSectionTitle}>快速上手</h3>
                 <ul className={styles.helpList}>
-                  <li><b>导入课件</b>：在首页点击「导入课件」，上传 PDF / 图片，AI 自动解析考点</li>
+                  <li><b>导入课件</b>：在首页点击「导入课件」，上传 PDF / Word / 图片，AI 自动解析考点</li>
                   <li><b>闯关学习</b>：在「闯关冲刺」中按顺序完成关卡，每关需答对小测题才能通关</li>
                   <li><b>小测功能</b>：支持单选、多选、填空、简答四种题型，答错自动记入错题本</li>
                   <li><b>重新生成</b>：小测中可点击「重新生成」获取同知识点的新题目（免费）</li>

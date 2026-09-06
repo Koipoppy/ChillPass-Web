@@ -19,6 +19,9 @@ build/
 installer/tools/
 installer/rcedit-x64.exe
 
+# 解析器测试夹具（本地生成）
+test-fixtures/
+
 # TypeScript 增量编译缓存
 *.tsbuildinfo
 

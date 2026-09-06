@@ -50,7 +50,7 @@ export function setupElectronMock() {
         const input = document.createElement('input')
         input.type = 'file'
         input.multiple = true
-        input.accept = '.pdf,.pptx,.ppt,.txt,.md'
+        input.accept = '.pdf,.doc,.docx,.ppt,.pptx,.txt,.md'
         input.onchange = async (e) => {
           const files = (e.target as HTMLInputElement).files
           if (!files || files.length === 0) {
