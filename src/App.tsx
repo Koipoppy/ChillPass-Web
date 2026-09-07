@@ -24,9 +24,9 @@ import styles from './App.module.css'
 import { useT } from './i18n'
 
 /**
- * 页面切换动画变体（共享轴 · 水平方向）
- * 新页面从右侧滑入并渐显，旧页面小幅左移并渐隐
- * 相比等速对推，运动量更小、有纵深层次，观感更顺滑
+ * 页面切换动画变体（同步推移）
+ * 新页面从右侧滑入并渐显，旧页面以完全相同的速度与缓动向左滑出——
+ * 新旧页面始终并肩运动，旧页面位移永远不落后于新页面，切换过程中不会产生内容重叠
  */
 const pageVariants: Variants = {
   initial: {
@@ -43,12 +43,11 @@ const pageVariants: Variants = {
     },
   },
   exit: {
-    x: '-28%',
-    opacity: 0,
+    x: '-100%',
     transition: {
       type: 'tween',
-      ease: [0.4, 0, 1, 1],
-      duration: 0.34,
+      ease: [0.32, 0.72, 0, 1],
+      duration: 0.42,
     },
   },
 }
