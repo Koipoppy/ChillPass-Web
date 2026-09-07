@@ -54,3 +54,6 @@ vite.config.js
 
 # 非项目资源文件
 招聘海报.png
+
+# ZCode 工作区内部状态
+.zcode/
