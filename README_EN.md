@@ -338,6 +338,7 @@ tray.ps1                     System tray icon (WinForms NotifyIcon)
 - **Full UI localization**: every page, component, and service-level message now ships in Chinese/English/Russian/Japanese/Korean (629 translation keys total) — AI errors, file parsing, and update dialogs included
 - **New-version alert & one-click download**: the task card checks for updates on launch, shows a persistent banner with a one-click download button (falls back to browser download when auto update is unavailable)
 - **Localized model options**: the model dropdown descriptions on the API settings page now follow the interface language
+- **Animation polish**: page transitions now use a shared-axis pattern (slide-in with fade / slight drift with fade-out); the task card morphs into its badge, and notifications and banners animate in smoothly
 </details>
 
 <details>

@@ -16,23 +16,11 @@
   padding: 16px;
   background: rgba(255, 255, 255, 0.85);
   box-shadow: var(--shadow-float);
-  animation: cardSlideIn 0.35s cubic-bezier(0.32, 0.72, 0, 1);
   scrollbar-width: none;
 }
 
 .card::-webkit-scrollbar {
   display: none;
-}
-
-@keyframes cardSlideIn {
-  from {
-    opacity: 0;
-    transform: translateY(16px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }
 
 /* ===== 主题覆盖 ===== */
@@ -45,6 +33,11 @@
 }
 
 /* ===== 折叠徽章：圆形悬浮按钮 + 进度角标 ===== */
+/* 徽章动画包装层：作为 collapsedCount 的绝对定位参照 */
+.badgeWrap {
+  position: relative;
+}
+
 .collapsedCard:global(.liquid-glass) {
   width: 52px;
   height: 52px;

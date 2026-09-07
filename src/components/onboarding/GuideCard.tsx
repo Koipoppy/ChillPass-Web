@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { AnimatePresence, motion } from 'framer-motion'
 import {
   Target,
   Key,
@@ -155,37 +156,74 @@ export default function GuideCard() {
     navigate('/lessons')
   }
 
-  // ── 折叠态：圆形小徽章 ──
+  // ── 折叠态：圆形小徽章（与展开卡片通过 AnimatePresence 做形变衔接）──
   if (collapsed) {
     return (
       <div className={styles.cardAnchor}>
-        <button
-          type="button"
-          className={`liquid-glass ${styles.collapsedCard}`}
-          onClick={() => setCollapsed(false)}
-          aria-label={unreadCount > 0 ? t('notify.newNotice') : t('guide.expand')}
-          title={unreadCount > 0 ? t('notify.newNotice') : t('guide.expand')}
-        >
-          {unreadCount > 0 ? (
-            <AlertTriangle size={20} strokeWidth={2.2} className={styles.collapsedIconAlert} />
-          ) : allDone ? (
-            <Check size={20} strokeWidth={2.2} className={styles.collapsedIconDone} />
-          ) : (
-            <Target size={20} strokeWidth={2} className={styles.collapsedIcon} />
-          )}
-        </button>
-        <span
-          className={`${styles.collapsedCount} ${unreadCount > 0 ? styles.collapsedCountAlert : ''} ${allDone && unreadCount === 0 ? styles.collapsedCountDone : ''}`}
-        >
-          {unreadCount > 0 ? unreadCount : allDone ? '✓' : `${doneCount}/3`}
-        </span>
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div
+            key="badge"
+            className={styles.badgeWrap}
+            initial={{ scale: 0.4, opacity: 0 }}
+            animate={{
+              scale: 1,
+              opacity: 1,
+              transition: { type: 'spring', stiffness: 480, damping: 28 },
+            }}
+            exit={{
+              scale: 0.4,
+              opacity: 0,
+              transition: { duration: 0.14, ease: 'easeIn' },
+            }}
+            style={{ transformOrigin: '85% 85%' }}
+          >
+            <button
+              type="button"
+              className={`liquid-glass ${styles.collapsedCard}`}
+              onClick={() => setCollapsed(false)}
+              aria-label={unreadCount > 0 ? t('notify.newNotice') : t('guide.expand')}
+              title={unreadCount > 0 ? t('notify.newNotice') : t('guide.expand')}
+            >
+              {unreadCount > 0 ? (
+                <AlertTriangle size={20} strokeWidth={2.2} className={styles.collapsedIconAlert} />
+              ) : allDone ? (
+                <Check size={20} strokeWidth={2.2} className={styles.collapsedIconDone} />
+              ) : (
+                <Target size={20} strokeWidth={2} className={styles.collapsedIcon} />
+              )}
+            </button>
+            <span
+              className={`${styles.collapsedCount} ${unreadCount > 0 ? styles.collapsedCountAlert : ''} ${allDone && unreadCount === 0 ? styles.collapsedCountDone : ''}`}
+            >
+              {unreadCount > 0 ? unreadCount : allDone ? '✓' : `${doneCount}/3`}
+            </span>
+          </motion.div>
+        </AnimatePresence>
       </div>
     )
   }
 
   return (
     <div className={styles.cardAnchor}>
-        <div className={`liquid-glass ${styles.card}`}>
+      <AnimatePresence mode="wait" initial={false}>
+        <motion.div
+          key="card"
+          className={`liquid-glass ${styles.card}`}
+          initial={{ opacity: 0, y: 20, scale: 0.96 }}
+          animate={{
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            transition: { duration: 0.34, ease: [0.32, 0.72, 0, 1] },
+          }}
+          exit={{
+            opacity: 0,
+            y: 14,
+            scale: 0.94,
+            transition: { duration: 0.18, ease: [0.4, 0, 1, 1] },
+          }}
+          style={{ transformOrigin: '85% 100%' }}
+        >
         <div className={styles.header}>
           <div className={styles.headerTitle}>
             <span className={styles.headerIcon}>
@@ -213,7 +251,12 @@ export default function GuideCard() {
 
       {/* 新版本提示：发现新版本时常驻展示，支持一键下载 */}
       {updateInfo && (
-        <div className={styles.updateBanner}>
+        <motion.div
+          className={styles.updateBanner}
+          initial={{ opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.28, ease: 'easeOut' }}
+        >
           <div className={styles.updateMeta}>
             <Download size={14} strokeWidth={2.2} className={styles.updateMetaIcon} />
             <span className={styles.updateVersion}>
@@ -228,30 +271,42 @@ export default function GuideCard() {
               <span>{t('upd.downloadNow')}</span>
             </button>
           )}
-        </div>
+        </motion.div>
       )}
 
       {/* 通知列表：有新通知时置顶展示 */}
       {recentNotifications.length > 0 && (
         <div className={styles.notifList}>
           {recentNotifications.map(n => (
-            <div
+            <motion.div
               key={n.id}
+              layout
               className={`${styles.notifItem} ${!n.read ? styles.notifItemUnread : ''}`}
+              initial={{ opacity: 0, y: -8, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ duration: 0.25, ease: 'easeOut' }}
             >
               <AlertTriangle size={14} strokeWidth={2} className={styles.notifItemIcon} />
               <div className={styles.notifItemText}>
                 <span className={styles.notifItemTitle}>{n.title}</span>
                 <span className={styles.notifItemBody}>{n.body}</span>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
       )}
 
+        <AnimatePresence mode="wait" initial={false}>
         {allDone ? (
           /* ── 完成态 ── */
-          <div className={styles.donePanel}>
+          <motion.div
+            key="done"
+            className={styles.donePanel}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.22, ease: 'easeOut' }}
+          >
             <div className={styles.doneIcon}>
               <PartyPopper size={26} strokeWidth={1.8} />
             </div>
@@ -279,10 +334,17 @@ export default function GuideCard() {
               <span>{t('guide.startQuest')}</span>
               <ArrowRight size={16} strokeWidth={2.2} />
             </button>
-          </div>
+          </motion.div>
         ) : (
           /* ── 步骤列表 ── */
-          <div className={styles.stepList}>
+          <motion.div
+            key="steps"
+            className={styles.stepList}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.22, ease: 'easeOut' }}
+          >
             {steps.map((step, i) => {
               const Icon = step.icon
               const done = stepDone[i]
@@ -334,10 +396,12 @@ export default function GuideCard() {
                   )}
                 </div>
               )
-            })}
-          </div>
+              })}
+          </motion.div>
         )}
-        </div>
+        </AnimatePresence>
+        </motion.div>
+      </AnimatePresence>
     </div>
   )
 }

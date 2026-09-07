@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, motion, type Variants } from 'framer-motion'
 import Sidebar from './components/layout/Sidebar'
 import TitleBar from './components/layout/TitleBar'
 import GlassFilter from './components/common/GlassFilter'
@@ -24,28 +24,31 @@ import styles from './App.module.css'
 import { useT } from './i18n'
 
 /**
- * 页面切换动画变体
- * 纯挤入挤出效果：新页面从右侧推入，旧页面向左被挤出
- * 新旧页面同时运动，不使用渐隐
+ * 页面切换动画变体（共享轴 · 水平方向）
+ * 新页面从右侧滑入并渐显，旧页面小幅左移并渐隐
+ * 相比等速对推，运动量更小、有纵深层次，观感更顺滑
  */
-const pageVariants = {
+const pageVariants: Variants = {
   initial: {
     x: '100%',
+    opacity: 0,
   },
   enter: {
     x: 0,
+    opacity: 1,
     transition: {
       type: 'tween',
       ease: [0.32, 0.72, 0, 1],
-      duration: 0.4,
+      duration: 0.42,
     },
   },
   exit: {
-    x: '-100%',
+    x: '-28%',
+    opacity: 0,
     transition: {
       type: 'tween',
-      ease: [0.32, 0.72, 0, 1],
-      duration: 0.4,
+      ease: [0.4, 0, 1, 1],
+      duration: 0.34,
     },
   },
 }
