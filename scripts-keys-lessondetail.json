@@ -1,0 +1,240 @@
+{
+  "lesson.notFound": {
+    "zh": "关卡不存在或已被移除",
+    "en": "Lesson not found or removed",
+    "ru": "Уровень не найден или удалён",
+    "ja": "レベルが存在しないか削除されました",
+    "ko": "레벨이 없거나 삭제되었습니다"
+  },
+  "lesson.backToList": {
+    "zh": "返回关卡列表",
+    "en": "Back to lesson list",
+    "ru": "К списку уровней",
+    "ja": "レベル一覧に戻る",
+    "ko": "레벨 목록으로"
+  },
+  "lesson.noExamPoint": {
+    "zh": "找不到对应考点信息",
+    "en": "Exam point info not found",
+    "ru": "Информация о теме не найдена",
+    "ja": "対応する試験ポイントが見つかりません",
+    "ko": "시험 포인트 정보를 찾을 수 없습니다"
+  },
+  "lesson.genFailedRetry": {
+    "zh": "内容生成失败，请重试",
+    "en": "Content generation failed, please retry",
+    "ru": "Не удалось создать контент, попробуйте снова",
+    "ja": "コンテンツ生成に失敗しました。再試行してください",
+    "ko": "콘텐츠 생성 실패, 다시 시도하세요"
+  },
+  "lesson.gradeFailed": {
+    "zh": "评阅失败，请重试",
+    "en": "Grading failed, please retry",
+    "ru": "Ошибка проверки, попробуйте снова",
+    "ja": "採点に失敗しました。再試行してください",
+    "ko": "채점 실패, 다시 시도하세요"
+  },
+  "lesson.regenerateFailed": {
+    "zh": "题目重新生成失败，请重试",
+    "en": "Question regeneration failed, please retry",
+    "ru": "Не удалось пересоздать вопрос, попробуйте снова",
+    "ja": "問題の再生成に失敗しました。再試行してください",
+    "ko": "문제 재생성 실패, 다시 시도하세요"
+  },
+  "lesson.coinsInsufficientSkip": {
+    "zh": "Chill币不足，跳过需要 10 枚",
+    "en": "Not enough Chill coins — skipping costs 10",
+    "ru": "Недостаточно монет Chill — пропуск стоит 10",
+    "ja": "Chill コインが不足しています。スキップには10枚必要です",
+    "ko": "Chill 코인이 부족합니다. 건너뛰기에 10개 필요합니다"
+  },
+  "lesson.orderLabel": {
+    "zh": "第 {n} 关",
+    "en": "Lesson {n}",
+    "ru": "Уровень {n}",
+    "ja": "レベル {n}",
+    "ko": "레벨 {n}"
+  },
+  "lesson.regenerating": {
+    "zh": "正在重新生成学习内容...",
+    "en": "Regenerating lesson content...",
+    "ru": "Пересоздание содержимого урока...",
+    "ja": "学習内容を再生成中...",
+    "ko": "학습 내용 재생성 중..."
+  },
+  "lesson.tabPoints": {
+    "zh": "知识点",
+    "en": "Key points",
+    "ru": "Ключевые идеи",
+    "ja": "キーポイント",
+    "ko": "핵심 포인트"
+  },
+  "lesson.explanationTitle": {
+    "zh": "详细解释",
+    "en": "Detailed explanation",
+    "ru": "Подробное объяснение",
+    "ja": "詳しい解説",
+    "ko": "상세 설명"
+  },
+  "lesson.noExamples": {
+    "zh": "本关暂无例题",
+    "en": "No worked examples in this lesson",
+    "ru": "В этом уровне нет примеров",
+    "ja": "このレベルには例題がありません",
+    "ko": "이 레벨에는 예제가 없습니다"
+  },
+  "lesson.exampleN": {
+    "zh": "例题 {n}",
+    "en": "Example {n}",
+    "ru": "Пример {n}",
+    "ja": "例題 {n}",
+    "ko": "예제 {n}"
+  },
+  "lesson.stepsLabel": {
+    "zh": "解题步骤",
+    "en": "Solution steps",
+    "ru": "Шаги решения",
+    "ja": "解法ステップ",
+    "ko": "풀이 단계"
+  },
+  "lesson.answerLabel": {
+    "zh": "答案",
+    "en": "Answer",
+    "ru": "Ответ",
+    "ja": "答え",
+    "ko": "답"
+  },
+  "lesson.noQuiz": {
+    "zh": "本关暂无小测题",
+    "en": "No quiz questions in this lesson",
+    "ru": "В этом уровне нет тестовых вопросов",
+    "ja": "このレベルにはクイズがありません",
+    "ko": "이 레벨에는 퀴즈가 없습니다"
+  },
+  "lesson.questionN": {
+    "zh": "问题 {cur} / {total}",
+    "en": "Question {cur} / {total}",
+    "ru": "Вопрос {cur} / {total}",
+    "ja": "問題 {cur} / {total}",
+    "ko": "문제 {cur} / {total}"
+  },
+  "lesson.qTypeChoice": {
+    "zh": "单选题",
+    "en": "Single choice",
+    "ru": "Одиночный выбор",
+    "ja": "単一選択",
+    "ko": "객관식"
+  },
+  "lesson.qTypeMulti": {
+    "zh": "多选题",
+    "en": "Multiple choice",
+    "ru": "Множественный выбор",
+    "ja": "複数選択",
+    "ko": "복수선택"
+  },
+  "lesson.qTypeFill": {
+    "zh": "填空题",
+    "en": "Fill in the blank",
+    "ru": "Заполнение",
+    "ja": "空欄埋め",
+    "ko": "빈칸 채우기"
+  },
+  "lesson.qTypeShort": {
+    "zh": "简答题",
+    "en": "Short answer",
+    "ru": "Краткий ответ",
+    "ja": "短答式",
+    "ko": "단답형"
+  },
+  "lesson.yourAnswerPlaceholder": {
+    "zh": "请输入你的答案",
+    "en": "Enter your answer",
+    "ru": "Введите ваш ответ",
+    "ja": "あなたの答えを入力してください",
+    "ko": "답을 입력하세요"
+  },
+  "lesson.answerCorrect": {
+    "zh": "回答正确",
+    "en": "Correct!",
+    "ru": "Правильно!",
+    "ja": "正解！",
+    "ko": "정답!"
+  },
+  "lesson.answerWrong": {
+    "zh": "回答错误",
+    "en": "Wrong answer",
+    "ru": "Неправильно",
+    "ja": "不正解",
+    "ko": "오답"
+  },
+  "lesson.regenerateTitle": {
+    "zh": "生成同知识点的新题目（不消耗 Chill币）",
+    "en": "Generate a new question on the same point (no Chill coins)",
+    "ru": "Новый вопрос по той же теме (без монет)",
+    "ja": "同じポイントの新問題を生成（コイン不要）",
+    "ko": "같은 포인트의 새 문제 생성(코인 소모 없음)"
+  },
+  "lesson.regenerate": {
+    "zh": "重新生成",
+    "en": "Regenerate",
+    "ru": "Пересоздать",
+    "ja": "再生成",
+    "ko": "다시 생성"
+  },
+  "lesson.skipTitle": {
+    "zh": "消耗 10 Chill币 跳到下一题",
+    "en": "Spend 10 Chill coins to jump to the next question",
+    "ru": "Потратьте 10 монет, чтобы перейти к следующему вопросу",
+    "ja": "Chill コイン10枚で次の問題へスキップ",
+    "ko": "Chill 코인 10개로 다음 문제로 건너뛰기"
+  },
+  "lesson.skipCost": {
+    "zh": "跳过 (10币)",
+    "en": "Skip (10 coins)",
+    "ru": "Пропустить (10 монет)",
+    "ja": "スキップ（10枚）",
+    "ko": "건너뛰기 (10코인)"
+  },
+  "lesson.tryAgain": {
+    "zh": "再试一次",
+    "en": "Try again",
+    "ru": "Ещё раз",
+    "ja": "もう一度",
+    "ko": "다시 시도"
+  },
+  "lesson.submitWithCount": {
+    "zh": "提交答案（已选 {count} 项）",
+    "en": "Submit ({count} selected)",
+    "ru": "Ответить (выбрано: {count})",
+    "ja": "提出（{count}件選択中）",
+    "ko": "제출({count}개 선택)"
+  },
+  "lesson.grading": {
+    "zh": "评阅中...",
+    "en": "Grading...",
+    "ru": "Проверка...",
+    "ja": "採点中...",
+    "ko": "채점 중..."
+  },
+  "lesson.completed": {
+    "zh": "本关已完成",
+    "en": "Lesson completed",
+    "ru": "Уровень пройден",
+    "ja": "このレベルは完了済み",
+    "ko": "레벨 완료"
+  },
+  "lesson.generatingWait": {
+    "zh": "内容正在生成中，请稍候...",
+    "en": "Content is being generated, please wait...",
+    "ru": "Контент генерируется, подождите...",
+    "ja": "コンテンツを生成中です。お待ちください...",
+    "ko": "콘텐츠 생성 중입니다. 잠시만 기다려 주세요..."
+  },
+  "lesson.genFailedManual": {
+    "zh": "关卡内容生成失败，你可以尝试手动重新生成。",
+    "en": "Lesson content failed to generate — you can try regenerating manually.",
+    "ru": "Не удалось создать содержимое урока — попробуйте пересоздать вручную.",
+    "ja": "レベル内容の生成に失敗しました。手動で再生成を試せます。",
+    "ko": "레벨 콘텐츠 생성에 실패했습니다. 수동으로 다시 생성해 보세요."
+  }
+}

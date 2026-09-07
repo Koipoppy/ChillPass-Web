@@ -1,0 +1,62 @@
+{
+  "api.cardTitle": { "zh": "模型接入", "en": "Model access", "ru": "Доступ к модели", "ja": "モデル接続", "ko": "모델 연결" },
+  "api.cardDesc": {
+    "zh": "配置 API Key 与模型，所有数据仅保存在本地，不会上传至任何第三方服务",
+    "en": "Configure your API key and model. All data stays local and is never uploaded to third parties",
+    "ru": "Настройте API-ключ и модель. Все данные хранятся локально и не передаются третьим лицам",
+    "ja": "APIキーとモデルを設定します。すべてのデータはローカルに保存され、第三者に送信されません",
+    "ko": "API 키와 모델을 설정합니다. 모든 데이터는 로컬에만 저장되며 제3자에게 전송되지 않습니다"
+  },
+  "api.provider": { "zh": "接口提供商", "en": "Provider", "ru": "Провайдер", "ja": "プロバイダー", "ko": "제공사" },
+  "api.hintZhipu": {
+    "zh": "使用智谱 AI 开放平台，国内访问友好，glm-5.3-flash 适合快速生成",
+    "en": "Uses the Zhipu AI platform — China-friendly; glm-5.3-flash is fast",
+    "ru": "Платформа Zhipu AI — удобна в Китае; glm-5.3-flash работает быстро",
+    "ja": "智譜AIプラットフォームを使用。glm-5.3-flash は高速生成向け",
+    "ko": "지푸 AI 플랫폼 사용, glm-5.3-flash는 빠른 생성에 적합합니다"
+  },
+  "api.hintDeepseek": {
+    "zh": "使用 DeepSeek 大模型，适合考点推理与内容生成",
+    "en": "Uses the DeepSeek model — great for exam-point reasoning and content generation",
+    "ru": "Модель DeepSeek — хорошо подходит для рассуждений и генерации контента",
+    "ja": "DeepSeek モデルを使用。試験ポイントの推論と生成に適しています",
+    "ko": "DeepSeek 모델 사용, 시험 포인트 추론과 콘텐츠 생성에 적합합니다"
+  },
+  "api.keyLabel": { "zh": "API Key", "en": "API Key", "ru": "API-ключ", "ja": "APIキー", "ko": "API 키" },
+  "api.keyPhZhipu": { "zh": "请输入智谱 API Key", "en": "Enter your Zhipu API key", "ru": "Введите API-ключ Zhipu", "ja": "智譜APIキーを入力してください", "ko": "지푸 API 키를 입력하세요" },
+  "api.keyPhDeepseek": { "zh": "请输入 DeepSeek API Key", "en": "Enter your DeepSeek API key", "ru": "Введите API-ключ DeepSeek", "ja": "DeepSeek APIキーを入力してください", "ko": "DeepSeek API 키를 입력하세요" },
+  "api.hideKey": { "zh": "隐藏 API Key", "en": "Hide API key", "ru": "Скрыть ключ", "ja": "APIキーを隠す", "ko": "API 키 숨기기" },
+  "api.showKey": { "zh": "显示 API Key", "en": "Show API key", "ru": "Показать ключ", "ja": "APIキーを表示", "ko": "API 키 표시" },
+  "api.keyHintZhipu": {
+    "zh": "可在智谱开放平台获取，数据仅保存在本地",
+    "en": "Get it from the Zhipu open platform. Stored locally only",
+    "ru": "Получите на платформе Zhipu. Хранится только локально",
+    "ja": "智譜オープンプラットフォームで取得できます。ローカルにのみ保存されます",
+    "ko": "지푸 오픈 플랫폼에서 발급 가능, 로컬에만 저장됩니다"
+  },
+  "api.keyHintDeepseek": {
+    "zh": "可在 DeepSeek 开放平台获取，数据仅保存在本地",
+    "en": "Get it from the DeepSeek open platform. Stored locally only",
+    "ru": "Получите на платформе DeepSeek. Хранится только локально",
+    "ja": "DeepSeekオープンプラットフォームで取得できます。ローカルにのみ保存されます",
+    "ko": "DeepSeek 오픈 플랫폼에서 발급 가능, 로컬에만 저장됩니다"
+  },
+  "api.linkZhipu": { "zh": "前往智谱开放平台获取 API Key", "en": "Get an API key from the Zhipu platform", "ru": "Получить ключ на платформе Zhipu", "ja": "智譜オープンプラットフォームでAPIキーを取得", "ko": "지푸 오픈 플랫폼에서 API 키 발급받기" },
+  "api.linkDeepseek": { "zh": "前往 DeepSeek 开放平台获取 API Key", "en": "Get an API key from the DeepSeek platform", "ru": "Получить ключ на платформе DeepSeek", "ja": "DeepSeekオープンプラットフォームでAPIキーを取得", "ko": "DeepSeek 오픈 플랫폼에서 API 키 발급받기" },
+  "api.modelLabel": { "zh": "模型", "en": "Model", "ru": "Модель", "ja": "モデル", "ko": "모델" },
+  "api.modelHintZhipu": {
+    "zh": "glm-5.3-flash 适合快速生成，glm-5.3 适合复杂考点推理",
+    "en": "glm-5.3-flash is fast; glm-5.3 handles complex exam-point reasoning",
+    "ru": "glm-5.3-flash быстрее; glm-5.3 — для сложных рассуждений",
+    "ja": "glm-5.3-flash は高速生成、glm-5.3 は複雑な推論向け",
+    "ko": "glm-5.3-flash는 빠른 생성, glm-5.3은 복잡한 추론에 적합합니다"
+  },
+  "api.modelHintDeepseek": {
+    "zh": "deepseek-chat 适合快速生成，deepseek-reasoner 适合复杂考点推理",
+    "en": "deepseek-chat is fast; deepseek-reasoner handles complex reasoning",
+    "ru": "deepseek-chat быстрее; deepseek-reasoner — для сложных рассуждений",
+    "ja": "deepseek-chat は高速生成、deepseek-reasoner は複雑な推論向け",
+    "ko": "deepseek-chat는 빠른 생성, deepseek-reasoner는 복잡한 추론에 적합합니다"
+  },
+  "api.save": { "zh": "保存设置", "en": "Save settings", "ru": "Сохранить настройки", "ja": "設定を保存", "ko": "설정 저장" }
+}

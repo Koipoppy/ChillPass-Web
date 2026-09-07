@@ -1,0 +1,22 @@
+{
+  "data.title": { "zh": "数据管理", "en": "Data management", "ru": "Управление данными", "ja": "データ管理", "ko": "데이터 관리" },
+  "data.subtitle": { "zh": "管理本地存储的课程与学习数据", "en": "Manage locally stored courses and study data", "ru": "Управление локальными курсами и данными учёбы", "ja": "ローカルに保存したコースと学習データを管理", "ko": "로컬에 저장된 코스와 학습 데이터 관리" },
+  "data.statsTitle": { "zh": "数据统计", "en": "Statistics", "ru": "Статистика", "ja": "データ統計", "ko": "데이터 통계" },
+  "data.statsDesc": { "zh": "查看当前本地存储的课程与课件数量", "en": "See how many courses and files are stored locally", "ru": "Сколько курсов и файлов хранится локально", "ja": "ローカル保存されたコースと資料の数を表示", "ko": "로컬에 저장된 코스와 자료 수 표시" },
+  "data.courseCount": { "zh": "课程数量", "en": "Courses", "ru": "Курсы", "ja": "コース数", "ko": "코스 수" },
+  "data.storageTitle": { "zh": "存储信息", "en": "Storage info", "ru": "Сведения о хранилище", "ja": "ストレージ情報", "ko": "저장 정보" },
+  "data.storageDesc": { "zh": "查看应用安装位置、数据存储位置与磁盘占用情况", "en": "Install location, data location and disk usage", "ru": "Путь установки, путь данных и занятое место", "ja": "インストール先・データ保存先・ディスク使用量を表示", "ko": "설치 위치, 데이터 위치, 디스크 사용량 표시" },
+  "data.installPath": { "zh": "安装位置", "en": "Install location", "ru": "Путь установки", "ja": "インストール先", "ko": "설치 위치" },
+  "data.loading": { "zh": "加载中...", "en": "Loading...", "ru": "Загрузка...", "ja": "読み込み中...", "ko": "로드 중..." },
+  "data.locateTip": { "zh": "在资源管理器中定位安装位置", "en": "Locate the install folder in Explorer", "ru": "Открыть папку установки в проводнике", "ja": "エクスプローラーでインストール先を開く", "ko": "탐색기에서 설치 위치 열기" },
+  "data.locate": { "zh": "定位", "en": "Locate", "ru": "Открыть", "ja": "開く", "ko": "열기" },
+  "data.userDataPath": { "zh": "数据存储位置", "en": "Data location", "ru": "Путь данных", "ja": "データ保存先", "ko": "데이터 위치" },
+  "data.diskUsage": { "zh": "磁盘占用", "en": "Disk usage", "ru": "Занято на диске", "ja": "ディスク使用量", "ko": "디스크 사용량" },
+  "data.courseDataApprox": { "zh": "课程数据约 {size}", "en": "course data ≈ {size}", "ru": "данные курсов ≈ {size}", "ja": "コースデータ約 {size}", "ko": "코스 데이터 약 {size}" },
+  "data.byCourse": { "zh": "按课程占用", "en": "Usage by course", "ru": "По курсам", "ja": "コース別使用量", "ko": "코스별 사용량" },
+  "data.dangerTitle": { "zh": "危险操作", "en": "Danger zone", "ru": "Опасная зона", "ja": "危険な操作", "ko": "위험 작업" },
+  "data.dangerDesc": { "zh": "清除操作将删除所有已上传的课件、考点与闯关进度，且不可恢复", "en": "Clearing deletes all uploaded courseware, exam points and quest progress — permanently", "ru": "Очистка удалит все материалы, темы и прогресс — безвозвратно", "ja": "クリアすると資料・試験ポイント・進捗がすべて削除され、元に戻せません", "ko": "지우면 자료·시험 포인트·진행 상황이 모두 삭제되며 복구할 수 없습니다" },
+  "data.clearAll": { "zh": "清除所有课程数据", "en": "Clear all course data", "ru": "Удалить все данные курсов", "ja": "すべてのコースデータを削除", "ko": "모든 코스 데이터 지우기" },
+  "data.clearConfirm": { "zh": "确定要清除所有课程数据吗？此操作不可恢复，将删除所有已上传的课件、考点与闯关进度。", "en": "Clear all course data? This is permanent — all courseware, exam points and progress will be deleted.", "ru": "Удалить все данные курсов? Это необратимо: материалы, темы и прогресс будут удалены.", "ja": "すべてのコースデータを削除しますか？元に戻せません。", "ko": "모든 코스 데이터를 지울까요? 되돌릴 수 없습니다." },
+  "data.confirmClear": { "zh": "确认清除", "en": "Confirm clear", "ru": "Подтвердить очистку", "ja": "削除する", "ko": "지우기 확인" }
+}

@@ -1,0 +1,51 @@
+{
+  "wrongbook.clearConfirm": {
+    "zh": "确定要清空「{name}」的所有错题吗？此操作不可撤销。",
+    "en": "Clear all mistakes for \"{name}\"? This cannot be undone.",
+    "ru": "Очистить все ошибки курса «{name}»? Это нельзя отменить.",
+    "ja": "「{name}」の間違いをすべて削除しますか？取り消せません。",
+    "ko": "\"{name}\"의 모든 오답을 비울까요? 되돌릴 수 없습니다."
+  },
+  "wrongbook.noAnswer": {
+    "zh": "未作答",
+    "en": "Not answered",
+    "ru": "Нет ответа",
+    "ja": "未回答",
+    "ko": "미답변"
+  },
+  "wrongbook.unknown": {
+    "zh": "未知",
+    "en": "Unknown",
+    "ru": "Неизвестно",
+    "ja": "不明",
+    "ko": "알 수 없음"
+  },
+  "wrongbook.prefillChoice": {
+    "zh": "我在「{lesson}」这关遇到了一道错题：\n题目：{question}\n我选了：{my}\n正确答案：{correct}\n请帮我理解这个知识点。",
+    "en": "I got a wrong answer in the lesson \"{lesson}\":\nQuestion: {question}\nI chose: {my}\nCorrect answer: {correct}\nPlease help me understand this point.",
+    "ru": "Я ошибся в уроке «{lesson}»:\nВопрос: {question}\nЯ выбрал: {my}\nПравильный ответ: {correct}\nОбъясните мне эту тему.",
+    "ja": "「{lesson}」のレベルで間違えました：\n問題：{question}\n私の選択：{my}\n正解：{correct}\nこのポイントを解説してください。",
+    "ko": "\"{lesson}\" 레벨에서 틀린 문제가 있습니다:\n문제: {question}\n내 선택: {my}\n정답: {correct}\n이 포인트를 설명해 주세요."
+  },
+  "wrongbook.prefillText": {
+    "zh": "我在「{lesson}」这关遇到了一道错题：\n题目：{question}\n我的答案：{my}\n参考答案：{correct}\n请帮我理解这个知识点。",
+    "en": "I got a wrong answer in the lesson \"{lesson}\":\nQuestion: {question}\nMy answer: {my}\nReference answer: {correct}\nPlease help me understand this point.",
+    "ru": "Я ошибся в уроке «{lesson}»:\nВопрос: {question}\nМой ответ: {my}\nЭталонный ответ: {correct}\nОбъясните мне эту тему.",
+    "ja": "「{lesson}」のレベルで間違えました：\n問題：{question}\n私の回答：{my}\n参考答案：{correct}\nこのポイントを解説してください。",
+    "ko": "\"{lesson}\" 레벨에서 틀린 문제가 있습니다:\n문제: {question}\n내 답: {my}\n참고 답안: {correct}\n이 포인트를 설명해 주세요."
+  },
+  "wrongbook.subtitle": {
+    "zh": "按课程归类，逐个击破",
+    "en": "Grouped by course — crush them one by one",
+    "ru": "По курсам — разобрать по одному",
+    "ja": "コース別にひとつずつ克服",
+    "ko": "코스별로 하나씩 정복"
+  },
+  "wrongbook.keepGoing": {
+    "zh": "继续保持！",
+    "en": "Keep it up!",
+    "ru": "Так держать!",
+    "ja": "この調子！",
+    "ko": "계속 유지하세요!"
+  }
+}

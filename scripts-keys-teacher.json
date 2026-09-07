@@ -1,0 +1,352 @@
+{
+  "teacher.qTypeCalculation": {
+    "zh": "计算题",
+    "en": "Calculation",
+    "ru": "Расчётные",
+    "ja": "計算問題",
+    "ko": "계산 문제"
+  },
+  "teacher.qTypeEssay": {
+    "zh": "论述题",
+    "en": "Essay",
+    "ru": "Эссе",
+    "ja": "論述問題",
+    "ko": "논술형"
+  },
+  "teacher.diffEasy": {
+    "zh": "简单",
+    "en": "Easy",
+    "ru": "Легко",
+    "ja": "簡単",
+    "ko": "쉬움"
+  },
+  "teacher.diffMedium": {
+    "zh": "中等",
+    "en": "Medium",
+    "ru": "Средне",
+    "ja": "普通",
+    "ko": "보통"
+  },
+  "teacher.diffHard": {
+    "zh": "困难",
+    "en": "Hard",
+    "ru": "Сложно",
+    "ja": "難しい",
+    "ko": "어려움"
+  },
+  "teacher.errPrintWindow": {
+    "zh": "无法创建打印窗口",
+    "en": "Could not open the print window",
+    "ru": "Не удалось открыть окно печати",
+    "ja": "印刷ウィンドウを開けませんでした",
+    "ko": "인쇄 창을 열 수 없습니다"
+  },
+  "teacher.errSelectCourse": {
+    "zh": "请先选择一个课程",
+    "en": "Please select a course first",
+    "ru": "Сначала выберите курс",
+    "ja": "先にコースを選択してください",
+    "ko": "먼저 코스를 선택하세요"
+  },
+  "teacher.errNoCourseware": {
+    "zh": "该课程没有课件文本，请先导入并分析课件",
+    "en": "This course has no courseware text — import and analyze courseware first",
+    "ru": "У курса нет текста материалов — сначала импортируйте и проанализируйте",
+    "ja": "このコースには資料テキストがありません。先にインポートして解析してください",
+    "ko": "이 코스에는 자료 텍스트가 없습니다. 먼저 가져와 분석하세요"
+  },
+  "teacher.errGenerate": {
+    "zh": "生成失败，请重试（可能是网络问题或课件内容不足）",
+    "en": "Generation failed, please retry (network issue or not enough courseware content)",
+    "ru": "Не удалось создать вопросы — проверьте сеть или объём материалов",
+    "ja": "生成に失敗しました。再試行してください（ネットワークまたは資料不足の可能性）",
+    "ko": "생성 실패, 다시 시도하세요(네트워크 또는 자료 부족 가능성)"
+  },
+  "teacher.errGenerateShort": {
+    "zh": "生成失败，请重试",
+    "en": "Generation failed, please retry",
+    "ru": "Не удалось создать, попробуйте снова",
+    "ja": "生成に失敗しました。再試行してください",
+    "ko": "생성 실패, 다시 시도하세요"
+  },
+  "teacher.clearConfirm": {
+    "zh": "确定要清空所有已生成的题目吗？",
+    "en": "Clear all generated questions?",
+    "ru": "Очистить все созданные вопросы?",
+    "ja": "生成された問題をすべて削除しますか？",
+    "ko": "생성된 모든 문제를 지울까요?"
+  },
+  "teacher.errExportEmpty": {
+    "zh": "请先生成题目再导出",
+    "en": "Generate questions before exporting",
+    "ru": "Сначала создайте вопросы для экспорта",
+    "ja": "エクスポート前に問題を生成してください",
+    "ko": "내보내기 전에 문제를 먼저 생성하세요"
+  },
+  "teacher.errTranslate": {
+    "zh": "翻译失败，将使用中文内容导出",
+    "en": "Translation failed — exporting with the original content",
+    "ru": "Ошибка перевода — экспорт в оригинале",
+    "ja": "翻訳に失敗したため元の内容でエクスポートします",
+    "ko": "번역 실패, 원본 내용으로 내보냅니다"
+  },
+  "teacher.defaultPaperTitle": {
+    "zh": "{course}期末考试试卷",
+    "en": "{course} Final Exam",
+    "ru": "Итоговый экзамен: {course}",
+    "ja": "{course} 期末試験問題",
+    "ko": "{course} 기말고사 시험지"
+  },
+  "teacher.courseFallback": {
+    "zh": "课程",
+    "en": "Course",
+    "ru": "Курс",
+    "ja": "コース",
+    "ko": "코스"
+  },
+  "teacher.title": {
+    "zh": "教师工作台",
+    "en": "Teacher Workspace",
+    "ru": "Панель учителя",
+    "ja": "教師ワークスペース",
+    "ko": "교사 워크스페이스"
+  },
+  "teacher.subtitle": {
+    "zh": "从课件生成试题，组装试卷并导出 PDF",
+    "en": "Generate questions from courseware, assemble an exam and export PDF",
+    "ru": "Создавайте вопросы из материалов, собирайте экзамен и экспортируйте PDF",
+    "ja": "資料から問題を生成し、試験紙を組み立ててPDF出力します",
+    "ko": "자료에서 문제를 생성하고 시험지를 조립해 PDF로 내보냅니다"
+  },
+  "teacher.selectCourse": {
+    "zh": "选择课程",
+    "en": "Select a course",
+    "ru": "Выбор курса",
+    "ja": "コース選択",
+    "ko": "코스 선택"
+  },
+  "teacher.selectCourseDesc": {
+    "zh": "选择已导入课件内容的课程作为出题来源",
+    "en": "Pick a course with imported courseware as the question source",
+    "ru": "Выберите курс с материалами как источник вопросов",
+    "ja": "資料を取り込んだコースを出題元として選択してください",
+    "ko": "자료를 가져온 코스를 출제 원본으로 선택하세요"
+  },
+  "teacher.noCourses": {
+    "zh": "暂无课程，请先导入课件",
+    "en": "No courses yet — import courseware first",
+    "ru": "Курсов пока нет — сначала импортируйте материалы",
+    "ja": "コースがありません。先に資料をインポートしてください",
+    "ko": "코스가 없습니다. 먼저 자료를 가져오세요"
+  },
+  "teacher.charsCount": {
+    "zh": "{n} 字",
+    "en": "{n} chars",
+    "ru": "{n} знаков",
+    "ja": "{n}文字",
+    "ko": "{n}자"
+  },
+  "teacher.noText": {
+    "zh": "无文本",
+    "en": "No text",
+    "ru": "Нет текста",
+    "ja": "テキストなし",
+    "ko": "텍스트 없음"
+  },
+  "teacher.generate": {
+    "zh": "生成题目",
+    "en": "Generate questions",
+    "ru": "Генерация вопросов",
+    "ja": "問題生成",
+    "ko": "문제 생성"
+  },
+  "teacher.generateDesc": {
+    "zh": "选择题型、难度和数量，AI 根据课件内容生成试题",
+    "en": "Choose type, difficulty and count — AI generates questions from the courseware",
+    "ru": "Выберите тип, сложность и количество — ИИ создаст вопросы по материалам",
+    "ja": "形式・難易度・数を選ぶと、AIが資料から問題を生成します",
+    "ko": "유형·난이도·수량을 고르면 AI가 자료 기반으로 문제를 생성합니다"
+  },
+  "teacher.fieldQType": {
+    "zh": "题型",
+    "en": "Question type",
+    "ru": "Тип вопросов",
+    "ja": "問題形式",
+    "ko": "문제 유형"
+  },
+  "teacher.fieldDifficulty": {
+    "zh": "难度",
+    "en": "Difficulty",
+    "ru": "Сложность",
+    "ja": "難易度",
+    "ko": "난이도"
+  },
+  "teacher.fieldCount": {
+    "zh": "数量",
+    "en": "Count",
+    "ru": "Количество",
+    "ja": "数量",
+    "ko": "수량"
+  },
+  "teacher.countHint": {
+    "zh": "题（1-50）",
+    "en": "questions (1-50)",
+    "ru": "вопросов (1-50)",
+    "ja": "問（1-50）",
+    "ko": "문제(1-50)"
+  },
+  "teacher.generating": {
+    "zh": "正在生成...",
+    "en": "Generating...",
+    "ru": "Генерация...",
+    "ja": "生成中...",
+    "ko": "생성 중..."
+  },
+  "teacher.generateBtn": {
+    "zh": "生成题目",
+    "en": "Generate questions",
+    "ru": "Создать вопросы",
+    "ja": "問題を生成",
+    "ko": "문제 생성"
+  },
+  "teacher.listTitle": {
+    "zh": "题目列表",
+    "en": "Question list",
+    "ru": "Список вопросов",
+    "ja": "問題リスト",
+    "ko": "문제 목록"
+  },
+  "teacher.listSummary": {
+    "zh": "共 {count} 题，合计 {points} 分",
+    "en": "{count} questions, {points} points total",
+    "ru": "Всего вопросов: {count}, {points} баллов",
+    "ja": "全{count}問、合計{points}点",
+    "ko": "총 {count}문제, 합계 {points}점"
+  },
+  "teacher.groupSummary": {
+    "zh": "{count} 题 · {points} 分",
+    "en": "{count} questions · {points} points",
+    "ru": "{count} вопросов · {points} баллов",
+    "ja": "{count}問 · {points}点",
+    "ko": "{count}문제 · {points}점"
+  },
+  "teacher.pointsUnit": {
+    "zh": "分",
+    "en": "pts",
+    "ru": "балл",
+    "ja": "点",
+    "ko": "점"
+  },
+  "teacher.labelOptions": {
+    "zh": "选项：",
+    "en": "Options:",
+    "ru": "Варианты:",
+    "ja": "選択肢：",
+    "ko": "선택지:"
+  },
+  "teacher.labelCorrect": {
+    "zh": "正确",
+    "en": "Correct",
+    "ru": "Верно",
+    "ja": "正解",
+    "ko": "정답"
+  },
+  "teacher.labelAnswer": {
+    "zh": "答案：",
+    "en": "Answer:",
+    "ru": "Ответ:",
+    "ja": "答え：",
+    "ko": "답:"
+  },
+  "teacher.labelSteps": {
+    "zh": "解题步骤：",
+    "en": "Solution steps:",
+    "ru": "Шаги решения:",
+    "ja": "解法手順：",
+    "ko": "풀이 단계:"
+  },
+  "teacher.labelAcceptable": {
+    "zh": "可接受答案：",
+    "en": "Acceptable answers:",
+    "ru": "Допустимые ответы:",
+    "ja": "許容解答：",
+    "ko": "허용 답안:"
+  },
+  "teacher.labelExplanation": {
+    "zh": "解析：",
+    "en": "Explanation:",
+    "ru": "Объяснение:",
+    "ja": "解説：",
+    "ko": "해설:"
+  },
+  "teacher.assemble": {
+    "zh": "组装试卷并导出",
+    "en": "Assemble & export exam",
+    "ru": "Сборка и экспорт экзамена",
+    "ja": "試験紙を組み立てて出力",
+    "ko": "시험지 조립 및 내보내기"
+  },
+  "teacher.assembleDesc": {
+    "zh": "设置试卷标题、考试时长和出题语言，导出为 PDF 打印",
+    "en": "Set the title, duration and language, then export as PDF for printing",
+    "ru": "Задайте название, длительность и язык — экспортируйте PDF для печати",
+    "ja": "タイトル・試験時間・言語を設定して、印刷用PDFとして出力します",
+    "ko": "제목, 시험 시간, 언어를 설정하고 인쇄용 PDF로 내보냅니다"
+  },
+  "teacher.assembleTranslateHint": {
+    "zh": "（非中文将自动翻译全部内容后导出）",
+    "en": "(non-Chinese languages are translated automatically before export)",
+    "ru": "(не-китайские языки автоматически переводятся перед экспортом)",
+    "ja": "(中国語以外は自動翻訳してから出力されます)",
+    "ko": "(중국어 이외는 자동 번역 후 내보냅니다)"
+  },
+  "teacher.fieldPaperTitle": {
+    "zh": "试卷标题",
+    "en": "Exam title",
+    "ru": "Название экзамена",
+    "ja": "試験タイトル",
+    "ko": "시험지 제목"
+  },
+  "teacher.fieldDuration": {
+    "zh": "考试时长（分钟）",
+    "en": "Duration (minutes)",
+    "ru": "Длительность (минуты)",
+    "ja": "試験時間（分）",
+    "ko": "시험 시간(분)"
+  },
+  "teacher.fieldLanguage": {
+    "zh": "出题语言",
+    "en": "Exam language",
+    "ru": "Язык экзамена",
+    "ja": "出題言語",
+    "ko": "출제 언어"
+  },
+  "teacher.summaryQuestions": {
+    "zh": "{count} 道题目",
+    "en": "{count} questions",
+    "ru": "{count} вопросов",
+    "ja": "{count}問",
+    "ko": "{count}문제"
+  },
+  "teacher.summaryDuration": {
+    "zh": "{count} 分钟",
+    "en": "{count} minutes",
+    "ru": "{count} минут",
+    "ja": "{count}分",
+    "ko": "{count}분"
+  },
+  "teacher.translatingExport": {
+    "zh": "正在翻译并导出...",
+    "en": "Translating and exporting...",
+    "ru": "Перевод и экспорт...",
+    "ja": "翻訳して出力中...",
+    "ko": "번역 후 내보내는 중..."
+  },
+  "teacher.exportPdf": {
+    "zh": "导出为 PDF",
+    "en": "Export as PDF",
+    "ru": "Экспорт в PDF",
+    "ja": "PDFとして出力",
+    "ko": "PDF로 내보내기"
+  }
+}

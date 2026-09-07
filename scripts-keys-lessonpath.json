@@ -1,0 +1,79 @@
+{
+  "lessons.defaultGroup": {
+    "zh": "默认分组",
+    "en": "Default group",
+    "ru": "Основная группа",
+    "ja": "デフォルトグループ",
+    "ko": "기본 그룹"
+  },
+  "lessons.emptyTitle": {
+    "zh": "还没有闯关路径",
+    "en": "No quest path yet",
+    "ru": "Путь квеста пока не создан",
+    "ja": "クエストパスはまだありません",
+    "ko": "아직 퀘스트 경로가 없습니다"
+  },
+  "lessons.emptyDesc": {
+    "zh": "先导入课件，AI 会自动为你生成考点闯关路径",
+    "en": "Import courseware first — AI will build your exam-point quest path",
+    "ru": "Сначала импортируйте материалы — ИИ построит путь из тем экзамена",
+    "ja": "まず資料をインポートすると、AIが試験ポイントのクエストパスを生成します",
+    "ko": "먼저 자료를 가져오면 AI가 시험 포인트 퀘스트 경로를 만들어 줍니다"
+  },
+  "lessons.goImport": {
+    "zh": "去导入课件",
+    "en": "Import courseware",
+    "ru": "Импортировать материалы",
+    "ja": "資料をインポート",
+    "ko": "자료 가져오기"
+  },
+  "lessons.groupProgress": {
+    "zh": "{done}/{count} 关",
+    "en": "{done}/{count} done",
+    "ru": "{done}/{count} пройдено",
+    "ja": "{done}/{count} 完了",
+    "ko": "{done}/{count} 완료"
+  },
+  "lessons.statusDone": {
+    "zh": "已完成",
+    "en": "Completed",
+    "ru": "Пройдено",
+    "ja": "完了",
+    "ko": "완료"
+  },
+  "lessons.unlockFailed": {
+    "zh": "解锁失败",
+    "en": "Unlock failed",
+    "ru": "Не удалось разблокировать",
+    "ja": "解放に失敗しました",
+    "ko": "잠금 해제 실패"
+  },
+  "lessons.upNext": {
+    "zh": "接下来做",
+    "en": "Up next",
+    "ru": "Далее",
+    "ja": "次はこれ",
+    "ko": "다음 학습"
+  },
+  "lessons.statusLocked": {
+    "zh": "未解锁",
+    "en": "Locked",
+    "ru": "Закрыто",
+    "ja": "ロック中",
+    "ko": "잠김"
+  },
+  "lessons.unlockWithCost": {
+    "zh": "解锁 ({coins} Chill币)",
+    "en": "Unlock ({coins} coins)",
+    "ru": "Разблокировать ({coins} монет)",
+    "ja": "解放（{coins} コイン）",
+    "ko": "잠금 해제 ({coins} 코인)"
+  },
+  "lessons.tapStart": {
+    "zh": "点击开始",
+    "en": "Tap to start",
+    "ru": "Нажмите, чтобы начать",
+    "ja": "タップして開始",
+    "ko": "눌러서 시작"
+  }
+}
