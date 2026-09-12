@@ -1,8 +1,24 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ArrowLeft, Eye, EyeOff, Save, Check, ExternalLink, Trash2 } from 'lucide-react'
-import { useSettingsStore, PROVIDER_MODELS, PROVIDER_DEFAULT_MODEL } from '@stores/settingsStore'
+import {
+  ArrowLeft,
+  Eye,
+  EyeOff,
+  Save,
+  Check,
+  ExternalLink,
+  Trash2,
+  RefreshCw,
+  ChevronDown,
+  AlertTriangle,
+} from 'lucide-react'
+import { useSettingsStore, PROVIDER_DEFAULT_MODEL } from '@stores/settingsStore'
 import type { AIProvider } from '@stores/settingsStore'
+import {
+  BUILTIN_MODELS,
+  describeModel,
+  fetchProviderModels,
+} from '@services/modelCatalog'
 import { useTokenStore, dateKey } from '@stores/tokenStore'
 import { useT } from '../../i18n'
 import styles from './SettingsSub.module.css'
@@ -33,6 +49,14 @@ export default function ApiSettings() {
   const [showKey, setShowKey] = useState(false)
   const [saved, setSaved] = useState(false)
 
+  // ── 模型列表：实时拉取 + 悬停说明 ──
+  const [liveModels, setLiveModels] = useState<string[] | null>(null)
+  const [fetching, setFetching] = useState(false)
+  const [fetchError, setFetchError] = useState('')
+  const [menuOpen, setMenuOpen] = useState(false)
+  const [hoveredModel, setHoveredModel] = useState<string | null>(null)
+  const modelBoxRef = useRef<HTMLDivElement>(null)
+
   // 当 store 中的值被外部修改时，同步本地输入
   useEffect(() => {
     setApiKeyInput(isZhipu ? storeZhipuKey : storeApiKey)
@@ -41,6 +65,93 @@ export default function ApiSettings() {
   useEffect(() => {
     setModelInput(storeModel)
   }, [storeModel])
+
+  // 切换提供商：模型切换为该提供商默认模型，并清空上一个提供商的实时列表
+  useEffect(() => {
+    setLiveModels(null)
+    setFetchError('')
+  }, [provider])
+
+  /** 拉取服务商当前可用的模型列表 */
+  const handleFetchModels = async () => {
+    const key = apiKey.trim() || storedKey.trim()
+    if (!key) {
+      setFetchError(t('api.modelNeedKey'))
+      return
+    }
+    setFetching(true)
+    setFetchError('')
+    try {
+      const ids = await fetchProviderModels(provider, key)
+      setLiveModels(ids)
+    } catch (err) {
+      setLiveModels(null)
+      setFetchError(
+        t('api.modelRefreshFailed').replace(
+          '{msg}',
+          err instanceof Error ? err.message : t('about.unknownError'),
+        ),
+      )
+    } finally {
+      setFetching(false)
+    }
+  }
+
+  // 已保存过 Key 时自动拉取一次，省去用户手动点击
+  useEffect(() => {
+    if (!storedKey.trim()) return
+    let cancelled = false
+    setFetching(true)
+    setFetchError('')
+    fetchProviderModels(provider, storedKey)
+      .then(ids => {
+        if (!cancelled) setLiveModels(ids)
+      })
+      .catch(() => {
+        // 自动拉取失败不打扰用户，仅保留内置列表
+        if (!cancelled) setLiveModels(null)
+      })
+      .finally(() => {
+        if (!cancelled) setFetching(false)
+      })
+    return () => {
+      cancelled = true
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [provider, storedKey])
+
+  // 点击外部或按 Esc 关闭下拉
+  useEffect(() => {
+    if (!menuOpen) return
+    const onPointerDown = (e: PointerEvent) => {
+      if (modelBoxRef.current && !modelBoxRef.current.contains(e.target as Node)) {
+        setMenuOpen(false)
+      }
+    }
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setMenuOpen(false)
+    }
+    document.addEventListener('pointerdown', onPointerDown)
+    document.addEventListener('keydown', onKeyDown)
+    return () => {
+      document.removeEventListener('pointerdown', onPointerDown)
+      document.removeEventListener('keydown', onKeyDown)
+    }
+  }, [menuOpen])
+
+  // 下拉选项：实时列表优先，否则用内置列表；始终保留当前已选模型
+  const modelOptions = useMemo(() => {
+    const base =
+      liveModels && liveModels.length > 0
+        ? liveModels
+        : BUILTIN_MODELS[provider].map(m => m.id)
+    const list = [...base]
+    if (model && !list.includes(model)) list.unshift(model)
+    return list
+  }, [liveModels, provider, model])
+
+  // 悬停说明：优先显示光标停留的选项，否则显示当前所选模型
+  const tipModel = hoveredModel ?? model
 
   // 切换提供商：模型自动切换为该提供商的默认模型
   const handleProviderChange = (next: AIProvider) => {
@@ -166,23 +277,92 @@ export default function ApiSettings() {
         </div>
 
         <div className={styles.field}>
-          <label className={styles.label}>{t('api.modelLabel')}</label>
-          <div className={styles.selectWrap}>
-            <select
-              className={styles.select}
-              value={model}
-              onChange={e => setModelInput(e.target.value)}
+          <div className={styles.labelRow}>
+            <label className={styles.label}>{t('api.modelLabel')}</label>
+            <button
+              type="button"
+              className={styles.fetchBtn}
+              onClick={handleFetchModels}
+              disabled={fetching}
             >
-              {PROVIDER_MODELS[provider].map(m => (
-                <option key={m.id} value={m.id}>{t(m.labelKey)}</option>
-              ))}
-            </select>
+              <RefreshCw
+                size={13}
+                strokeWidth={2.2}
+                className={fetching ? styles.spinIcon : undefined}
+              />
+              <span>{fetching ? t('api.modelRefreshing') : t('api.modelRefresh')}</span>
+            </button>
           </div>
-          <p className={styles.hint}>
-            {isZhipu
-              ? t('api.modelHintZhipu')
-              : t('api.modelHintDeepseek')}
-          </p>
+
+          <div className={styles.modelSelect} ref={modelBoxRef}>
+            {/* 悬停说明面板：光标停在选项或当前模型上时显示 */}
+            {tipModel && (
+              <div className={styles.modelTip} role="tooltip">
+                {describeModel(tipModel)}
+              </div>
+            )}
+
+            <button
+              type="button"
+              className={`${styles.modelTrigger} ${menuOpen ? styles.modelTriggerOpen : ''}`}
+              onClick={() => setMenuOpen(o => !o)}
+              onMouseEnter={() => setHoveredModel(null)}
+              aria-haspopup="listbox"
+              aria-expanded={menuOpen}
+            >
+              <span className={styles.modelTriggerId}>{model}</span>
+              <ChevronDown
+                size={16}
+                strokeWidth={2}
+                className={`${styles.modelChevron} ${menuOpen ? styles.modelChevronOpen : ''}`}
+              />
+            </button>
+
+            {menuOpen && (
+              <div className={styles.modelMenu} role="listbox">
+                {modelOptions.map(id => (
+                  <button
+                    key={id}
+                    type="button"
+                    role="option"
+                    aria-selected={id === model}
+                    className={`${styles.modelOption} ${id === model ? styles.modelOptionActive : ''}`}
+                    onMouseEnter={() => setHoveredModel(id)}
+                    onFocus={() => setHoveredModel(id)}
+                    onClick={() => {
+                      setModelInput(id)
+                      setMenuOpen(false)
+                      setHoveredModel(null)
+                    }}
+                  >
+                    <span className={styles.modelOptionId}>{id}</span>
+                    {id === model && <Check size={14} strokeWidth={2.5} />}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* 拉取状态 */}
+          {fetchError ? (
+            <p className={styles.modelStatusError}>
+              <AlertTriangle size={13} strokeWidth={2.2} />
+              <span>{fetchError}</span>
+            </p>
+          ) : liveModels ? (
+            <p className={styles.modelStatusOk}>
+              <Check size={13} strokeWidth={2.5} />
+              <span>
+                {t('api.modelRefreshOk').replace('{count}', String(liveModels.length))}
+                {' · '}
+                {t('api.modelLiveHint')}
+              </span>
+            </p>
+          ) : (
+            <p className={styles.hint}>{t('api.modelBuiltinHint')}</p>
+          )}
+
+          <p className={styles.hint}>{t('api.modelHoverHint')}</p>
         </div>
 
         <div className={styles.actions}>

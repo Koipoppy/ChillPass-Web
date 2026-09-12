@@ -624,8 +624,6 @@ export type TranslationKey =
   | 'img.ocrFailed'
   | 'img.apiUnavailable'
   | 'store.insufficientCoins'
-  | 'model.deepseekChat'
-  | 'model.deepseekReasoner'
   | 'model.glmFlash'
   | 'model.glm53'
   | 'mock.dirDialogPrompt'
@@ -643,6 +641,22 @@ export type TranslationKey =
   | 'upd.availableBody'
   | 'upd.downloadNow'
   | 'upd.downloading'
+
+  | 'model.deepseekFlash'
+  | 'model.deepseekV4Pro'
+  | 'model.deepseekV4FlashLegacy'
+  | 'model.deepseekVisionExp'
+  | 'model.deepseekChatLegacy'
+  | 'model.deepseekReasonerLegacy'
+  | 'model.unknownDesc'
+  | 'api.modelRefresh'
+  | 'api.modelRefreshing'
+  | 'api.modelRefreshOk'
+  | 'api.modelRefreshFailed'
+  | 'api.modelNeedKey'
+  | 'api.modelBuiltinHint'
+  | 'api.modelLiveHint'
+  | 'api.modelHoverHint'
 
 const zh: Record<TranslationKey, string> = {
   'nav.dashboard': '首页',
@@ -852,6 +866,21 @@ const zh: Record<TranslationKey, string> = {
   'notify.lessonsDoneTitle': '关卡生成完成',
   'notify.lessonsDoneBody': '「{course}」的 {count} 个关卡已生成完毕，开始学习吧',
   'notify.newNotice': '新通知',
+  'model.deepseekFlash': "deepseek-flash — V4.1 Flash，响应快、成本低，支持图像理解",
+  'model.deepseekV4Pro': "deepseek-v4-pro — V4 Pro 旗舰，推理能力最强，适合复杂题目与长文（不支持图像）",
+  'model.deepseekV4FlashLegacy': "deepseek-v4-flash — 旧版 ID，仍可调用但已由 Flash 接替",
+  'model.deepseekVisionExp': "deepseek-v4-flash-vision-exp — 视觉实验版，旧版 ID",
+  'model.deepseekChatLegacy': "deepseek-chat — 已于 2026-07-24 退役，调用会失败，请改用 deepseek-flash",
+  'model.deepseekReasonerLegacy': "deepseek-reasoner — 已于 2026-07-24 退役，调用会失败，请改用 deepseek-flash",
+  'model.unknownDesc': "账号可用模型（暂无内置说明）",
+  'api.modelRefresh': "拉取最新模型",
+  'api.modelRefreshing': "正在拉取…",
+  'api.modelRefreshOk': "已从服务商获取 {count} 个可用模型",
+  'api.modelRefreshFailed': "拉取失败：{msg}",
+  'api.modelNeedKey': "请先在上方填写并保存 API Key，再拉取模型列表",
+  'api.modelBuiltinHint': "当前为内置模型列表，点击「拉取最新模型」可获取账号实时可用的模型",
+  'api.modelLiveHint': "列表来自服务商实时接口",
+  'api.modelHoverHint': "将光标停在选项上可查看模型说明",
   'app.docTitle': "ChillPass — 期末冲刺助手",
   'wrongbook.subtitle': "按课程归类，逐个击破",
   'athena.ocrFallback': "识别中...",
@@ -923,8 +952,6 @@ const zh: Record<TranslationKey, string> = {
   'img.ocrFailed': "图片识别失败: {msg}",
   'img.apiUnavailable': "无法读取文件，文件 API 不可用",
   'store.insufficientCoins': "Chill币不足，需要 {cost} 枚",
-  'model.deepseekChat': "deepseek-chat（通用对话，速度快）",
-  'model.deepseekReasoner': "deepseek-reasoner（深度推理，更精准）",
   'model.glmFlash': "glm-5.3-flash（高速响应，性价比高）",
   'model.glm53': "glm-5.3（旗舰模型，能力更强）",
   'mock.dirDialogPrompt': "浏览器模式下不支持选择目录，文件将存储在浏览器 IndexedDB 中",
@@ -1482,6 +1509,21 @@ const en: Record<TranslationKey, string> = {
   'notify.lessonsDoneTitle': 'Lessons ready',
   'notify.lessonsDoneBody': '{count} lessons for "{course}" are ready — start learning',
   'notify.newNotice': 'New notice',
+  'model.deepseekFlash': "deepseek-flash — V4.1 Flash, fast and low-cost, supports image understanding",
+  'model.deepseekV4Pro': "deepseek-v4-pro — V4 Pro flagship, strongest reasoning for complex problems and long texts (no image support)",
+  'model.deepseekV4FlashLegacy': "deepseek-v4-flash — legacy ID, still accepted but served by Flash",
+  'model.deepseekVisionExp': "deepseek-v4-flash-vision-exp — experimental vision model, legacy ID",
+  'model.deepseekChatLegacy': "deepseek-chat — retired on 2026-07-24, calls will fail; use deepseek-flash instead",
+  'model.deepseekReasonerLegacy': "deepseek-reasoner — retired on 2026-07-24, calls will fail; use deepseek-flash instead",
+  'model.unknownDesc': "Available for your account (no built-in description)",
+  'api.modelRefresh': "Fetch latest models",
+  'api.modelRefreshing': "Fetching…",
+  'api.modelRefreshOk': "Fetched {count} available models from the provider",
+  'api.modelRefreshFailed': "Fetch failed: {msg}",
+  'api.modelNeedKey': "Fill in and save your API key above before fetching models",
+  'api.modelBuiltinHint': "Showing the built-in list — click \"Fetch latest models\" to load what your account actually has",
+  'api.modelLiveHint': "List fetched live from the provider",
+  'api.modelHoverHint': "Hover an option to see its description",
   'athena.charterMemory': 'Charter Memory',
   'athena.flowMemory': 'Flow Memory',
   'wrongbook.subtitle': "Grouped by course — tackle them one by one",
@@ -1555,8 +1597,6 @@ const en: Record<TranslationKey, string> = {
   'img.ocrFailed': "Image recognition failed: {msg}",
   'img.apiUnavailable': "Cannot read the file — file API unavailable",
   'store.insufficientCoins': "Not enough Chill Coins — {cost} required",
-  'model.deepseekChat': "deepseek-chat (general chat, fast)",
-  'model.deepseekReasoner': "deepseek-reasoner (deep reasoning, more precise)",
   'model.glmFlash': "glm-5.3-flash (fast response, great value)",
   'model.glm53': "glm-5.3 (flagship, more capable)",
   'mock.dirDialogPrompt': "Directory selection is not supported in browser mode — files are stored in browser IndexedDB",
@@ -2114,6 +2154,21 @@ const ru: Record<TranslationKey, string> = {
   'notify.lessonsDoneTitle': 'Уровни готовы',
   'notify.lessonsDoneBody': '{count} уровней для «{course}» готовы — начинайте учиться',
   'notify.newNotice': 'Новое уведомление',
+  'model.deepseekFlash': "deepseek-flash — V4.1 Flash: быстрая и недорогая, поддерживает распознавание изображений",
+  'model.deepseekV4Pro': "deepseek-v4-pro — флагман V4 Pro: сильнейшие рассуждения для сложных задач и длинных текстов (без изображений)",
+  'model.deepseekV4FlashLegacy': "deepseek-v4-flash — устаревший ID: ещё принимается, но обслуживается Flash",
+  'model.deepseekVisionExp': "deepseek-v4-flash-vision-exp — экспериментальная модель зрения, устаревший ID",
+  'model.deepseekChatLegacy': "deepseek-chat — выведена из эксплуатации 2026-07-24, вызовы завершатся ошибкой; используйте deepseek-flash",
+  'model.deepseekReasonerLegacy': "deepseek-reasoner — выведена из эксплуатации 2026-07-24, вызовы завершатся ошибкой; используйте deepseek-flash",
+  'model.unknownDesc': "Доступна для вашего аккаунта (встроенного описания нет)",
+  'api.modelRefresh': "Получить актуальные модели",
+  'api.modelRefreshing': "Загрузка…",
+  'api.modelRefreshOk': "Получено моделей от провайдера: {count}",
+  'api.modelRefreshFailed': "Не удалось получить список: {msg}",
+  'api.modelNeedKey': "Сначала укажите и сохраните API-ключ выше, затем получайте список",
+  'api.modelBuiltinHint': "Показан встроенный список — нажмите «Получить актуальные модели», чтобы загрузить доступные вашему аккаунту",
+  'api.modelLiveHint': "Список получен от провайдера в реальном времени",
+  'api.modelHoverHint': "Наведите курсор на вариант, чтобы увидеть описание",
   'athena.charterMemory': 'Уставная память',
   'athena.flowMemory': 'Текущая память',
   'wrongbook.subtitle': "Сгруппировано по курсам — разбирайте по порядку",
@@ -2187,8 +2242,6 @@ const ru: Record<TranslationKey, string> = {
   'img.ocrFailed': "Ошибка распознавания изображения: {msg}",
   'img.apiUnavailable': "Не удалось прочитать файл — файловый API недоступен",
   'store.insufficientCoins': "Недостаточно Chill-монет — нужно {cost}",
-  'model.deepseekChat': "deepseek-chat (универсальная, быстрая)",
-  'model.deepseekReasoner': "deepseek-reasoner (глубокие рассуждения, точнее)",
   'model.glmFlash': "glm-5.3-flash (быстрый отклик, выгодная)",
   'model.glm53': "glm-5.3 (флагман, мощнее)",
   'mock.dirDialogPrompt': "Выбор папки недоступен в режиме браузера — файлы сохраняются в IndexedDB",
@@ -2746,6 +2799,21 @@ const ja: Record<TranslationKey, string> = {
   'notify.lessonsDoneTitle': 'レベル生成完了',
   'notify.lessonsDoneBody': '「{course}」の{count}個のレベルが生成されました。学習を始めましょう',
   'notify.newNotice': '新着通知',
+  'model.deepseekFlash': "deepseek-flash — V4.1 Flash。高速・低コストで画像理解にも対応",
+  'model.deepseekV4Pro': "deepseek-v4-pro — V4 Pro フラッグシップ。複雑な問題や長文に強い最高精度の推論（画像非対応）",
+  'model.deepseekV4FlashLegacy': "deepseek-v4-flash — 旧 ID。まだ受け付けられますが Flash が応答します",
+  'model.deepseekVisionExp': "deepseek-v4-flash-vision-exp — 視覚実験版。旧 ID",
+  'model.deepseekChatLegacy': "deepseek-chat — 2026-07-24 に提供終了。呼び出すと失敗するため deepseek-flash をご利用ください",
+  'model.deepseekReasonerLegacy': "deepseek-reasoner — 2026-07-24 に提供終了。呼び出すと失敗するため deepseek-flash をご利用ください",
+  'model.unknownDesc': "アカウントで利用可能（内蔵の説明はありません）",
+  'api.modelRefresh': "最新モデルを取得",
+  'api.modelRefreshing': "取得中…",
+  'api.modelRefreshOk': "プロバイダーから {count} 個のモデルを取得しました",
+  'api.modelRefreshFailed': "取得に失敗しました：{msg}",
+  'api.modelNeedKey': "先に上の API キーを入力・保存してから取得してください",
+  'api.modelBuiltinHint': "現在は内蔵リストを表示中。「最新モデルを取得」でアカウントの利用可能モデルを取得できます",
+  'api.modelLiveHint': "プロバイダーのリアルタイム API から取得したリストです",
+  'api.modelHoverHint': "項目にカーソルを合わせると説明が表示されます",
   'athena.charterMemory': 'チャーターメモリ',
   'athena.flowMemory': 'フローメモリ',
   'wrongbook.subtitle': "コース別に分類し、ひとつずつ克服",
@@ -2819,8 +2887,6 @@ const ja: Record<TranslationKey, string> = {
   'img.ocrFailed': "画像認識に失敗しました: {msg}",
   'img.apiUnavailable': "ファイルを読み取れません。ファイル API を利用できません",
   'store.insufficientCoins': "Chillコインが不足しています。{cost} 枚必要です",
-  'model.deepseekChat': "deepseek-chat（汎用会話・高速）",
-  'model.deepseekReasoner': "deepseek-reasoner（深い推論・高精度）",
   'model.glmFlash': "glm-5.3-flash（高速応答・コスパ重視）",
   'model.glm53': "glm-5.3（フラッグシップ・高性能）",
   'mock.dirDialogPrompt': "ブラウザモードではディレクトリ選択に対応していません。ファイルは IndexedDB に保存されます",
@@ -3378,6 +3444,21 @@ const ko: Record<TranslationKey, string> = {
   'notify.lessonsDoneTitle': '레벨 생성 완료',
   'notify.lessonsDoneBody': '"{course}"의 {count}개 레벨이 생성되었습니다. 학습을 시작하세요',
   'notify.newNotice': '새 알림',
+  'model.deepseekFlash': "deepseek-flash — V4.1 Flash. 빠르고 저렴하며 이미지 이해를 지원",
+  'model.deepseekV4Pro': "deepseek-v4-pro — V4 Pro 플래그십. 복잡한 문제와 장문에 가장 강력한 추론(이미지 미지원)",
+  'model.deepseekV4FlashLegacy': "deepseek-v4-flash — 구버전 ID. 아직 허용되지만 Flash가 응답합니다",
+  'model.deepseekVisionExp': "deepseek-v4-flash-vision-exp — 비전 실험 버전, 구버전 ID",
+  'model.deepseekChatLegacy': "deepseek-chat — 2026-07-24에 종료되어 호출이 실패합니다. deepseek-flash를 사용하세요",
+  'model.deepseekReasonerLegacy': "deepseek-reasoner — 2026-07-24에 종료되어 호출이 실패합니다. deepseek-flash를 사용하세요",
+  'model.unknownDesc': "계정에서 사용 가능(내장 설명 없음)",
+  'api.modelRefresh': "최신 모델 가져오기",
+  'api.modelRefreshing': "가져오는 중…",
+  'api.modelRefreshOk': "공급자에서 {count}개 모델을 가져왔습니다",
+  'api.modelRefreshFailed': "가져오기 실패: {msg}",
+  'api.modelNeedKey': "먼저 위에서 API 키를 입력하고 저장한 후 가져오세요",
+  'api.modelBuiltinHint': "현재 내장 목록입니다. '최신 모델 가져오기'를 누르면 계정에서 사용 가능한 모델을 불러옵니다",
+  'api.modelLiveHint': "공급자의 실시간 API에서 가져온 목록입니다",
+  'api.modelHoverHint': "항목에 커서를 올리면 설명이 표시됩니다",
   'athena.charterMemory': '헌장 메모리',
   'athena.flowMemory': '흐름 메모리',
   'wrongbook.subtitle': "과목별로 분류하여 하나씩 정복하세요",
@@ -3451,8 +3532,6 @@ const ko: Record<TranslationKey, string> = {
   'img.ocrFailed': "이미지 인식에 실패했습니다: {msg}",
   'img.apiUnavailable': "파일을 읽을 수 없습니다. 파일 API를 사용할 수 없습니다",
   'store.insufficientCoins': "Chill코인이 부족합니다. {cost}개가 필요합니다",
-  'model.deepseekChat': "deepseek-chat(범용 대화, 빠름)",
-  'model.deepseekReasoner': "deepseek-reasoner(깊은 추론, 더 정밀)",
   'model.glmFlash': "glm-5.3-flash(빠른 응답, 높은 가성비)",
   'model.glm53': "glm-5.3(플래그십, 더 강력)",
   'mock.dirDialogPrompt': "브라우저 모드에서는 디렉터리 선택이 지원되지 않습니다. 파일은 브라우저 IndexedDB에 저장됩니다",

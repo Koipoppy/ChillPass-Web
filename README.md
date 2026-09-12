@@ -298,6 +298,7 @@ src/
 │   └── wrongQuestionStore.ts 错题记录
 ├── services/
 │   ├── deepseek.ts          API + 批改 + 批量提取 + 出题 + 翻译
+│   ├── modelCatalog.ts      模型目录（实时拉取可用模型 + 内置回退与说明）
 │   ├── fileParser.ts        PDF / Word / PPTX / TXT / MD 文本提取
 │   ├── imageService.ts      通过 Tesseract.js 实现 OCR
 │   ├── lessonGenerator.ts   关卡内容生成流水线
@@ -337,7 +338,7 @@ tray.ps1                     系统托盘图标（WinForms NotifyIcon）
 
 - **界面语言全局化**：全部页面、组件与服务层提示文案接入中/英/俄/日/韩五语言（累计 629 个翻译键），AI 报错、文件解析、更新弹窗等服务层文案同步本地化
 - **新版本提醒与一键下载**：任务卡启动时自动检查更新，发现新版本常驻提示横幅并支持一键下载（自动更新不可用时自动回退浏览器下载）
-- **模型选项本地化**：API 配置页模型下拉描述随界面语言切换
+- **模型选项实时拉取**：API 配置页可一键从服务商接口拉取账号当前可用的模型列表（已保存 Key 时自动拉取），并修复了内置列表——`deepseek-chat` / `deepseek-reasoner` 已于 2026-07-24 退役，最新模型为 `deepseek-flash` 与 `deepseek-v4-pro`，旧配置会自动迁移；模型下拉改为自定义列表，光标驻留选项即显示模型说明
 - **动画优化**：页面切换改为新旧页面等速同步推移，杜绝切换中的内容重叠；任务卡与徽章形变衔接、通知与横幅平滑入场
 </details>
 

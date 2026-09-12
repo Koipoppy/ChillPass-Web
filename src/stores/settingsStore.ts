@@ -1,25 +1,17 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import type { TranslationKey } from '../i18n/translations'
+import { normalizeModelId } from '../services/modelCatalog'
 
 /** AI 服务提供商 */
 export type AIProvider = 'deepseek' | 'zhipu'
 
-/** 各提供商的可用模型 */
-export const PROVIDER_MODELS: Record<AIProvider, { id: string; labelKey: TranslationKey }[]> = {
-  deepseek: [
-    { id: 'deepseek-chat', labelKey: 'model.deepseekChat' },
-    { id: 'deepseek-reasoner', labelKey: 'model.deepseekReasoner' },
-  ],
-  zhipu: [
-    { id: 'glm-5.3-flash', labelKey: 'model.glmFlash' },
-    { id: 'glm-5.3', labelKey: 'model.glm53' },
-  ],
-}
-
-/** 各提供商的默认模型 */
+/**
+ * 各提供商的默认模型
+ * 注意：deepseek-chat / deepseek-reasoner 已于 2026-07-24 退役（调用返回 404），
+ * 现行可用模型为 deepseek-flash 与 deepseek-v4-pro
+ */
 export const PROVIDER_DEFAULT_MODEL: Record<AIProvider, string> = {
-  deepseek: 'deepseek-chat',
+  deepseek: 'deepseek-flash',
   zhipu: 'glm-5.3-flash',
 }
 
@@ -46,7 +38,7 @@ export const useSettingsStore = create<SettingsState>()(
       provider: 'deepseek',
       apiKey: '',
       zhipuApiKey: '',
-      model: 'deepseek-chat',
+      model: PROVIDER_DEFAULT_MODEL.deepseek,
       storagePath: '',
       githubToken: '',
       isTeacher: false,
@@ -60,6 +52,15 @@ export const useSettingsStore = create<SettingsState>()(
     }),
     {
       name: 'chillpass-settings',
+      // v1：旧版本存的模型 ID 可能已退役（如 deepseek-chat），迁移为当前可用模型
+      version: 1,
+      migrate: (persisted) => {
+        const state = persisted as Partial<SettingsState> | undefined
+        if (state && typeof state.model === 'string') {
+          state.model = normalizeModelId(state.model)
+        }
+        return state as SettingsState
+      },
     }
   )
 )
