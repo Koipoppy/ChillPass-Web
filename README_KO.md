@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://img.shields.io/badge/version-0.0.9-blue?style=flat-square" alt="버전" />
+  <img src="https://img.shields.io/badge/version-0.1.0-blue?style=flat-square" alt="버전" />
   <img src="https://img.shields.io/badge/Node.js-SEA-339933?style=flat-square&logo=node.js" alt="Node.js SEA" />
   <img src="https://img.shields.io/badge/React-18-61DAFB?style=flat-square&logo=react" alt="React" />
   <img src="https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript" alt="TypeScript" />
@@ -37,7 +37,7 @@
 
 <p align="center">
   <a href="https://github.com/Koipoppy/ChillPass-Web/releases/latest">
-    <img src="https://img.shields.io/badge/다운로드-ChillPass%20Setup%200.0.9.exe-blue?style=for-the-badge" alt="다운로드" />
+    <img src="https://img.shields.io/badge/다운로드-ChillPass%20Setup%200.1.0.exe-blue?style=for-the-badge" alt="다운로드" />
   </a>
 </p>
 
@@ -189,7 +189,7 @@ Athena는 단순한 챗봇이 아니라 **능력**, **기억**, **태스크 워�
 
 ### 다운로드 후 설치 (권장)
 
-[Releases](https://github.com/Koipoppy/ChillPass-Web/releases)로 이동 → `ChillPass-Setup-0.0.9.exe` 다운로드 → 설치.
+[Releases](https://github.com/Koipoppy/ChillPass-Web/releases)로 이동 → `ChillPass-Setup-0.1.0.exe` 다운로드 → 설치.
 
 > Windows 10/11 (64비트). 사용자 단위 설치(관리자 권한 불필요). 설치 후 바탕화면 바로가기가 자동 생성됩니다. 업데이트 시에도 데이터는 자동으로 보존됩니다.
 
@@ -334,13 +334,18 @@ tray.ps1                     시스템 트레이 아이콘 (WinForms NotifyIcon)
 ## 변경 로그
 
 <details>
+<summary><strong>v0.1.0</strong> — 2026-09-12</summary>
+
+- **모델 목록 실시간 조회**: API 설정 페이지에서 계정이 실제 사용할 수 있는 모델을 공급자 API에서 바로 가져올 수 있습니다(키가 저장되어 있으면 자동 조회). 내장 목록도 수정했습니다 — `deepseek-chat` / `deepseek-reasoner`는 2026-07-24에 종료되었고 현재 모델은 `deepseek-flash`와 `deepseek-v4-pro`이며, 기존 설정은 자동 마이그레이션됩니다. 드롭다운이 사용자 지정 목록으로 바뀌어 항목에 커서를 올리면 설명이 표시됩니다
+- **답안 재검토**: 퀴즈 답이 참고 답안과 일치하지 않으면 AI가 먼저 독립적으로 문제를 풀고 판정합니다. 참고 답안 자체가 틀렸고(최대항/최소항 혼동 등) 사용자가 맞았다면 정답으로 변경하고, 문제의 답을 자동 수정하며 오답 노트에 기록하지 않습니다. 출제 프롬프트에도 자기 일관성 규칙을 추가했습니다
+</details>
+
+<details>
 <summary><strong>v0.0.9</strong> — 2026-09-06</summary>
 
 - **UI 완전 현지화**: 모든 페이지, 컴포넌트, 서비스 레벨 메시지가 중국어/영어/러시아어/일본어/한국어로 제공됩니다(총 629개 번역 키). AI 오류, 파일 파싱, 업데이트 대화상자 포함
 - **새 버전 알림 및 원클릭 다운로드**: 작업 카드가 실행 시 업데이트를 확인하고, 새 버전이 감지되면 상시 표시 배너와 원클릭 다운로드 버튼 제공(자동 업데이트 불가 시 브라우저 다운로드로 폴백)
-- **모델 목록 실시간 조회**: API 설정 페이지에서 계정이 실제 사용할 수 있는 모델을 공급자 API에서 바로 가져올 수 있습니다(키가 저장되어 있으면 자동 조회). 내장 목록도 수정했습니다 — `deepseek-chat` / `deepseek-reasoner`는 2026-07-24에 종료되었고 현재 모델은 `deepseek-flash`와 `deepseek-v4-pro`이며, 기존 설정은 자동 마이그레이션됩니다. 드롭다운이 사용자 지정 목록으로 바뀌어 항목에 커서를 올리면 설명이 표시됩니다
 - **애니메이션 개선**: 페이지 전환 시 이전/새 페이지를 동일 속도로 슬라이드하여 전환 중 겹침을 해소. 작업 카드와 배지의 형태 변형 연결, 알림·배너의 부드러운 등장
-- **답안 재검토**: 퀴즈 답이 참고 답안과 일치하지 않으면 AI가 먼저 독립적으로 문제를 풀고 판정합니다. 참고 답안 자체가 틀렸고(최대항/최소항 혼동 등) 사용자가 맞았다면 정답으로 변경하고, 문제의 답을 자동 수정하며 오답 노트에 기록하지 않습니다. 출제 프롬프트에도 자기 일관성 규칙을 추가했습니다
 </details>
 
 <details>

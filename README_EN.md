@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://img.shields.io/badge/version-0.0.9-blue?style=flat-square" alt="Version" />
+  <img src="https://img.shields.io/badge/version-0.1.0-blue?style=flat-square" alt="Version" />
   <img src="https://img.shields.io/badge/Node.js-SEA-339933?style=flat-square&logo=node.js" alt="Node.js SEA" />
   <img src="https://img.shields.io/badge/React-18-61DAFB?style=flat-square&logo=react" alt="React" />
   <img src="https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript" alt="TypeScript" />
@@ -37,7 +37,7 @@
 
 <p align="center">
   <a href="https://github.com/Koipoppy/ChillPass-Web/releases/latest">
-    <img src="https://img.shields.io/badge/Download-ChillPass%20Setup%200.0.9.exe-blue?style=for-the-badge" alt="Download" />
+    <img src="https://img.shields.io/badge/Download-ChillPass%20Setup%200.1.0.exe-blue?style=for-the-badge" alt="Download" />
   </a>
 </p>
 
@@ -189,7 +189,7 @@ The round help button next to the focus-mode button opens a help dialog with:
 
 ### Download & install (recommended)
 
-Head to [Releases](https://github.com/Koipoppy/ChillPass-Web/releases) → download `ChillPass-Setup-0.0.9.exe` → install.
+Head to [Releases](https://github.com/Koipoppy/ChillPass-Web/releases) → download `ChillPass-Setup-0.1.0.exe` → install.
 
 > Windows 10/11 (64-bit). Per-user install (no admin rights required). A desktop shortcut is created automatically after install. Your data is preserved when updating.
 
@@ -334,13 +334,18 @@ tray.ps1                     System tray icon (WinForms NotifyIcon)
 ## Changelog
 
 <details>
+<summary><strong>v0.1.0</strong> — 2026-09-12</summary>
+
+- **Live model list**: the API settings page can now fetch the models actually available to your account straight from the provider (auto-fetched once a key is saved). The built-in list was also fixed — `deepseek-chat` / `deepseek-reasoner` were retired on 2026-07-24, current models are `deepseek-flash` and `deepseek-v4-pro`, and saved configs migrate automatically. The dropdown is now a custom list that shows a model description on hover
+- **Answer adjudication**: when a quiz answer disagrees with the reference key, the AI now independently re-solves the question before judging — if the stored key itself is wrong (e.g. maxterm/minterm mix-up) and the user is right, the verdict is corrected, the question key is fixed in place, and nothing goes to the mistake notebook; generation prompts gained consistency rules so explanations can no longer contradict correctIndex
+</details>
+
+<details>
 <summary><strong>v0.0.9</strong> — 2026-09-06</summary>
 
 - **Full UI localization**: every page, component, and service-level message now ships in Chinese/English/Russian/Japanese/Korean (629 translation keys total) — AI errors, file parsing, and update dialogs included
 - **New-version alert & one-click download**: the task card checks for updates on launch, shows a persistent banner with a one-click download button (falls back to browser download when auto update is unavailable)
-- **Live model list**: the API settings page can now fetch the models actually available to your account straight from the provider (auto-fetched once a key is saved). The built-in list was also fixed — `deepseek-chat` / `deepseek-reasoner` were retired on 2026-07-24, current models are `deepseek-flash` and `deepseek-v4-pro`, and saved configs migrate automatically. The dropdown is now a custom list that shows a model description on hover
 - **Animation polish**: page transitions now slide the old and new pages at identical speed, eliminating any overlap during the switch; the task card morphs into its badge, and notifications and banners animate in smoothly
-- **Answer adjudication**: when a quiz answer disagrees with the reference key, the AI now independently re-solves the question before judging — if the stored key itself is wrong (e.g. maxterm/minterm mix-up) and the user is right, the verdict is corrected, the question key is fixed in place, and nothing goes to the mistake notebook; generation prompts gained consistency rules so explanations can no longer contradict correctIndex
 </details>
 
 <details>

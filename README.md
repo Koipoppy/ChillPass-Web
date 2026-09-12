@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://img.shields.io/badge/version-0.0.9-blue?style=flat-square" alt="版本" />
+  <img src="https://img.shields.io/badge/version-0.1.0-blue?style=flat-square" alt="版本" />
   <img src="https://img.shields.io/badge/Node.js-SEA-339933?style=flat-square&logo=node.js" alt="Node.js SEA" />
   <img src="https://img.shields.io/badge/React-18-61DAFB?style=flat-square&logo=react" alt="React" />
   <img src="https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript" alt="TypeScript" />
@@ -29,7 +29,7 @@
 
 <p align="center">
   <a href="https://github.com/Koipoppy/ChillPass-Web/releases/latest">
-    <img src="https://img.shields.io/badge/%E4%B8%8B%E8%BD%BD-ChillPass%20Setup%200.0.9.exe-blue?style=for-the-badge" alt="下载" />
+    <img src="https://img.shields.io/badge/%E4%B8%8B%E8%BD%BD-ChillPass%20Setup%200.1.0.exe-blue?style=for-the-badge" alt="下载" />
   </a>
 </p>
 
@@ -189,7 +189,7 @@ Athena 不只是聊天机器人，而是拥有**能力**、**记忆**和**任务
 
 ### 下载安装（推荐）
 
-前往 [Releases](https://github.com/Koipoppy/ChillPass-Web/releases) → 下载 `ChillPass-Setup-0.0.9.exe` → 安装。
+前往 [Releases](https://github.com/Koipoppy/ChillPass-Web/releases) → 下载 `ChillPass-Setup-0.1.0.exe` → 安装。
 
 > Windows 10/11（64 位）。按用户安装（无需管理员权限）。安装后自动在桌面创建快捷方式。更新时数据自动保留。
 
@@ -334,13 +334,18 @@ tray.ps1                     系统托盘图标（WinForms NotifyIcon）
 ## 更新日志
 
 <details>
+<summary><strong>v0.1.0</strong> — 2026-09-12</summary>
+
+- **模型选项实时拉取**：API 配置页可一键从服务商接口拉取账号当前可用的模型列表（已保存 Key 时自动拉取），并修复了内置列表——`deepseek-chat` / `deepseek-reasoner` 已于 2026-07-24 退役，最新模型为 `deepseek-flash` 与 `deepseek-v4-pro`，旧配置会自动迁移；模型下拉改为自定义列表，光标驻留选项即显示模型说明
+- **答题复核机制**：选择题答案与参考答案不一致时，AI 先独立解题复核再判定——若参考答案本身标错（如混淆最大项/最小项）而用户答对，改判为正确、自动修正题目答案且不计入错题本；出题提示词同步加入自洽性约束，避免解析与 correctIndex 互相矛盾
+</details>
+
+<details>
 <summary><strong>v0.0.9</strong> — 2026-09-06</summary>
 
 - **界面语言全局化**：全部页面、组件与服务层提示文案接入中/英/俄/日/韩五语言（累计 629 个翻译键），AI 报错、文件解析、更新弹窗等服务层文案同步本地化
 - **新版本提醒与一键下载**：任务卡启动时自动检查更新，发现新版本常驻提示横幅并支持一键下载（自动更新不可用时自动回退浏览器下载）
-- **模型选项实时拉取**：API 配置页可一键从服务商接口拉取账号当前可用的模型列表（已保存 Key 时自动拉取），并修复了内置列表——`deepseek-chat` / `deepseek-reasoner` 已于 2026-07-24 退役，最新模型为 `deepseek-flash` 与 `deepseek-v4-pro`，旧配置会自动迁移；模型下拉改为自定义列表，光标驻留选项即显示模型说明
 - **动画优化**：页面切换改为新旧页面等速同步推移，杜绝切换中的内容重叠；任务卡与徽章形变衔接、通知与横幅平滑入场
-- **答题复核机制**：选择题答案与参考答案不一致时，AI 先独立解题复核再判定——若参考答案本身标错（如混淆最大项/最小项）而用户答对，改判为正确、自动修正题目答案且不计入错题本；出题提示词同步加入自洽性约束，避免解析与 correctIndex 互相矛盾
 </details>
 
 <details>

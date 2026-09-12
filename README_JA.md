@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://img.shields.io/badge/version-0.0.9-blue?style=flat-square" alt="バージョン" />
+  <img src="https://img.shields.io/badge/version-0.1.0-blue?style=flat-square" alt="バージョン" />
   <img src="https://img.shields.io/badge/Node.js-SEA-339933?style=flat-square&logo=node.js" alt="Node.js SEA" />
   <img src="https://img.shields.io/badge/React-18-61DAFB?style=flat-square&logo=react" alt="React" />
   <img src="https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript" alt="TypeScript" />
@@ -37,7 +37,7 @@
 
 <p align="center">
   <a href="https://github.com/Koipoppy/ChillPass-Web/releases/latest">
-    <img src="https://img.shields.io/badge/ダウンロード-ChillPass%20Setup%200.0.9.exe-blue?style=for-the-badge" alt="ダウンロード" />
+    <img src="https://img.shields.io/badge/ダウンロード-ChillPass%20Setup%200.1.0.exe-blue?style=for-the-badge" alt="ダウンロード" />
   </a>
 </p>
 
@@ -189,7 +189,7 @@ Athena は単なるチャットボットではなく、**能力**・**記憶**�
 
 ### ダウンロードしてインストール（推奨）
 
-[Releases](https://github.com/Koipoppy/ChillPass-Web/releases) にアクセス → `ChillPass-Setup-0.0.9.exe` をダウンロード → インストール。
+[Releases](https://github.com/Koipoppy/ChillPass-Web/releases) にアクセス → `ChillPass-Setup-0.1.0.exe` をダウンロード → インストール。
 
 > Windows 10/11（64 ビット）。ユーザーごとのインストール（管理者権限不要）。インストール後にデスクトップショートカットを自動作成。更新時もデータは保持されます。
 
@@ -334,13 +334,18 @@ tray.ps1                     システムトレイアイコン（WinForms Notify
 ## 変更履歴
 
 <details>
+<summary><strong>v0.1.0</strong> — 2026-09-12</summary>
+
+- **モデル一覧のリアルタイム取得**：API 設定ページで、アカウントで利用可能なモデルをプロバイダー API から直接取得できるようになりました（キー保存済みなら自動取得）。内蔵リストも修正——`deepseek-chat` / `deepseek-reasoner` は 2026-07-24 に提供終了、現行は `deepseek-flash` と `deepseek-v4-pro` で、旧設定は自動移行されます。ドロップダウンは独自リストになり、項目にカーソルを合わせると説明が表示されます
+- **解答の再審査**：クイズの解答が参考答案と一致しない場合、AI が先に独立して解き直してから判定します。参考答案自体の誤り（最大項/最小項の混同など）でユーザーが正解していた場合は正答に改め、問題の答えを自動修正し、間違いノートには記録しません。出題プロンプトにも自己整合性の制約を追加しました
+</details>
+
+<details>
 <summary><strong>v0.0.9</strong> — 2026-09-06</summary>
 
 - **UI の完全ローカライズ**：すべてのページ・コンポーネント・サービス層メッセージが中国語/英語/ロシア語/日本語/韓国語に対応（合計 629 翻訳キー）。AI エラー・ファイル解析・更新ダイアログも含みます
 - **新バージョン通知とワンクリックダウンロード**：タスクカードが起動時に更新をチェックし、新バージョン検出時は常時表示のバナーとワンクリックダウンロードを提供（自動更新が利用できない場合はブラウザダウンロードへフォールバック）
-- **モデル一覧のリアルタイム取得**：API 設定ページで、アカウントで利用可能なモデルをプロバイダー API から直接取得できるようになりました（キー保存済みなら自動取得）。内蔵リストも修正——`deepseek-chat` / `deepseek-reasoner` は 2026-07-24 に提供終了、現行は `deepseek-flash` と `deepseek-v4-pro` で、旧設定は自動移行されます。ドロップダウンは独自リストになり、項目にカーソルを合わせると説明が表示されます
 - **アニメーション改善**：ページ遷移時に新旧ページを同速度でスライドさせ、切り替え中の重なりを解消。タスクカードとバッジの変形つなぎ、通知・バナーの滑らかな登場
-- **解答の再審査**：クイズの解答が参考答案と一致しない場合、AI が先に独立して解き直してから判定します。参考答案自体の誤り（最大項/最小項の混同など）でユーザーが正解していた場合は正答に改め、問題の答えを自動修正し、間違いノートには記録しません。出題プロンプトにも自己整合性の制約を追加しました
 </details>
 
 <details>
