@@ -340,6 +340,7 @@ tray.ps1                     System tray icon (WinForms NotifyIcon)
 - **New-version alert & one-click download**: the task card checks for updates on launch, shows a persistent banner with a one-click download button (falls back to browser download when auto update is unavailable)
 - **Live model list**: the API settings page can now fetch the models actually available to your account straight from the provider (auto-fetched once a key is saved). The built-in list was also fixed — `deepseek-chat` / `deepseek-reasoner` were retired on 2026-07-24, current models are `deepseek-flash` and `deepseek-v4-pro`, and saved configs migrate automatically. The dropdown is now a custom list that shows a model description on hover
 - **Animation polish**: page transitions now slide the old and new pages at identical speed, eliminating any overlap during the switch; the task card morphs into its badge, and notifications and banners animate in smoothly
+- **Answer adjudication**: when a quiz answer disagrees with the reference key, the AI now independently re-solves the question before judging — if the stored key itself is wrong (e.g. maxterm/minterm mix-up) and the user is right, the verdict is corrected, the question key is fixed in place, and nothing goes to the mistake notebook; generation prompts gained consistency rules so explanations can no longer contradict correctIndex
 </details>
 
 <details>

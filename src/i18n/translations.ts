@@ -658,6 +658,9 @@ export type TranslationKey =
   | 'api.modelLiveHint'
   | 'api.modelHoverHint'
 
+  | 'lesson.adjudicating'
+  | 'lesson.keyFixedNote'
+
 const zh: Record<TranslationKey, string> = {
   'nav.dashboard': '首页',
   'nav.upload': '导入课件',
@@ -866,6 +869,8 @@ const zh: Record<TranslationKey, string> = {
   'notify.lessonsDoneTitle': '关卡生成完成',
   'notify.lessonsDoneBody': '「{course}」的 {count} 个关卡已生成完毕，开始学习吧',
   'notify.newNotice': '新通知',
+  'lesson.adjudicating': "你的答案与参考答案不一致，AI 正在独立复核这道题…",
+  'lesson.keyFixedNote': "复核结果：题目标注的参考答案有误，你的回答是正确的。本题答案已修正，且不计入错题本。",
   'model.deepseekFlash': "deepseek-flash — V4.1 Flash，响应快、成本低，支持图像理解",
   'model.deepseekV4Pro': "deepseek-v4-pro — V4 Pro 旗舰，推理能力最强，适合复杂题目与长文（不支持图像）",
   'model.deepseekV4FlashLegacy': "deepseek-v4-flash — 旧版 ID，仍可调用但已由 Flash 接替",
@@ -1509,6 +1514,8 @@ const en: Record<TranslationKey, string> = {
   'notify.lessonsDoneTitle': 'Lessons ready',
   'notify.lessonsDoneBody': '{count} lessons for "{course}" are ready — start learning',
   'notify.newNotice': 'New notice',
+  'lesson.adjudicating': "Your answer differs from the reference answer — AI is double-checking this question…",
+  'lesson.keyFixedNote': "Verdict: the reference answer on this question was wrong, and your answer is correct. The question has been fixed and will not be added to the mistake notebook.",
   'model.deepseekFlash': "deepseek-flash — V4.1 Flash, fast and low-cost, supports image understanding",
   'model.deepseekV4Pro': "deepseek-v4-pro — V4 Pro flagship, strongest reasoning for complex problems and long texts (no image support)",
   'model.deepseekV4FlashLegacy': "deepseek-v4-flash — legacy ID, still accepted but served by Flash",
@@ -2154,6 +2161,8 @@ const ru: Record<TranslationKey, string> = {
   'notify.lessonsDoneTitle': 'Уровни готовы',
   'notify.lessonsDoneBody': '{count} уровней для «{course}» готовы — начинайте учиться',
   'notify.newNotice': 'Новое уведомление',
+  'lesson.adjudicating': "Ваш ответ отличается от эталонного — ИИ перепроверяет вопрос…",
+  'lesson.keyFixedNote': "Вердикт: эталонный ответ в вопросе был неверным, а ваш — правильным. Вопрос исправлен и не попадёт в тетрадь ошибок.",
   'model.deepseekFlash': "deepseek-flash — V4.1 Flash: быстрая и недорогая, поддерживает распознавание изображений",
   'model.deepseekV4Pro': "deepseek-v4-pro — флагман V4 Pro: сильнейшие рассуждения для сложных задач и длинных текстов (без изображений)",
   'model.deepseekV4FlashLegacy': "deepseek-v4-flash — устаревший ID: ещё принимается, но обслуживается Flash",
@@ -2799,6 +2808,8 @@ const ja: Record<TranslationKey, string> = {
   'notify.lessonsDoneTitle': 'レベル生成完了',
   'notify.lessonsDoneBody': '「{course}」の{count}個のレベルが生成されました。学習を始めましょう',
   'notify.newNotice': '新着通知',
+  'lesson.adjudicating': "あなたの答えと参考答案が一致しないため、AI が独立に复核中です…",
+  'lesson.keyFixedNote': "复核結果：この問題の参考答案は誤っており、あなたの回答が正解です。問題は修正され、間違いノートには記録されません。",
   'model.deepseekFlash': "deepseek-flash — V4.1 Flash。高速・低コストで画像理解にも対応",
   'model.deepseekV4Pro': "deepseek-v4-pro — V4 Pro フラッグシップ。複雑な問題や長文に強い最高精度の推論（画像非対応）",
   'model.deepseekV4FlashLegacy': "deepseek-v4-flash — 旧 ID。まだ受け付けられますが Flash が応答します",
@@ -3444,6 +3455,8 @@ const ko: Record<TranslationKey, string> = {
   'notify.lessonsDoneTitle': '레벨 생성 완료',
   'notify.lessonsDoneBody': '"{course}"의 {count}개 레벨이 생성되었습니다. 학습을 시작하세요',
   'notify.newNotice': '새 알림',
+  'lesson.adjudicating': "답안이 참고 답안과 일치하지 않아 AI가 재검토 중입니다…",
+  'lesson.keyFixedNote': "판정: 이 문제의 참고 답안이 잘못되었으며 당신의 답이 맞습니다. 문제가 수정되었고 오답 노트에는 기록되지 않습니다.",
   'model.deepseekFlash': "deepseek-flash — V4.1 Flash. 빠르고 저렴하며 이미지 이해를 지원",
   'model.deepseekV4Pro': "deepseek-v4-pro — V4 Pro 플래그십. 복잡한 문제와 장문에 가장 강력한 추론(이미지 미지원)",
   'model.deepseekV4FlashLegacy': "deepseek-v4-flash — 구버전 ID. 아직 허용되지만 Flash가 응답합니다",

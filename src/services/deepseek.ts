@@ -441,6 +441,7 @@ export async function generateLessonContent(
 - 题目难度递进，从基础到进阶
 - 题目类型混合：单选题（type="choice"，4个选项，correctIndex为正确选项索引）、多选题（type="multi"，4-6个选项，correctIndices为正确选项索引数组）、填空题（type="fill"）、简答题（type="short"）
 - 多选题至少有2个正确选项
+- 出题自洽：先独立推导每道选择题的正确选项，再据此设置 correctIndex/correctIndices；explanation 必须与推导结果完全一致，不得出现"correctIndex 有误/应为"等更正或自我质疑的表述
 - 选择题的干扰项要有迷惑性但明确错误
 - 选择题的options数组只写选项内容本身，不要包含A. B. C. D.等前缀
 - 填空题提供 answer（标准答案）和 acceptableAnswers（可接受的其他答案数组）
@@ -613,6 +614,92 @@ export async function gradeAnswer(
 }
 
 /**
+ * 选择题答案复核
+ * 当学生的选择与题目标注的参考答案不一致时，AI 独立解题后裁定：
+ * 参考答案可能有误（生成时混淆概念、correctIndex 标错等），不能盲判学生错误
+ */
+export interface AnswerAdjudication {
+  /** 学生的答案是否与 AI 推导的正确答案一致 */
+  userCorrect: boolean
+  /** AI 推导出的正确选项索引（单选题，从 0 开始） */
+  correctIndex?: number
+  /** AI 推导出的正确选项索引数组（多选题） */
+  correctIndices?: number[]
+  /** 面向学生的复核说明 */
+  feedback: string
+}
+
+export async function adjudicateAnswer(params: {
+  questionType: 'choice' | 'multi'
+  question: string
+  options: string[]
+  storedCorrectIndex?: number
+  storedCorrectIndices?: number[]
+  userSelectedIndex?: number
+  userSelectedIndices?: number[]
+}): Promise<AnswerAdjudication> {
+  const { questionType, question, options } = params
+  const letter = (i: number) => String.fromCharCode(65 + i)
+  const optionLines = options.map((opt, i) => `${letter(i)}. ${opt}`).join('\n')
+  const isMulti = questionType === 'multi'
+
+  const storedLetters = isMulti
+    ? (params.storedCorrectIndices ?? []).map(letter).join('、')
+    : letter(params.storedCorrectIndex ?? -1)
+  const userLetters = isMulti
+    ? (params.userSelectedIndices ?? []).map(letter).join('、')
+    : letter(params.userSelectedIndex ?? -1)
+
+  const systemPrompt = `你是一位严谨的阅卷复核老师。学生做一道${isMulti ? '多选' : '单选'}题，他的答案与题目标注的参考答案不一致。请你独立解题后裁定，特别注意：标注的参考答案本身可能有误（例如混淆了最大项/最小项、原函数/反函数等约定），不要盲目相信它。
+
+题目：
+${question}
+
+选项：
+${optionLines}
+
+题目标注的参考答案：${storedLetters}
+学生的答案：${userLetters}
+
+请独立推导这道题的正确答案，然后返回 JSON（不要包含任何其他文字）：
+{
+  "correctIndex": 0,
+  "correctIndices": null,
+  "userCorrect": true,
+  "feedback": "面向学生的简短复核说明"
+}
+
+字段说明：
+- correctIndex：你推导出的正确选项索引（从 0 开始）；多选题此字段填 null
+- correctIndices：多选题的正确选项索引数组；单选题此字段填 null
+- userCorrect：学生的答案是否与你推导的正确答案一致
+- feedback：先简述推导过程与正确答案（提及选项用字母），再说明标注的参考答案是否有误`
+
+  const result = await callDeepSeek(
+    [{ role: 'system', content: systemPrompt }],
+    { temperature: 0.1, maxTokens: 800 }
+  )
+
+  const jsonMatch = result.match(/\{[\s\S]*\}/)
+  const json = jsonMatch ? jsonMatch[0] : result
+  const parsed = JSON.parse(json)
+
+  const validIndex = (n: unknown): n is number =>
+    typeof n === 'number' && Number.isInteger(n) && n >= 0 && n < options.length
+  const validIndices = (arr: unknown): arr is number[] =>
+    Array.isArray(arr) && arr.length > 0 && arr.every(validIndex)
+
+  return {
+    userCorrect: !!parsed.userCorrect,
+    correctIndex: validIndex(parsed.correctIndex) ? parsed.correctIndex : undefined,
+    correctIndices: validIndices(parsed.correctIndices) ? parsed.correctIndices : undefined,
+    feedback:
+      parsed.feedback ||
+      serviceText(parsed.userCorrect ? 'service.answerFeedbackOk' : 'service.answerFeedbackBad'),
+  }
+}
+
+/**
  * 重新生成一道考察相同知识点的小测题
  */
 export async function regenerateQuizQuestion(
@@ -629,6 +716,7 @@ export async function regenerateQuizQuestion(
 - 新题目必须考察相同的知识点，但题目内容和表述不同
 - 数学公式使用 LaTeX 语法（$...$ 或 $$...$$）
 - 选择题的options数组只写选项内容本身，不要包含A. B. C. D.等前缀
+- 出题自洽：先独立推导正确选项再设置 correctIndex，explanation 必须与之完全一致，不得出现更正或质疑 correctIndex 的表述
 - 返回 JSON 格式，包含 type、question、options/correctIndex（选择题）或 answer/acceptableAnswers（填空/简答题）、explanation
 
 返回 JSON：

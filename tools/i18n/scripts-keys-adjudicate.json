@@ -1,0 +1,4 @@
+{
+  "lesson.adjudicating": { "zh": "你的答案与参考答案不一致，AI 正在独立复核这道题…", "en": "Your answer differs from the reference answer — AI is double-checking this question…", "ru": "Ваш ответ отличается от эталонного — ИИ перепроверяет вопрос…", "ja": "あなたの答えと参考答案が一致しないため、AI が独立に复核中です…", "ko": "답안이 참고 답안과 일치하지 않아 AI가 재검토 중입니다…" },
+  "lesson.keyFixedNote": { "zh": "复核结果：题目标注的参考答案有误，你的回答是正确的。本题答案已修正，且不计入错题本。", "en": "Verdict: the reference answer on this question was wrong, and your answer is correct. The question has been fixed and will not be added to the mistake notebook.", "ru": "Вердикт: эталонный ответ в вопросе был неверным, а ваш — правильным. Вопрос исправлен и не попадёт в тетрадь ошибок.", "ja": "复核結果：この問題の参考答案は誤っており、あなたの回答が正解です。問題は修正され、間違いノートには記録されません。", "ko": "판정: 이 문제의 참고 답안이 잘못되었으며 당신의 답이 맞습니다. 문제가 수정되었고 오답 노트에는 기록되지 않습니다." }
+}

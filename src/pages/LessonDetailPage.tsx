@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import {
   ArrowLeft,
@@ -16,6 +16,7 @@ import {
 import { useCourseStore, useCurrentBundle } from '@stores/courseStore'
 import { useWrongQuestionStore } from '@stores/wrongQuestionStore'
 import {
+  adjudicateAnswer,
   generateLessonContent,
   gradeAnswer,
   regenerateQuizQuestion,
@@ -96,6 +97,8 @@ export default function LessonDetailPage() {
   const [multiSelected, setMultiSelected] = useState<Set<number>>(new Set())
   const [multiSubmitted, setMultiSubmitted] = useState(false)
   const [revealed, setRevealed] = useState(false)
+  // AI 复核进行中（学生答案与参考答案不一致时触发）
+  const [adjudicating, setAdjudicating] = useState(false)
 
   // 切换关卡时重置本地状态
   useEffect(() => {
@@ -109,10 +112,17 @@ export default function LessonDetailPage() {
     setFeedback(null)
     setChoiceSelected(null)
     setRevealed(false)
+    setAdjudicating(false)
   }, [lessonId])
 
   // 同步小测题目（内容加载或重新生成时）
+  // 注意：AI 复核修正答案也会更新 content，此时跳过重置，避免清掉复核反馈与解题进度
+  const skipQuizSyncRef = useRef(false)
   useEffect(() => {
+    if (skipQuizSyncRef.current) {
+      skipQuizSyncRef.current = false
+      return
+    }
     if (content?.quiz) {
       setQuizQuestions(content.quiz)
       setQuizPage(0)
@@ -121,6 +131,7 @@ export default function LessonDetailPage() {
       setFeedback(null)
       setChoiceSelected(null)
       setRevealed(false)
+      setAdjudicating(false)
     }
   }, [content])
 
@@ -171,7 +182,7 @@ export default function LessonDetailPage() {
 
   /** 多选题：切换选项选择 */
   const handleMultiToggle = (optionIndex: number) => {
-    if (multiSubmitted) return
+    if (multiSubmitted || adjudicating) return
     setMultiSelected(prev => {
       const next = new Set(prev)
       if (next.has(optionIndex)) {
@@ -183,34 +194,125 @@ export default function LessonDetailPage() {
     })
   }
 
+  /** 把（可能被复核修正的）小测题写回本地状态与课程存储 */
+  const patchQuizQuestion = (patched: QuizQuestion) => {
+    skipQuizSyncRef.current = true
+    setQuizQuestions(prev => prev.map((item, i) => (i === quizPage ? patched : item)))
+    if (content) {
+      setLessonContent(lesson.id, {
+        ...content,
+        quiz: content.quiz.map(item => (item.id === patched.id ? patched : item)),
+      })
+    }
+  }
+
+  /**
+   * AI 复核：学生答案与参考答案不一致时，独立裁定真正正确的选项。
+   * 参考答案可能是生成出题时就标错了（如混淆最大项/最小项），不能盲判学生错误。
+   */
+  const adjudicateMismatch = async (
+    q: QuizQuestion,
+    userSelectedIndex?: number,
+    userSelectedIndices?: number[],
+  ): Promise<void> => {
+    setAdjudicating(true)
+    try {
+      const result = await adjudicateAnswer({
+        questionType: q.type === 'multi' ? 'multi' : 'choice',
+        question: q.question,
+        options: q.options ?? [],
+        storedCorrectIndex: q.correctIndex,
+        storedCorrectIndices: q.correctIndices,
+        userSelectedIndex,
+        userSelectedIndices,
+      })
+
+      // 用复核结果修正题目的参考答案（本地状态 + 课程存储）
+      const patched: QuizQuestion = { ...q }
+      if (q.type === 'multi' && result.correctIndices) {
+        patched.correctIndices = result.correctIndices
+      } else if (q.type !== 'multi' && result.correctIndex !== undefined) {
+        patched.correctIndex = result.correctIndex
+      }
+      const hasCorrection =
+        q.type === 'multi' ? !!result.correctIndices : result.correctIndex !== undefined
+      if (hasCorrection) patchQuizQuestion(patched)
+      if (q.type === 'multi') setMultiSubmitted(true)
+      setRevealed(true)
+
+      if (result.userCorrect) {
+        // 参考答案标错、学生答对了：改判为正确，不计入错题本
+        setPageSolved(prev => new Set(prev).add(quizPage))
+        setFeedback({
+          correct: true,
+          text: `${t('lesson.keyFixedNote')}
+
+${result.feedback}`,
+        })
+      } else {
+        // 学生确实答错（参考答案无误，或正确选项另有其他）
+        setFeedback({ correct: false, text: result.feedback })
+        if (examPoint && bundle) {
+          addWrongQuestion({
+            courseId: bundle.course.id,
+            courseName: bundle.course.name,
+            lessonId: lesson.id,
+            lessonTitle: lesson.title,
+            question: q.question,
+            quizType: q.type,
+            options: q.options,
+            correctIndex: patched.correctIndex,
+            correctIndices: patched.correctIndices,
+            selectedIndex: userSelectedIndex,
+            selectedIndices: userSelectedIndices,
+            explanation: result.feedback,
+            examPointTitle: examPoint.title,
+            priority: lesson.priority,
+          })
+        }
+      }
+    } catch {
+      // 复核失败（网络/接口异常）：按参考答案判定，保持原有行为
+      setRevealed(true)
+      if (examPoint && bundle) {
+        addWrongQuestion({
+          courseId: bundle.course.id,
+          courseName: bundle.course.name,
+          lessonId: lesson.id,
+          lessonTitle: lesson.title,
+          question: q.question,
+          quizType: q.type,
+          options: q.options,
+          correctIndex: q.correctIndex,
+          correctIndices: q.correctIndices,
+          selectedIndex: userSelectedIndex,
+          selectedIndices: userSelectedIndices,
+          explanation: q.explanation,
+          examPointTitle: examPoint.title,
+          priority: lesson.priority,
+        })
+      }
+    } finally {
+      setAdjudicating(false)
+    }
+  }
+
   /** 多选题：提交答案 */
   const handleMultiSubmit = () => {
     const q = quizQuestions[quizPage]
     if (!q || !q.correctIndices || multiSelected.size === 0) return
 
-    setMultiSubmitted(true)
     const correctSet = new Set(q.correctIndices)
     const isCorrect =
       multiSelected.size === correctSet.size &&
       [...multiSelected].every(i => correctSet.has(i))
 
     if (isCorrect) {
+      setMultiSubmitted(true)
       setPageSolved(prev => new Set(prev).add(quizPage))
-    } else if (examPoint && bundle) {
-      addWrongQuestion({
-        courseId: bundle.course.id,
-        courseName: bundle.course.name,
-        lessonId: lesson.id,
-        lessonTitle: lesson.title,
-        question: q.question,
-        quizType: q.type,
-        options: q.options,
-        correctIndices: q.correctIndices,
-        selectedIndices: [...multiSelected],
-        explanation: q.explanation,
-        examPointTitle: examPoint.title,
-        priority: lesson.priority,
-      })
+    } else {
+      // 与参考答案不一致：先复核再判定
+      adjudicateMismatch(q, undefined, [...multiSelected])
     }
   }
 
@@ -227,30 +329,19 @@ export default function LessonDetailPage() {
 
   /** 选择题：点击选项 */
   const handleChoiceAnswer = (optionIndex: number) => {
-    if (revealed) return
+    if (revealed || adjudicating) return
     const q = quizQuestions[quizPage]
     if (!q || q.correctIndex === undefined) return
 
     setChoiceSelected(optionIndex)
-    setRevealed(true)
 
     if (optionIndex === q.correctIndex) {
+      // 与参考答案一致，直接判定正确
+      setRevealed(true)
       setPageSolved(prev => new Set(prev).add(quizPage))
-    } else if (examPoint && bundle) {
-      addWrongQuestion({
-        courseId: bundle.course.id,
-        courseName: bundle.course.name,
-        lessonId: lesson.id,
-        lessonTitle: lesson.title,
-        question: q.question,
-        quizType: q.type,
-        options: q.options,
-        correctIndex: q.correctIndex,
-        selectedIndex: optionIndex,
-        explanation: q.explanation,
-        examPointTitle: examPoint.title,
-        priority: lesson.priority,
-      })
+    } else {
+      // 与参考答案不一致：先 AI 复核再判定
+      adjudicateMismatch(q, optionIndex)
     }
   }
 
@@ -597,7 +688,7 @@ export default function LessonDetailPage() {
                                   key={oi}
                                   className={cls}
                                   onClick={() => handleChoiceAnswer(oi)}
-                                  disabled={revealed}
+                                  disabled={revealed || adjudicating}
                                 >
                                   <span className={styles.optionLabel}>
                                     {String.fromCharCode(65 + oi)}
@@ -642,7 +733,7 @@ export default function LessonDetailPage() {
                                     key={oi}
                                     className={cls}
                                     onClick={() => handleMultiToggle(oi)}
-                                    disabled={multiSubmitted}
+                                    disabled={multiSubmitted || adjudicating}
                                   >
                                     <span className={styles.optionLabel}>
                                       {String.fromCharCode(65 + oi)}
@@ -717,6 +808,14 @@ export default function LessonDetailPage() {
                           />
                         )}
 
+                        {/* AI 复核进行中（学生答案与参考答案不一致时） */}
+                        {adjudicating && (
+                          <div className={styles.adjudicating}>
+                            <Loader size={14} className={styles.submitSpinner} />
+                            <span>{t('lesson.adjudicating')}</span>
+                          </div>
+                        )}
+
                         {/* 操作行：左侧重新生成+跳过，右侧提交答案 */}
                         <div className={styles.quizActionRow}>
                           <div className={styles.quizNavLeft}>
@@ -724,7 +823,7 @@ export default function LessonDetailPage() {
                             <button
                               className={styles.regenerateBtn}
                               onClick={handleRegenerateQuestion}
-                              disabled={grading}
+                              disabled={grading || adjudicating}
                               title={t('lesson.regenerateTitle')}
                             >
                               {grading ? (
@@ -738,7 +837,7 @@ export default function LessonDetailPage() {
                             <button
                               className={styles.skipBtn}
                               onClick={handleSkipQuestion}
-                              disabled={grading}
+                              disabled={grading || adjudicating}
                               title={t('lesson.skipTitle')}
                             >
                               <SkipForward size={14} strokeWidth={2} />
