@@ -814,8 +814,8 @@
   left: 0;
   right: 0;
   bottom: 0;
-  /* 遮罩用一层高斯模糊柔化背后内容，避免与卡片边缘产生生硬阴影 */
-  background: rgba(0, 0, 0, 0.18);
+  /* 只做高斯模糊，不压黑色遮罩：卡片背后不应出现一层黑色 */
+  background: transparent;
   backdrop-filter: blur(16px) saturate(160%);
   -webkit-backdrop-filter: blur(16px) saturate(160%);
   z-index: 1000;
@@ -844,7 +844,7 @@
   /* 自身再叠一层高斯模糊，保证与背板过渡柔和 */
   backdrop-filter: blur(28px) saturate(140%);
   -webkit-backdrop-filter: blur(28px) saturate(140%);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.06);
   animation: modalSlideUp 0.3s cubic-bezier(0.32, 0.72, 0, 1);
 }
 
