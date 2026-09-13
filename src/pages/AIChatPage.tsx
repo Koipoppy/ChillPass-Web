@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
+import { createPortal } from 'react-dom'
 import type { KeyboardEvent as ReactKeyboardEvent, ChangeEvent as ReactChangeEvent, PointerEvent as ReactPointerEvent } from 'react'
 import { useLocation } from 'react-router-dom'
 import { Send, Trash2, Sparkles, ImageIcon, X, Brain, Zap, Download, Upload, Plus, FileText, BookOpen, Calendar, MessageCircle, Shield, Waves, ChevronDown } from 'lucide-react'
@@ -50,6 +51,20 @@ const TASK_FORMS: Record<string, { labelKey: string; placeholderKey: string; req
     { labelKey: 'athena.fWeakAreas', placeholderKey: 'athena.fWeakAreasPh', required: false },
     { labelKey: 'athena.fMastered', placeholderKey: 'athena.fMasteredPh', required: false },
   ],
+}
+
+/**
+ * 弹窗容器：portal 到 body
+ * 页面容器带 transform（创建层叠上下文），直接渲染在里面会导致：
+ *   1) position: fixed 被该容器裁切（模糊/遮罩只覆盖内容区）
+ *   2) 弹窗 z-index 只在容器内生效，会被 App 层级的全局模糊层盖住
+ * portal 到 body 后弹窗脱离该容器，可正常居于模糊层之上
+ */
+function ModalPortal({ children }: { children: React.ReactNode }) {
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => setMounted(true), [])
+  if (!mounted) return null
+  return createPortal(children, document.body)
 }
 
 /** 空消息数组常量：选择器返回稳定引用 */
@@ -672,6 +687,7 @@ export default function AIChatPage() {
 
       {/* Ability Panel */}
       {showAbilityPanel && (
+        <ModalPortal>
         <div className={styles.modalOverlay} onClick={() => setShowAbilityPanel(false)}>
           <div className={styles.modal} onClick={e => e.stopPropagation()}>
             <div className={styles.modalHeader}>
@@ -688,10 +704,12 @@ export default function AIChatPage() {
             </div>
           </div>
         </div>
+        </ModalPortal>
       )}
 
       {/* Memory Panel */}
       {showMemoryPanel && (
+        <ModalPortal>
         <div className={styles.modalOverlay} onClick={() => setShowMemoryPanel(false)}>
           <div className={styles.modal} onClick={e => e.stopPropagation()}>
             <div className={styles.modalHeader}>
@@ -708,10 +726,12 @@ export default function AIChatPage() {
             </div>
           </div>
         </div>
+        </ModalPortal>
       )}
 
       {/* Task Form Modal */}
       {showTaskForm && (
+        <ModalPortal>
         <div className={styles.modalOverlay} onClick={() => setShowTaskForm(false)}>
           <div className={styles.modal} onClick={e => e.stopPropagation()}>
             <div className={styles.modalHeader}>
@@ -758,6 +778,7 @@ export default function AIChatPage() {
             </div>
           </div>
         </div>
+        </ModalPortal>
       )}
     </div>
   )
