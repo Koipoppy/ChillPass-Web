@@ -1,0 +1,4 @@
+{
+  "img.invalidFormat": { "zh": "无法读取该图片，请改用 PNG、JPEG、WebP 或 GIF 格式", "en": "Could not read this image — please use PNG, JPEG, WebP or GIF", "ru": "Не удалось прочитать изображение — используйте PNG, JPEG, WebP или GIF", "ja": "この画像を読み込めません。PNG・JPEG・WebP・GIF をご利用ください", "ko": "이 이미지를 읽을 수 없습니다. PNG, JPEG, WebP, GIF를 사용하세요" },
+  "img.tooLarge": { "zh": "图片过大，压缩后仍无法发送，请换一张更小的图片", "en": "The image is too large to send even after compression — please use a smaller one", "ru": "Изображение слишком большое даже после сжатия — выберите файл меньше", "ja": "画像が大きすぎて圧縮後も送信できません。より小さい画像をご利用ください", "ko": "이미지가 너무 커서 압축 후에도 전송할 수 없습니다. 더 작은 이미지를 사용하세요" }
+}

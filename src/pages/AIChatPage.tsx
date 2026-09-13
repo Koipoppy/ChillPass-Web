@@ -8,7 +8,7 @@ import { useAthenaStore } from '@stores/athenaStore'
 import { useT } from '../i18n'
 import type { TranslationKey } from '../i18n'
 import { chatWithAthena, executeTask, summarizeAthenaInsights } from '@services/deepseek'
-import { fileToDataURL } from '@services/imageService'
+import { prepareImageForModel, mimeFromExtension } from '@services/imageService'
 import { modelVisionSupport } from '@services/modelCatalog'
 import { useSettingsStore } from '@stores/settingsStore'
 import type { ChatMessage, AthenaAbility, AthenaMemory, AthenaTaskType } from '@types/index'
@@ -188,6 +188,7 @@ export default function AIChatPage() {
     async (e?: ReactChangeEvent<HTMLInputElement>) => {
       let imageBuffer: ArrayBuffer | null = null
       let file: File | null = null
+      let mimeHint: string | undefined
 
       if (e) {
         // 浏览器环境：从 input 获取 File
@@ -199,6 +200,7 @@ export default function AIChatPage() {
         const result = await window.electronAPI.openImageDialog()
         if (!result || result.length === 0) return
         const filePath = result[0].path
+        mimeHint = mimeFromExtension(filePath)
         if (window.electronAPI?.readFileBuffer) {
           imageBuffer = await window.electronAPI.readFileBuffer(filePath)
         }
@@ -207,8 +209,11 @@ export default function AIChatPage() {
       }
 
       try {
-        // 仅生成预览：图片将作为多模态内容直接交给模型读图
-        const dataUrl = file ? await fileToDataURL(file) : await fileToDataURL(imageBuffer!)
+        // 规范化为模型支持的格式（PNG/JPEG）：BMP/TIFF/HEIC 或缺少 MIME 的
+        // ArrayBuffer 直接发送会被接口以 400 拒绝
+        const dataUrl = file
+          ? await prepareImageForModel(file)
+          : await prepareImageForModel(imageBuffer!, mimeHint)
         setAttachedImage(dataUrl)
       } catch (err) {
         console.error('图片读取失败', err)

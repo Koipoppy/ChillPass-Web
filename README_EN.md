@@ -341,7 +341,7 @@ tray.ps1                     System tray icon (WinForms NotifyIcon)
 - **More reliable regeneration**: new questions must keep the **same question type and same knowledge point** as the original; incomplete fields or a mismatched type trigger an automatic retry, and the new question is now persisted (previously lost when leaving the page)
 - **Better answering feedback**: option highlighting is instant on click (fixing the selected state being masked by hover, which required moving the cursor away to see); added a click sound for options and a satisfying chime for correct answers
 - **Review covers every question type**: fill-in and short-answer questions can be reviewed too — automated grading may miss valid wording or be too strict, so the AI re-judges independently on demand, correcting the reference answer and withdrawing the mistake when needed
-- **Athena images now go straight to the model**: the local OCR engine is gone (tesseract.js dependency removed); images are sent as multimodal content and read by the model itself — more accurate, faster, no engine to load
+- **Athena images now go straight to the model**: the local OCR engine is gone (tesseract.js dependency removed); images are sent as multimodal content and read by the model itself — more accurate, faster, no engine to load. Unsupported formats (BMP/TIFF/HEIC) and oversized images are automatically converted to a supported PNG/JPEG and downscaled before sending, fixing the 400 errors they used to cause
 </details>
 
 <details>
