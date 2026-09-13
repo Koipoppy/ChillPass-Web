@@ -670,6 +670,8 @@ export type TranslationKey =
   | 'athena.deleteChat'
   | 'athena.messageCount'
 
+  | 'sidebar.courseManage'
+
 const zh: Record<TranslationKey, string> = {
   'nav.dashboard': '首页',
   'nav.upload': '导入课件',
@@ -878,6 +880,7 @@ const zh: Record<TranslationKey, string> = {
   'notify.lessonsDoneTitle': '关卡生成完成',
   'notify.lessonsDoneBody': '「{course}」的 {count} 个关卡已生成完毕，开始学习吧',
   'notify.newNotice': '新通知',
+  'sidebar.courseManage': "课程管理",
   'athena.conversation': "会话",
   'athena.newChat': "新会话",
   'athena.deleteChat': "删除该会话",
@@ -1526,6 +1529,7 @@ const en: Record<TranslationKey, string> = {
   'notify.lessonsDoneTitle': 'Lessons ready',
   'notify.lessonsDoneBody': '{count} lessons for "{course}" are ready — start learning',
   'notify.newNotice': 'New notice',
+  'sidebar.courseManage': "Course management",
   'athena.conversation': "Conversation",
   'athena.newChat': "New chat",
   'athena.deleteChat': "Delete this conversation",
@@ -2176,6 +2180,7 @@ const ru: Record<TranslationKey, string> = {
   'notify.lessonsDoneTitle': 'Уровни готовы',
   'notify.lessonsDoneBody': '{count} уровней для «{course}» готовы — начинайте учиться',
   'notify.newNotice': 'Новое уведомление',
+  'sidebar.courseManage': "Управление курсами",
   'athena.conversation': "Беседа",
   'athena.newChat': "Новая беседа",
   'athena.deleteChat': "Удалить эту беседу",
@@ -2826,6 +2831,7 @@ const ja: Record<TranslationKey, string> = {
   'notify.lessonsDoneTitle': 'レベル生成完了',
   'notify.lessonsDoneBody': '「{course}」の{count}個のレベルが生成されました。学習を始めましょう',
   'notify.newNotice': '新着通知',
+  'sidebar.courseManage': "コース管理",
   'athena.conversation': "会話",
   'athena.newChat': "新しい会話",
   'athena.deleteChat': "この会話を削除",
@@ -3476,6 +3482,7 @@ const ko: Record<TranslationKey, string> = {
   'notify.lessonsDoneTitle': '레벨 생성 완료',
   'notify.lessonsDoneBody': '"{course}"의 {count}개 레벨이 생성되었습니다. 학습을 시작하세요',
   'notify.newNotice': '새 알림',
+  'sidebar.courseManage': "코스 관리",
   'athena.conversation': "대화",
   'athena.newChat': "새 대화",
   'athena.deleteChat': "이 대화 삭제",

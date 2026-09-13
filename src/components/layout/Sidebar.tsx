@@ -1,6 +1,22 @@
-import { NavLink } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
 import { useEffect, useRef, useState } from 'react'
-import { Home, Upload, BookOpen, BookX, MessageCircle, Settings, Briefcase } from 'lucide-react'
+import {
+  Home,
+  Upload,
+  BookOpen,
+  BookX,
+  MessageCircle,
+  Settings,
+  Briefcase,
+  ChevronDown,
+  ChevronUp,
+  Plus,
+  Download,
+  Trash2,
+  Pencil,
+  Check,
+  X,
+} from 'lucide-react'
 import styles from './Sidebar.module.css'
 import { useCourseStore, useCurrentBundle } from '@stores/courseStore'
 import { useSettingsStore } from '@stores/settingsStore'
@@ -17,11 +33,28 @@ const navItems = [
 ]
 
 export default function Sidebar() {
+  const navigate = useNavigate()
   const bundle = useCurrentBundle()
   const course = bundle?.course
   const progress = bundle?.progress
   const isTeacher = useSettingsStore(s => s.isTeacher)
   const t = useT()
+
+  // ── 课程管理（由首页迁移至此：切换 / 重命名 / 导出 / 删除 / 新建 / 导入）──
+  const courses = useCourseStore(s => s.courses)
+  const currentCourseId = useCourseStore(s => s.currentCourseId)
+  const switchCourse = useCourseStore(s => s.switchCourse)
+  const renameCourse = useCourseStore(s => s.renameCourse)
+  const deleteCourse = useCourseStore(s => s.deleteCourse)
+  const exportCourse = useCourseStore(s => s.exportCourse)
+  const importCourse = useCourseStore(s => s.importCourse)
+
+  const [menuOpen, setMenuOpen] = useState(false)
+  const [renaming, setRenaming] = useState(false)
+  const [renameValue, setRenameValue] = useState('')
+  const menuRef = useRef<HTMLDivElement>(null)
+  const renameInputRef = useRef<HTMLInputElement>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const prevCoinsRef = useRef(progress?.chillCoins ?? 0)
   const [coinBounce, setCoinBounce] = useState(false)
@@ -37,9 +70,78 @@ export default function Sidebar() {
     prevCoinsRef.current = currentCoins
   }, [currentCoins])
 
+  // 点击外部或 Esc 关闭课程菜单
+  useEffect(() => {
+    if (!menuOpen) return
+    const onPointerDown = (e: PointerEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) setMenuOpen(false)
+    }
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setMenuOpen(false)
+    }
+    document.addEventListener('pointerdown', onPointerDown)
+    document.addEventListener('keydown', onKeyDown)
+    return () => {
+      document.removeEventListener('pointerdown', onPointerDown)
+      document.removeEventListener('keydown', onKeyDown)
+    }
+  }, [menuOpen])
+
+  const handleSwitch = (id: string) => {
+    switchCourse(id)
+    setMenuOpen(false)
+  }
+
+  const handleDelete = (id: string, name: string) => {
+    if (window.confirm(t('dashboard.deleteConfirm').replace('{name}', name))) {
+      deleteCourse(id)
+      setMenuOpen(false)
+    }
+  }
+
+  const handleFileImport = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = () => {
+      try {
+        const data = JSON.parse(reader.result as string)
+        if (!data.course?.name) {
+          window.alert(t('dashboard.importFailedFormat'))
+          return
+        }
+        const success = importCourse(data)
+        if (success) {
+          window.alert(t('dashboard.importSuccess'))
+          setMenuOpen(false)
+        } else {
+          const hasValidData =
+            data.course && Array.isArray(data.examPoints) && Array.isArray(data.lessons)
+          window.alert(hasValidData ? t('dashboard.importDuplicate') : t('dashboard.importFailedFormat'))
+        }
+      } catch (err) {
+        console.error('导入课程解析失败', err)
+        window.alert(t('dashboard.importFailedParse'))
+      }
+    }
+    reader.onerror = () => window.alert(t('dashboard.importFailedRead'))
+    reader.readAsText(file)
+    e.target.value = ''
+  }
+
+  const readyCourses = courses.filter(b => b.course.status === 'ready')
+
+  /** 提交重命名（currentCourseId 可能为 null，做一次收窄） */
+  const commitRename = () => {
+    if (currentCourseId && renameValue.trim()) {
+      renameCourse(currentCourseId, renameValue)
+    }
+    setRenaming(false)
+  }
+
   return (
     <aside className={styles.sidebar}>
-      <div className={`${styles.sidebarInner} liquid-glass`}>
+      <div className={`${styles.sidebarInner} liquid-glass ${menuOpen ? styles.menuOpen : ''}`}>
         {/* Logo */}
         <div className={styles.logo}>
           <span className={styles.logoText}>ChillPass</span>
@@ -76,10 +178,76 @@ export default function Sidebar() {
           )}
         </nav>
 
-        {/* 课程进度卡片 */}
+        {/* 课程管理 + 进度卡片 */}
         {course && course.status === 'ready' && (
-          <div className={styles.progressCard}>
-            <div className={styles.progressCourseName}>{course.name}</div>
+          <div className={styles.progressCard} ref={menuRef}>
+            {/* 课程名：点击展开课程列表 */}
+            {renaming ? (
+              <div className={styles.renameBar}>
+                <input
+                  ref={renameInputRef}
+                  className={styles.renameInput}
+                  value={renameValue}
+                  onChange={e => setRenameValue(e.target.value)}
+                  onKeyDown={e => {
+                    if (e.key === 'Enter') {
+                      commitRename()
+                    } else if (e.key === 'Escape') {
+                      setRenaming(false)
+                    }
+                  }}
+                  onBlur={commitRename}
+                  autoFocus
+                />
+                <button
+                  type="button"
+                  className={styles.renameConfirm}
+                  onClick={commitRename}
+                  aria-label={t('common.confirm')}
+                >
+                  <Check size={13} strokeWidth={2.5} />
+                </button>
+                <button
+                  type="button"
+                  className={styles.renameCancel}
+                  onClick={() => setRenaming(false)}
+                  aria-label={t('common.cancel')}
+                >
+                  <X size={13} strokeWidth={2.5} />
+                </button>
+              </div>
+            ) : (
+              <div className={styles.courseRow}>
+                <button
+                  type="button"
+                  className={styles.courseTrigger}
+                  onClick={() => setMenuOpen(o => !o)}
+                  aria-haspopup="listbox"
+                  aria-expanded={menuOpen}
+                  title={t('sidebar.courseManage')}
+                >
+                  <span className={styles.progressCourseName}>{course.name}</span>
+                  {menuOpen ? (
+                    <ChevronDown size={14} strokeWidth={2.2} />
+                  ) : (
+                    <ChevronUp size={14} strokeWidth={2.2} />
+                  )}
+                </button>
+                <button
+                  type="button"
+                  className={styles.courseIconBtn}
+                  onClick={() => {
+                    setRenameValue(course.name)
+                    setRenaming(true)
+                    setTimeout(() => renameInputRef.current?.focus(), 0)
+                  }}
+                  title={t('dashboard.renameCourse')}
+                >
+                  <Pencil size={12} strokeWidth={2} />
+                </button>
+              </div>
+            )}
+
             <div className={styles.progressStats}>
               <span className={styles.progressNumber}>
                 {progress!.completedLessons}/{progress!.totalLessons}
@@ -102,6 +270,82 @@ export default function Sidebar() {
                 <span className={styles.generatingBadge}>{t('nav.generating')}</span>
               )}
             </div>
+
+            {/* 课程列表与管理操作 */}
+            {menuOpen && (
+              <div className={styles.courseMenu} role="listbox">
+                <div className={styles.courseMenuList}>
+                  {readyCourses.map(b => (
+                    <div
+                      key={b.course.id}
+                      className={`${styles.courseMenuItem} ${
+                        b.course.id === currentCourseId ? styles.courseMenuItemActive : ''
+                      }`}
+                    >
+                      <button
+                        type="button"
+                        className={styles.courseMenuItemMain}
+                        onClick={() => handleSwitch(b.course.id)}
+                      >
+                        <span className={styles.courseMenuItemName}>{b.course.name}</span>
+                      </button>
+                      <button
+                        type="button"
+                        className={styles.courseIconBtn}
+                        onClick={e => {
+                          e.stopPropagation()
+                          exportCourse(b.course.id)
+                        }}
+                        title={t('dashboard.exportCourse')}
+                      >
+                        <Download size={12} strokeWidth={2} />
+                      </button>
+                      <button
+                        type="button"
+                        className={`${styles.courseIconBtn} ${styles.courseIconBtnDanger}`}
+                        onClick={e => {
+                          e.stopPropagation()
+                          handleDelete(b.course.id, b.course.name)
+                        }}
+                        title={t('dashboard.deleteCourse')}
+                      >
+                        <Trash2 size={12} strokeWidth={2} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+
+                <div className={styles.courseMenuActions}>
+                  <button
+                    type="button"
+                    className={styles.courseMenuBtn}
+                    onClick={() => {
+                      setMenuOpen(false)
+                      navigate('/upload')
+                    }}
+                  >
+                    <Plus size={13} strokeWidth={2.2} />
+                    <span>{t('dashboard.newCourse')}</span>
+                  </button>
+                  <button
+                    type="button"
+                    className={styles.courseMenuBtn}
+                    onClick={() => fileInputRef.current?.click()}
+                    title={t('dashboard.importCourseTip')}
+                  >
+                    <Download size={13} strokeWidth={2.2} />
+                    <span>{t('dashboard.importCourse')}</span>
+                  </button>
+                </div>
+                <input
+                  type="file"
+                  accept=".json"
+                  ref={fileInputRef}
+                  style={{ display: 'none' }}
+                  onChange={handleFileImport}
+                />
+              </div>
+            )}
           </div>
         )}
       </div>

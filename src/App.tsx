@@ -8,6 +8,7 @@ import Background from './components/layout/Background'
 import WelcomeModal from './components/onboarding/WelcomeModal'
 import GuideCard from './components/onboarding/GuideCard'
 import { useAuthStore } from './stores/authStore'
+import { useGlobalBlurActive } from './utils/useGlobalBlur'
 import Dashboard from './pages/Dashboard'
 import UploadPage from './pages/UploadPage'
 import LessonPathPage from './pages/LessonPathPage'
@@ -71,6 +72,8 @@ export default function App() {
   const location = useLocation()
   const ensureAccount = useAuthStore(s => s.ensureAccount)
   const t = useT()
+  // 弹窗打开时显示全局高斯模糊层（内联样式，行为确定）
+  const blurActive = useGlobalBlurActive()
 
   useEffect(() => {
     document.title = t('app.docTitle')
@@ -82,6 +85,16 @@ export default function App() {
     <>
       <GlassFilter />
       <Background />
+      {/*
+        全局高斯模糊层：位于页面内容之上、侧边栏与弹窗卡片之下。
+        必须渲染在 App 层级——页面容器带 transform，会把 fixed 元素限制在容器内，
+        导致模糊区域出现锐利边缘。
+      */}
+      <div
+        className={styles.globalBlur}
+        style={{ opacity: blurActive ? 1 : 0 }}
+        aria-hidden="true"
+      />
       <TitleBar />
       <div className={styles.app}>
         <Sidebar />

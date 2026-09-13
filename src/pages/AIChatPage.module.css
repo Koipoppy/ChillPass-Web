@@ -814,10 +814,12 @@
   left: 0;
   right: 0;
   bottom: 0;
-  /* 只做高斯模糊，不压黑色遮罩：卡片背后不应出现一层黑色 */
+  /*
+   * 只作透明点击捕获：模糊交给 App 层级的全局模糊层。
+   * 这里若自行 backdrop-filter，会因本节点位于带 transform 的页面容器内而被裁切，
+   * 模糊区域会出现锐利边缘。
+   */
   background: transparent;
-  backdrop-filter: blur(16px) saturate(160%);
-  -webkit-backdrop-filter: blur(16px) saturate(160%);
   z-index: 1000;
   display: flex;
   align-items: center;

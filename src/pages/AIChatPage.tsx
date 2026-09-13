@@ -10,6 +10,7 @@ import type { TranslationKey } from '../i18n'
 import { chatWithAthena, executeTask, summarizeAthenaInsights } from '@services/deepseek'
 import { prepareImageForModel, mimeFromExtension } from '@services/imageService'
 import { modelVisionSupport } from '@services/modelCatalog'
+import { useGlobalBlur } from '@utils/useGlobalBlur'
 import { useSettingsStore } from '@stores/settingsStore'
 import type { ChatMessage, AthenaAbility, AthenaMemory, AthenaTaskType } from '@types/index'
 import { renderMarkdown } from '../utils/markdown'
@@ -188,6 +189,9 @@ export default function AIChatPage() {
       behavior: isNewMessage ? 'smooth' : 'auto',
     })
   }, [messages])
+
+  // 弹窗打开时启用全局高斯模糊层（位于侧边栏与卡片之下）
+  useGlobalBlur(showAbilityPanel || showMemoryPanel || showTaskForm)
 
   // 会话下拉：点击外部或 Esc 关闭
   useEffect(() => {

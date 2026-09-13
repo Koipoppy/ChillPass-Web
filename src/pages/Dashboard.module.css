@@ -815,3 +815,15 @@
   color: var(--success-text);
   border-color: rgba(52, 199, 89, 0.3);
 }
+
+/* 课程标题（课程管理已迁移到导航栏，这里只做展示） */
+.courseTitle {
+  margin: 2px 0 0;
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

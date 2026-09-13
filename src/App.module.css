@@ -29,3 +29,21 @@
 .pageWrapper::-webkit-scrollbar {
   display: none;
 }
+
+/*
+ * 全局高斯模糊层
+ * - fixed + inset 0：覆盖整个视口，边缘落在屏幕之外，不会出现锐利边界
+ * - z-index 1：高于页面内容，低于侧边栏（z-index 2）、任务卡（990）与弹窗（1000）
+ *   => 导航栏与卡片保持清晰
+ * - 透明度由内联样式按状态控制（弹窗打开时才显现）
+ */
+.globalBlur {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0;
+  backdrop-filter: blur(18px) saturate(150%);
+  -webkit-backdrop-filter: blur(18px) saturate(150%);
+  transition: opacity 0.25s ease;
+}

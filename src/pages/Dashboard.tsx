@@ -52,41 +52,18 @@ export default function Dashboard() {
   const navigate = useNavigate()
   const t = useT()
   const bundle = useCurrentBundle()
-  const courses = useCourseStore(s => s.courses)
-  const currentCourseId = useCourseStore(s => s.currentCourseId)
-  const switchCourse = useCourseStore(s => s.switchCourse)
-  const renameCourse = useCourseStore(s => s.renameCourse)
-  const deleteCourse = useCourseStore(s => s.deleteCourse)
-  const exportCourse = useCourseStore(s => s.exportCourse)
+  // 课程管理（切换/重命名/导入导出/删除）已迁移到左侧导航栏
   const importCourse = useCourseStore(s => s.importCourse)
 
   const wrongQuestions = useWrongQuestionStore(s => s.questions)
   const resolveQuestion = useWrongQuestionStore(s => s.resolveQuestion)
 
-  const [switcherOpen, setSwitcherOpen] = useState(false)
-  const [renaming, setRenaming] = useState(false)
-  const [renameValue, setRenameValue] = useState('')
-  const switcherRef = useRef<HTMLDivElement>(null)
-  const renameInputRef = useRef<HTMLInputElement>(null)
-  const fileInputRef = useRef<HTMLInputElement>(null)
   const welcomeFileInputRef = useRef<HTMLInputElement>(null)
 
   // 考试日期设置
   const setExamDate = useCourseStore(s => s.setExamDate)
   const [showDatePicker, setShowDatePicker] = useState(false)
   const [tempDate, setTempDate] = useState('')
-
-  // 点击外部关闭下拉
-  useEffect(() => {
-    if (!switcherOpen) return
-    function handleClickOutside(e: MouseEvent) {
-      if (switcherRef.current && !switcherRef.current.contains(e.target as Node)) {
-        setSwitcherOpen(false)
-      }
-    }
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [switcherOpen])
 
   // 倒计时：距考试还有多少天
   const daysLeft = useMemo(() => {
@@ -117,23 +94,6 @@ export default function Dashboard() {
     [wrongQuestions, bundle?.course.id]
   )
 
-  const handleDelete = (id: string, name: string) => {
-    if (window.confirm(t('dashboard.deleteConfirm').replace('{name}', name))) {
-      deleteCourse(id)
-    }
-  }
-
-  const handleSwitch = (id: string) => {
-    switchCourse(id)
-    setSwitcherOpen(false)
-  }
-
-  // 导出课程
-  const handleExport = (e: React.MouseEvent, id: string) => {
-    e.stopPropagation()
-    exportCourse(id)
-  }
-
   // 导入课程：触发隐藏 file input
   const handleImportClick = (ref: React.RefObject<HTMLInputElement>) => {
     ref.current?.click()
@@ -156,17 +116,11 @@ export default function Dashboard() {
         const success = importCourse(data)
         if (success) {
           window.alert(t('dashboard.importSuccess'))
-          setSwitcherOpen(false)
         } else {
           // 可能是重复课程或格式错误
           // 检查是否因为重复（课程名或考点重叠）
           const hasValidData = data.course && Array.isArray(data.examPoints) && Array.isArray(data.lessons)
-          if (hasValidData) {
-            window.alert(t('dashboard.importDuplicate'))
-            setSwitcherOpen(false)
-          } else {
-            window.alert(t('dashboard.importFailedFormat'))
-          }
+          window.alert(hasValidData ? t('dashboard.importDuplicate') : t('dashboard.importFailedFormat'))
         }
       } catch (err) {
         console.error('导入课程解析失败', err)
@@ -289,152 +243,12 @@ export default function Dashboard() {
     setTempDate('')
   }
 
-  // 课程切换器（状态 2、3 共用）
+  // 课程标题（课程管理已迁移到左侧导航栏）
   const switcher = (
     <header className={styles.header}>
-      <div className={styles.switcherWrap} ref={switcherRef}>
+      <div className={styles.switcherWrap}>
         <p className={styles.greeting}>{t('dashboard.welcome')}</p>
-        {renaming ? (
-          <div className={styles.renameBar}>
-            <input
-              ref={renameInputRef}
-              className={styles.renameInput}
-              value={renameValue}
-              onChange={e => setRenameValue(e.target.value)}
-              onKeyDown={e => {
-                if (e.key === 'Enter') {
-                  renameCourse(currentCourseId, renameValue)
-                  setRenaming(false)
-                } else if (e.key === 'Escape') {
-                  setRenaming(false)
-                }
-              }}
-              onBlur={() => {
-                if (renameValue.trim()) {
-                  renameCourse(currentCourseId, renameValue)
-                }
-                setRenaming(false)
-              }}
-              autoFocus
-            />
-            <button
-              className={styles.renameConfirm}
-              onClick={() => {
-                renameCourse(currentCourseId, renameValue)
-                setRenaming(false)
-              }}
-            >
-              <Check size={16} strokeWidth={2.5} />
-            </button>
-            <button
-              className={styles.renameCancel}
-              onClick={() => setRenaming(false)}
-            >
-              <X size={16} strokeWidth={2.5} />
-            </button>
-          </div>
-        ) : (
-          <div className={styles.courseSwitcherRow}>
-            <button
-              className={styles.courseSwitcher}
-              onClick={() => setSwitcherOpen(o => !o)}
-            >
-              <span className={styles.courseName}>{course.name}</span>
-              <ChevronDown
-                size={20}
-                strokeWidth={2}
-                className={`${styles.chevron} ${switcherOpen ? styles.chevronOpen : ''}`}
-              />
-            </button>
-            <button
-              className={styles.renameBtn}
-              onClick={() => {
-                setRenameValue(course.name)
-                setRenaming(true)
-                setTimeout(() => renameInputRef.current?.focus(), 0)
-              }}
-              title={t('dashboard.renameCourse')}
-            >
-              <Pencil size={14} strokeWidth={2} />
-            </button>
-          </div>
-        )}
-
-        {switcherOpen && (
-          <div className={`liquid-glass ${styles.dropdown}`}>
-            <div className={styles.dropdownList}>
-              {courses
-                .filter(b => b.course.status === 'ready')
-                .map(b => (
-                <div
-                  key={b.course.id}
-                  className={`${styles.dropdownItem} ${
-                    b.course.id === currentCourseId ? styles.dropdownItemActive : ''
-                  }`}
-                  onClick={() => handleSwitch(b.course.id)}
-                >
-                  <div className={styles.dropdownItemInfo}>
-                    <span className={styles.dropdownItemName}>{b.course.name}</span>
-                    <span
-                      className={styles.dropdownItemStatus}
-                      style={{ color: statusColor[b.course.status] }}
-                    >
-                      {t(statusTextKey[b.course.status])}
-                    </span>
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 2, flexShrink: 0 }}>
-                    <button
-                      className={styles.deleteBtn}
-                      onClick={e => handleExport(e, b.course.id)}
-                      title={t('dashboard.exportCourse')}
-                    >
-                      <Download size={16} strokeWidth={1.8} />
-                    </button>
-                    <button
-                      className={styles.deleteBtn}
-                      onClick={e => {
-                        e.stopPropagation()
-                        handleDelete(b.course.id, b.course.name)
-                      }}
-                      title={t('dashboard.deleteCourse')}
-                    >
-                      <Trash2 size={16} strokeWidth={1.8} />
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-            <div style={{ display: 'flex', gap: 8, marginTop: 4 }}>
-              <button
-                className={styles.newCourseBtn}
-                style={{ flex: 1 }}
-                onClick={() => {
-                  setSwitcherOpen(false)
-                  navigate('/upload')
-                }}
-              >
-                <Plus size={18} strokeWidth={2} />
-                <span>{t('dashboard.newCourse')}</span>
-              </button>
-              <button
-                className={styles.newCourseBtn}
-                style={{ flex: 1 }}
-                onClick={() => handleImportClick(fileInputRef)}
-                title={t('dashboard.importCourseTip')}
-              >
-                <Download size={18} strokeWidth={2} />
-                <span>{t('dashboard.importCourse')}</span>
-              </button>
-            </div>
-            <input
-              type="file"
-              accept=".json"
-              ref={fileInputRef}
-              style={{ display: 'none' }}
-              onChange={handleFileImport}
-            />
-          </div>
-        )}
+        <h2 className={styles.courseTitle}>{course.name}</h2>
       </div>
 
       {progress.currentStreak > 0 && (
