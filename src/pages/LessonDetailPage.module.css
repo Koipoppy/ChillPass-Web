@@ -1072,3 +1072,51 @@
 .reviewBody p:last-child {
   margin-bottom: 0;
 }
+
+/* ============================================================
+   dock 版布局：放开宽度上限，长卡片与空态压扁
+   ============================================================ */
+:global([data-ui-style='dock']) .page {
+  max-width: none;
+  padding: 0 0 8px;
+}
+
+:global([data-ui-style='dock']) .title {
+  font-size: 18px;
+}
+
+:global([data-ui-style='dock']) .startCard,
+:global([data-ui-style='dock']) .loadingCard {
+  padding: 24px 20px;
+  gap: 12px;
+  border-radius: var(--radius-lg);
+}
+
+:global([data-ui-style='dock']) .startIcon {
+  width: 48px;
+  height: 48px;
+}
+
+:global([data-ui-style='dock']) .notFound {
+  max-width: none;
+  margin: 12px auto 0;
+  padding: 24px 24px;
+}
+
+:global([data-ui-style='dock']) .contentCard {
+  padding: 16px 18px;
+  border-radius: var(--radius-md);
+}
+
+/* 作答区不需要那么高，短容器里更省地方 */
+:global([data-ui-style='dock']) .textareaInput {
+  min-height: 68px;
+}
+
+:global([data-ui-style='dock']) .quizOptions {
+  gap: 6px;
+}
+
+:global([data-ui-style='dock']) .quizOption {
+  padding: 10px 14px;
+}

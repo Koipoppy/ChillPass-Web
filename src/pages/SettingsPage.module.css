@@ -744,3 +744,59 @@
 [data-theme="dark"] .teacherToggle {
   background: rgba(255, 255, 255, 0.15);
 }
+
+/* ============================================================
+   dock 版布局：设置卡与导航格改为横向铺开
+   ============================================================ */
+:global([data-ui-style='dock']) .container {
+  max-width: none;
+  gap: 12px;
+  padding: 0 0 8px;
+}
+
+:global([data-ui-style='dock']) .header {
+  gap: 2px;
+}
+
+:global([data-ui-style='dock']) .title {
+  font-size: 18px;
+}
+
+:global([data-ui-style='dock']) .subtitle {
+  font-size: 12.5px;
+}
+
+:global([data-ui-style='dock']) .card {
+  padding: 16px 18px;
+  gap: 14px;
+  border-radius: var(--radius-md);
+}
+
+:global([data-ui-style='dock']) .appLogo {
+  width: 40px;
+  height: 40px;
+}
+
+:global([data-ui-style='dock']) .statRow {
+  gap: 22px;
+}
+
+:global([data-ui-style='dock']) .statNum {
+  font-size: 22px;
+}
+
+/* 设置入口：两行两列 → 一行四列 */
+:global([data-ui-style='dock']) .navGrid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+:global([data-ui-style='dock']) .navCard {
+  padding: 12px 14px;
+  gap: 10px;
+}
+
+:global([data-ui-style='dock']) .navCardIcon {
+  width: 32px;
+  height: 32px;
+}

@@ -1,0 +1,460 @@
+/* ===== 底部 dock 右区：通知中心 ===== */
+.zone {
+  flex: 0 0 auto;
+  width: 68px;
+  padding: 12px;
+  border-radius: var(--radius-lg);
+  background: var(--bg-surface);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: var(--shadow-ambient);
+  overflow: hidden;
+  /* 折叠态下铃铛居中 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: width 0.28s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.zoneOpen {
+  width: 340px;
+}
+
+/* 折叠态：顶部铃铛（与左侧栏标题行对齐） */
+.bell {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-pill);
+  background: rgba(0, 0, 0, 0.04);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background 0.18s ease, color 0.18s ease;
+}
+
+.bell:hover {
+  background: rgba(0, 0, 0, 0.08);
+  color: var(--text-primary);
+}
+
+.badge {
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: var(--radius-pill);
+  background: var(--danger-text);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 16px;
+  text-align: center;
+}
+
+/* ===== 展开面板 ===== */
+.panel {
+  width: 316px; /* 340 - 2*12 padding */
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.panelHeader {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 0 2px 10px;
+  color: var(--text-primary);
+}
+
+.panelTitle {
+  flex: 1;
+  min-width: 0;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.closeBtn {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-pill);
+  background: rgba(0, 0, 0, 0.04);
+  color: var(--text-tertiary);
+  cursor: pointer;
+  transition: background 0.18s ease, color 0.18s ease;
+}
+
+.closeBtn:hover {
+  background: rgba(0, 0, 0, 0.09);
+  color: var(--text-primary);
+}
+
+.panelBody {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  scrollbar-width: none;
+}
+
+.panelBody::-webkit-scrollbar {
+  display: none;
+}
+
+/* 点击面板外区域收起（z-index: -1 使其落在 dock 之下、页面之上） */
+.clickAway {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+}
+
+/* ===== 通用分组 ===== */
+.block {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px;
+  border-radius: var(--radius-md);
+  background: rgba(0, 0, 0, 0.03);
+}
+
+.blockHead {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.blockCount {
+  margin-left: auto;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-tertiary);
+}
+
+/* ===== 新版本提示 ===== */
+.updateBanner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 10px;
+  border-radius: var(--radius-md);
+  background: rgba(0, 113, 227, 0.08);
+}
+
+.updateMeta {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--accent-text);
+}
+
+.updateMeta > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.updateBtn {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 9px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: var(--accent-text);
+  color: #fff;
+  font-family: inherit;
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: filter 0.18s ease;
+}
+
+.updateBtn:hover {
+  filter: brightness(1.08);
+}
+
+.updateDownloading {
+  flex-shrink: 0;
+  font-size: 11px;
+  color: var(--accent-text);
+}
+
+/* ===== 新手引导 ===== */
+.guideTrack {
+  height: 3px;
+  border-radius: 2px;
+  background: rgba(0, 0, 0, 0.07);
+  overflow: hidden;
+}
+
+.guideFill {
+  height: 100%;
+  border-radius: 2px;
+  background: var(--btn-primary-bg);
+  transition: width 0.4s ease;
+}
+
+.stepList {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.stepRow {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 6px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.stepRowCurrent {
+  background: rgba(255, 255, 255, 0.6);
+  color: var(--text-primary);
+}
+
+.stepStatus {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 17px;
+  height: 17px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.07);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.stepStatusDone {
+  background: var(--success-text);
+  color: #fff;
+}
+
+.stepIcon {
+  flex-shrink: 0;
+  color: var(--text-tertiary);
+}
+
+.stepTitle {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+.stepAction {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 4px 8px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: var(--btn-primary-bg);
+  color: var(--btn-primary-fg);
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.18s ease;
+}
+
+.stepAction:hover {
+  opacity: 0.85;
+}
+
+.genNote {
+  font-size: 11.5px;
+  color: var(--accent-text);
+  font-weight: 500;
+}
+
+/* ===== 开始闯关 ===== */
+.startBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 10px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: var(--btn-primary-bg);
+  color: var(--btn-primary-fg);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.18s ease;
+}
+
+.startBtn:hover {
+  opacity: 0.88;
+}
+
+/* ===== 通知列表 ===== */
+.empty {
+  padding: 14px 0;
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-tertiary);
+}
+
+.notifList {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.notifItem {
+  display: flex;
+  gap: 7px;
+  padding: 8px 9px;
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.55);
+}
+
+.notifItemUnread {
+  background: rgba(255, 159, 10, 0.1);
+}
+
+.notifIcon {
+  flex-shrink: 0;
+  margin-top: 1px;
+  color: var(--warning-text);
+}
+
+.notifText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.notifTitle {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.notifBody {
+  font-size: 11.5px;
+  line-height: 1.45;
+  color: var(--text-secondary);
+}
+
+/* ===== 全部已读 ===== */
+.markReadBtn {
+  flex-shrink: 0;
+  margin-top: 10px;
+  padding: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--text-secondary);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.18s ease, color 0.18s ease;
+}
+
+.markReadBtn:hover {
+  background: rgba(0, 0, 0, 0.04);
+  color: var(--text-primary);
+}
+
+/* ===== 主题覆盖 ===== */
+[data-theme="dark"] .zone {
+  background: rgba(28, 28, 30, 0.72);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="dark"] .bell,
+[data-theme="dark"] .closeBtn {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="dark"] .bell:hover,
+[data-theme="dark"] .closeBtn:hover {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+[data-theme="dark"] .block {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+[data-theme="dark"] .stepRowCurrent,
+[data-theme="dark"] .notifItem {
+  background: rgba(255, 255, 255, 0.07);
+}
+
+[data-theme="dark"] .notifItemUnread {
+  background: rgba(255, 159, 10, 0.16);
+}
+
+[data-theme="dark"] .guideTrack,
+[data-theme="dark"] .stepStatus {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+[data-theme="dark"] .markReadBtn {
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+[data-theme="dark"] .markReadBtn:hover {
+  background: rgba(255, 255, 255, 0.07);
+}
+
+[data-theme="vista"] .zone {
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+[data-theme="codex"] .zone {
+  background: #161b22;
+  border-color: rgba(240, 246, 252, 0.1);
+  box-shadow: none;
+}
+
+[data-theme="codex"] .bell,
+[data-theme="codex"] .closeBtn {
+  background: rgba(240, 246, 252, 0.08);
+}
+
+[data-theme="codex"] .block {
+  background: rgba(240, 246, 252, 0.04);
+}

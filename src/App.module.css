@@ -30,6 +30,14 @@
   display: none;
 }
 
+/* dock 版布局：页面收在底部 dock 卡片内，四周内边距收紧 */
+.pageWrapperDock {
+  top: 0;
+  left: 18px;
+  right: 18px;
+  bottom: 16px;
+}
+
 /*
  * 全局高斯模糊层
  * - fixed + inset 0：覆盖整个视口，边缘落在屏幕之外，不会出现锐利边界

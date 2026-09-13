@@ -672,6 +672,19 @@ export type TranslationKey =
 
   | 'sidebar.courseManage'
 
+  | 'uistyle.label'
+  | 'uistyle.classic'
+  | 'uistyle.modern'
+  | 'uistyle.switchTip'
+
+  | 'dock.stage'
+  | 'dock.notifications'
+  | 'dock.noNotifications'
+  | 'dock.markAllRead'
+  | 'dock.expandSidebar'
+  | 'dock.collapseSidebar'
+  | 'dock.resizeTip'
+
 const zh: Record<TranslationKey, string> = {
   'nav.dashboard': '首页',
   'nav.upload': '导入课件',
@@ -1321,6 +1334,19 @@ const zh: Record<TranslationKey, string> = {
   'dashboard.totalPoints': "共 {count} 个考点",
   'dashboard.quickEntries': "快捷入口",
   'dashboard.continueStudy': "继续学习",
+
+  'uistyle.label': "界面风格",
+  'uistyle.classic': "旧版",
+  'uistyle.modern': "新版",
+  'uistyle.switchTip': "切换旧版 / 新版界面",
+
+  'dock.stage': "课程关卡区（待布置）",
+  'dock.notifications': "通知中心",
+  'dock.noNotifications': "暂无通知",
+  'dock.markAllRead': "全部已读",
+  'dock.expandSidebar': "展开侧边栏",
+  'dock.collapseSidebar': "收起侧边栏",
+  'dock.resizeTip': "上下拖动可调整底部三栏高度",
 }
 
 const en: Record<TranslationKey, string> = {
@@ -1972,6 +1998,19 @@ const en: Record<TranslationKey, string> = {
   'dashboard.totalPoints': "{count} exam points in total",
   'dashboard.quickEntries': "Quick actions",
   'dashboard.continueStudy': "Continue learning",
+
+  'uistyle.label': "Interface style",
+  'uistyle.classic': "Classic",
+  'uistyle.modern': "New",
+  'uistyle.switchTip': "Switch between the classic and new interface",
+
+  'dock.stage': "Course levels area (to be designed)",
+  'dock.notifications': "Notifications",
+  'dock.noNotifications': "No notifications",
+  'dock.markAllRead': "Mark all read",
+  'dock.expandSidebar': "Expand sidebar",
+  'dock.collapseSidebar': "Collapse sidebar",
+  'dock.resizeTip': "Drag up or down to resize the bottom panels",
 }
 
 const ru: Record<TranslationKey, string> = {
@@ -2623,6 +2662,19 @@ const ru: Record<TranslationKey, string> = {
   'dashboard.totalPoints': "Всего тем: {count}",
   'dashboard.quickEntries': "Быстрый доступ",
   'dashboard.continueStudy': "Продолжить учёбу",
+
+  'uistyle.label': "Стиль интерфейса",
+  'uistyle.classic': "Классический",
+  'uistyle.modern': "Новый",
+  'uistyle.switchTip': "Переключить классический / новый интерфейс",
+
+  'dock.stage': "Зона уровней курса (в разработке)",
+  'dock.notifications': "Уведомления",
+  'dock.noNotifications': "Нет уведомлений",
+  'dock.markAllRead': "Прочитать все",
+  'dock.expandSidebar': "Развернуть панель",
+  'dock.collapseSidebar': "Свернуть панель",
+  'dock.resizeTip': "Потяните вверх или вниз, чтобы изменить высоту нижних панелей",
 }
 
 const ja: Record<TranslationKey, string> = {
@@ -3274,6 +3326,19 @@ const ja: Record<TranslationKey, string> = {
   'dashboard.totalPoints': "合計 {count} 個の試験ポイント",
   'dashboard.quickEntries': "クイックアクセス",
   'dashboard.continueStudy': "学習を続ける",
+
+  'uistyle.label': "画面スタイル",
+  'uistyle.classic': "旧版",
+  'uistyle.modern': "新版",
+  'uistyle.switchTip': "旧版 / 新版の画面を切り替え",
+
+  'dock.stage': "コースステージ（準備中）",
+  'dock.notifications': "通知センター",
+  'dock.noNotifications': "通知はありません",
+  'dock.markAllRead': "すべて既読",
+  'dock.expandSidebar': "サイドバーを展開",
+  'dock.collapseSidebar': "サイドバーを畳む",
+  'dock.resizeTip': "上下にドラッグして下部パネルの高さを調整",
 }
 
 const ko: Record<TranslationKey, string> = {
@@ -3925,6 +3990,19 @@ const ko: Record<TranslationKey, string> = {
   'dashboard.totalPoints': "총 {count}개 시험 포인트",
   'dashboard.quickEntries': "빠른 메뉴",
   'dashboard.continueStudy': "학습 계속하기",
+
+  'uistyle.label': "인터페이스 스타일",
+  'uistyle.classic': "클래식",
+  'uistyle.modern': "신규",
+  'uistyle.switchTip': "클래식 / 신규 인터페이스 전환",
+
+  'dock.stage': "코스 레벨 영역 (준비 중)",
+  'dock.notifications': "알림 센터",
+  'dock.noNotifications': "알림이 없습니다",
+  'dock.markAllRead': "모두 읽음",
+  'dock.expandSidebar': "사이드바 펼치기",
+  'dock.collapseSidebar': "사이드바 접기",
+  'dock.resizeTip': "위아래로 드래그하여 하단 패널 높이 조절",
 }
 
 const translations: Record<Language, Record<TranslationKey, string>> = {

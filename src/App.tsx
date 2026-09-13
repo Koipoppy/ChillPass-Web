@@ -3,11 +3,13 @@ import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { AnimatePresence, motion, type Variants } from 'framer-motion'
 import Sidebar from './components/layout/Sidebar'
 import TitleBar from './components/layout/TitleBar'
+import DockLayout from './components/layout/dock/DockLayout'
 import GlassFilter from './components/common/GlassFilter'
 import Background from './components/layout/Background'
 import WelcomeModal from './components/onboarding/WelcomeModal'
 import GuideCard from './components/onboarding/GuideCard'
 import { useAuthStore } from './stores/authStore'
+import { useUiStyleStore } from './stores/uiStyleStore'
 import { useGlobalBlurActive } from './utils/useGlobalBlur'
 import Dashboard from './pages/Dashboard'
 import UploadPage from './pages/UploadPage'
@@ -53,11 +55,14 @@ const pageVariants: Variants = {
   },
 }
 
-/** 带动画的页面包装器 */
-function AnimatedPage({ children }: { children: React.ReactNode }) {
+/**
+ * 带动画的页面包装器
+ * dock 版布局里页面收在底部 dock 中，内边距相应收紧
+ */
+function AnimatedPage({ children, dock }: { children: React.ReactNode; dock?: boolean }) {
   return (
     <motion.div
-      className={styles.pageWrapper}
+      className={`${styles.pageWrapper} ${dock ? styles.pageWrapperDock : ''}`}
       variants={pageVariants}
       initial="initial"
       animate="enter"
@@ -71,15 +76,37 @@ function AnimatedPage({ children }: { children: React.ReactNode }) {
 export default function App() {
   const location = useLocation()
   const ensureAccount = useAuthStore(s => s.ensureAccount)
+  const uiStyle = useUiStyleStore(s => s.uiStyle)
   const t = useT()
   // 弹窗打开时显示全局高斯模糊层（内联样式，行为确定）
   const blurActive = useGlobalBlurActive()
+  const dock = uiStyle === 'dock'
 
   useEffect(() => {
     document.title = t('app.docTitle')
     // 首次使用自动创建本地账号
     ensureAccount()
   }, [t])
+
+  const routes = (
+    <AnimatePresence initial={false}>
+      <Routes location={location} key={location.pathname}>
+        <Route path="/" element={<AnimatedPage dock={dock}><Dashboard /></AnimatedPage>} />
+        <Route path="/upload" element={<AnimatedPage dock={dock}><UploadPage /></AnimatedPage>} />
+        <Route path="/lessons" element={<AnimatedPage dock={dock}><LessonPathPage /></AnimatedPage>} />
+        <Route path="/lessons/:lessonId" element={<AnimatedPage dock={dock}><LessonDetailPage /></AnimatedPage>} />
+        <Route path="/chat" element={<AnimatedPage dock={dock}><AIChatPage /></AnimatedPage>} />
+        <Route path="/teacher" element={<AnimatedPage dock={dock}><TeacherWorkspace /></AnimatedPage>} />
+        <Route path="/wrongbook" element={<AnimatedPage dock={dock}><WrongBookPage /></AnimatedPage>} />
+        <Route path="/settings" element={<AnimatedPage dock={dock}><SettingsPage /></AnimatedPage>} />
+        <Route path="/settings/api" element={<AnimatedPage dock={dock}><ApiSettings /></AnimatedPage>} />
+        <Route path="/settings/storage" element={<AnimatedPage dock={dock}><StorageSettings /></AnimatedPage>} />
+        <Route path="/settings/data" element={<AnimatedPage dock={dock}><DataSettings /></AnimatedPage>} />
+        <Route path="/settings/about" element={<AnimatedPage dock={dock}><AboutSettings /></AnimatedPage>} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </AnimatePresence>
+  )
 
   return (
     <>
@@ -96,31 +123,20 @@ export default function App() {
         aria-hidden="true"
       />
       <TitleBar />
-      <div className={styles.app}>
-        <Sidebar />
-        <main className={styles.main}>
-          <AnimatePresence initial={false}>
-            <Routes location={location} key={location.pathname}>
-              <Route path="/" element={<AnimatedPage><Dashboard /></AnimatedPage>} />
-              <Route path="/upload" element={<AnimatedPage><UploadPage /></AnimatedPage>} />
-              <Route path="/lessons" element={<AnimatedPage><LessonPathPage /></AnimatedPage>} />
-              <Route path="/lessons/:lessonId" element={<AnimatedPage><LessonDetailPage /></AnimatedPage>} />
-              <Route path="/chat" element={<AnimatedPage><AIChatPage /></AnimatedPage>} />
-              <Route path="/teacher" element={<AnimatedPage><TeacherWorkspace /></AnimatedPage>} />
-              <Route path="/wrongbook" element={<AnimatedPage><WrongBookPage /></AnimatedPage>} />
-              <Route path="/settings" element={<AnimatedPage><SettingsPage /></AnimatedPage>} />
-              <Route path="/settings/api" element={<AnimatedPage><ApiSettings /></AnimatedPage>} />
-              <Route path="/settings/storage" element={<AnimatedPage><StorageSettings /></AnimatedPage>} />
-              <Route path="/settings/data" element={<AnimatedPage><DataSettings /></AnimatedPage>} />
-              <Route path="/settings/about" element={<AnimatedPage><AboutSettings /></AnimatedPage>} />
-              <Route path="*" element={<Navigate to="/" replace />} />
-            </Routes>
-          </AnimatePresence>
-        </main>
-      </div>
-      {/* 新手引导：欢迎向导 + 悬浮任务卡（组件内部自行判断是否显示） */}
+      {dock ? (
+        /* 新版布局：关卡区在上，导航 / 页面 / 通知中心收纳到底部 dock */
+        <DockLayout>{routes}</DockLayout>
+      ) : (
+        /* 旧版布局：左侧边栏 + 全幅页面（保持不变） */
+        <div className={styles.app}>
+          <Sidebar />
+          <main className={styles.main}>{routes}</main>
+        </div>
+      )}
+      {/* 新手引导：欢迎向导（两种布局共用）*/}
       <WelcomeModal />
-      <GuideCard />
+      {/* 悬浮任务卡只在旧版布局出现；新版布局中其职责由底部通知中心承担 */}
+      {!dock && <GuideCard />}
     </>
   )
 }

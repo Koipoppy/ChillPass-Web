@@ -827,3 +827,141 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+/* ============================================================
+   dock 版布局：页面收在宽而矮的容器里，重排为一行四卡
+   ============================================================ */
+:global([data-ui-style='dock']) .container {
+  max-width: none;
+  gap: 12px;
+  padding: 0 0 8px;
+}
+
+:global([data-ui-style='dock']) .header {
+  align-items: center;
+  gap: 12px;
+}
+
+:global([data-ui-style='dock']) .greeting {
+  font-size: 12.5px;
+  margin-bottom: 0;
+}
+
+:global([data-ui-style='dock']) .streakBadge {
+  padding: 6px 12px;
+  font-size: 12px;
+}
+
+/* 四张概览卡并排，不再 2×2 */
+:global([data-ui-style='dock']) .grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  align-items: start;
+}
+
+:global([data-ui-style='dock']) .card {
+  min-height: 0;
+  padding: 14px 16px;
+  gap: 8px;
+  border-radius: var(--radius-md);
+}
+
+:global([data-ui-style='dock']) .cardIcon {
+  width: 30px;
+  height: 30px;
+  border-radius: var(--radius-sm);
+}
+
+:global([data-ui-style='dock']) .cardLabel {
+  font-size: 12px;
+}
+
+:global([data-ui-style='dock']) .countdownNum {
+  font-size: 36px;
+}
+
+:global([data-ui-style='dock']) .countdownUnit {
+  font-size: 14px;
+}
+
+:global([data-ui-style='dock']) .countdownEmpty {
+  font-size: 14px;
+  padding: 6px 0;
+}
+
+:global([data-ui-style='dock']) .progressNum {
+  font-size: 26px;
+}
+
+:global([data-ui-style='dock']) .progressTotal {
+  font-size: 13px;
+}
+
+:global([data-ui-style='dock']) .pointStats {
+  gap: 18px;
+}
+
+:global([data-ui-style='dock']) .pointNum {
+  font-size: 24px;
+}
+
+:global([data-ui-style='dock']) .pointName,
+:global([data-ui-style='dock']) .pointTotal {
+  font-size: 12px;
+}
+
+:global([data-ui-style='dock']) .quickActions {
+  gap: 8px;
+}
+
+:global([data-ui-style='dock']) .quickBtn,
+:global([data-ui-style='dock']) .quickBtnGhost {
+  padding: 9px 12px;
+  gap: 8px;
+}
+
+:global([data-ui-style='dock']) .quickBtnText {
+  font-size: 13px;
+}
+
+/* 生成进度条横幅 */
+:global([data-ui-style='dock']) .genBanner {
+  padding: 10px 14px;
+}
+
+/* 空课程 / 准备中：改为横向紧凑排布，避免竖向撑满 */
+:global([data-ui-style='dock']) .hero,
+:global([data-ui-style='dock']) .preparing {
+  padding: 22px 24px;
+  gap: 12px;
+  border-radius: var(--radius-lg);
+}
+
+:global([data-ui-style='dock']) .heroTitle {
+  font-size: 28px;
+}
+
+:global([data-ui-style='dock']) .heroSubtitle,
+:global([data-ui-style='dock']) .preparingDesc {
+  font-size: 13.5px;
+  max-width: 620px;
+}
+
+:global([data-ui-style='dock']) .heroBadge {
+  padding: 6px 14px;
+  font-size: 12px;
+}
+
+:global([data-ui-style='dock']) .heroSteps {
+  gap: 20px;
+}
+
+:global([data-ui-style='dock']) .primaryBtn {
+  padding: 10px 20px;
+  font-size: 14px;
+}
+
+/* 错题速览列表：卡片内滚动区收窄 */
+:global([data-ui-style='dock']) .wrongList {
+  max-height: 180px;
+}

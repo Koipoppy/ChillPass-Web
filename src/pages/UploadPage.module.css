@@ -356,3 +356,51 @@
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+/* ============================================================
+   dock 版布局：放开宽度上限，整体压扁以适配矮容器
+   ============================================================ */
+:global([data-ui-style='dock']) .page {
+  max-width: none;
+  padding: 0 0 8px;
+}
+
+:global([data-ui-style='dock']) .header {
+  gap: 2px;
+}
+
+:global([data-ui-style='dock']) .title {
+  font-size: 18px;
+}
+
+:global([data-ui-style='dock']) .subtitle {
+  font-size: 12.5px;
+}
+
+:global([data-ui-style='dock']) .card {
+  padding: 16px 18px;
+  gap: 14px;
+  border-radius: var(--radius-md);
+}
+
+/* 拖放区与步骤提示并排，省下竖向空间 */
+:global([data-ui-style='dock']) .dropzone {
+  padding: 20px 20px;
+}
+
+:global([data-ui-style='dock']) .dropzoneIcon {
+  width: 40px;
+  height: 40px;
+}
+
+:global([data-ui-style='dock']) .fileItem {
+  padding: 8px 12px;
+}
+
+:global([data-ui-style='dock']) .progress {
+  padding: 14px;
+}
+
+:global([data-ui-style='dock']) .parseButton {
+  padding: 11px 20px;
+}

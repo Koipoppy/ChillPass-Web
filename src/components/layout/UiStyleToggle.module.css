@@ -1,0 +1,88 @@
+/* ===== 界面风格开关（标题栏左上角） ===== */
+.switch {
+  position: relative;
+  /* 两栏等宽：以最长文案决定整体宽度，各语言下都不会被挤压 */
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  width: max-content;
+  padding: 2px;
+  border-radius: var(--radius-pill);
+  background: rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  /* 覆盖标题栏容器的 pointer-events: none，开关本身可点击 */
+  pointer-events: auto;
+  -webkit-app-region: no-drag;
+}
+
+/* 滑块：跟随当前风格平移 */
+.thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  bottom: 2px;
+  width: calc(50% - 2px);
+  border-radius: var(--radius-pill);
+  background: var(--bg-surface);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.14);
+  transition: transform 0.28s cubic-bezier(0.32, 0.72, 0, 1);
+  z-index: 0;
+}
+
+.thumb[data-pos='right'] {
+  transform: translateX(100%);
+}
+
+.option {
+  position: relative;
+  z-index: 1;
+  padding: 3px 10px;
+  border: none;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--text-tertiary);
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.5;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color 0.22s ease;
+}
+
+.option:hover {
+  color: var(--text-primary);
+}
+
+.optionActive,
+.optionActive:hover {
+  color: var(--text-primary);
+}
+
+/* ===== 主题覆盖 ===== */
+[data-theme="dark"] .switch {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+[data-theme="dark"] .thumb {
+  background: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="codex"] .switch {
+  background: #161b22;
+  border-color: rgba(240, 246, 252, 0.12);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+[data-theme="codex"] .thumb {
+  background: rgba(0, 212, 255, 0.16);
+  box-shadow: none;
+}
+
+[data-theme="codex"] .optionActive {
+  color: #00d4ff;
+}

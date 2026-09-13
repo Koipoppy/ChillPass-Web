@@ -158,6 +158,158 @@
   overflow: visible !important;
 }
 
+/* ============================================================
+   rail 变体：新版底部 dock 左区
+   同一张卡片，宽度固定，展开时只向上长高
+   ============================================================ */
+.rail {
+  width: 208px;
+  padding: 0; /* 间距由 dock 的 gap 提供 */
+  /* 贴住 dock 底部：高度增长时向上溢出，而不是把布局撑开 */
+  align-self: flex-end;
+  height: var(--dock-h);
+  /* 收起：平滑回落，不做回弹（避免缩过 dock 底线露出空隙） */
+  transition: height 0.34s cubic-bezier(0.32, 0.72, 0, 1);
+  will-change: height;
+}
+
+.railExpanded {
+  /* 一直长到标题栏下方 */
+  height: calc(100vh - 50px);
+  /* 展开：带回弹的弹性曲线
+     峰值约 +4%，绝对量随窗口高度增长，仍留在标题栏 38px 的留白内不被裁切 */
+  transition: height 0.62s cubic-bezier(0.34, 1.38, 0.64, 1);
+}
+
+/* 拖动 dock 上边界时高度要跟手，不能走过渡 */
+:global([data-dock-resizing]) .rail {
+  transition: none;
+}
+
+.railInner {
+  border-radius: var(--radius-lg);
+  padding: 12px;
+}
+
+/* Logo 行：文字 + 展开开关 */
+.rail .logo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 2px 2px 10px;
+}
+
+.rail .logoText {
+  font-size: 14px;
+}
+
+.railToggle {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-pill);
+  background: rgba(0, 0, 0, 0.04);
+  color: var(--text-tertiary);
+  cursor: pointer;
+  -webkit-app-region: no-drag;
+  transition: background 0.18s ease, color 0.18s ease;
+}
+
+.railToggle:hover {
+  background: rgba(0, 0, 0, 0.08);
+  color: var(--text-primary);
+}
+
+/* 箭头翻转本身也走弹性曲线，作为展开/收起的即时反馈 */
+.railToggle svg {
+  transition: transform 0.5s cubic-bezier(0.34, 1.4, 0.64, 1);
+}
+
+.railToggleOpen svg {
+  transform: rotate(180deg);
+}
+
+/* 紧凑排版：窄卡片里一行放得下「图标 + 文字」 */
+.rail .nav {
+  gap: 2px;
+}
+
+.rail .navItem {
+  gap: 9px;
+  padding: 6px 9px;
+  font-size: 13px;
+}
+
+.rail .navItem svg {
+  flex-shrink: 0;
+  width: 17px;
+  height: 17px;
+}
+
+/* 课程卡片：0fr → 1fr 展开（真实高度动画） */
+.railCourses {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.42s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.railCoursesOpen {
+  grid-template-rows: 1fr;
+}
+
+.railCoursesInner {
+  min-height: 0;
+  overflow: hidden;
+  /* 收起后从可访问性树与 Tab 顺序中移除；延迟到收起动画结束再隐藏 */
+  visibility: hidden;
+  transition: visibility 0s linear 0.42s;
+}
+
+.railCoursesOpen .railCoursesInner {
+  visibility: visible;
+  transition: visibility 0s linear 0s;
+}
+
+/* 课程菜单是向上弹出的绝对定位元素，绘制时要放开裁切 */
+.menuOpen .railCoursesInner {
+  overflow: visible;
+}
+
+/* 卡片内的课程面板：贴着卡片底边，用更内敛的底色（不再是嵌套玻璃卡） */
+.rail .progressCard {
+  margin-top: 10px;
+  background: rgba(0, 0, 0, 0.035);
+  border-color: rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="dark"] .railToggle {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="dark"] .railToggle:hover {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+[data-theme="dark"] .rail .progressCard {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="codex"] .railToggle {
+  background: rgba(240, 246, 252, 0.08);
+}
+
+[data-theme="codex"] .rail .progressCard {
+  background: rgba(240, 246, 252, 0.04);
+  border-color: rgba(240, 246, 252, 0.08);
+}
+
 .courseRow {
   display: flex;
   align-items: center;

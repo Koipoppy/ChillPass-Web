@@ -1,13 +1,6 @@
 import { NavLink, useNavigate } from 'react-router-dom'
 import { useEffect, useRef, useState } from 'react'
 import {
-  Home,
-  Upload,
-  BookOpen,
-  BookX,
-  MessageCircle,
-  Settings,
-  Briefcase,
   ChevronDown,
   ChevronUp,
   Plus,
@@ -18,23 +11,31 @@ import {
   X,
 } from 'lucide-react'
 import styles from './Sidebar.module.css'
+import { NAV_ITEMS, WORKSPACE_ITEM } from './navItems'
 import { useCourseStore, useCurrentBundle } from '@stores/courseStore'
 import { useSettingsStore } from '@stores/settingsStore'
 import { useT } from '../../i18n'
-import type { TranslationKey } from '../../i18n'
 
-const navItems = [
-  { path: '/', labelKey: 'nav.dashboard' as TranslationKey, icon: Home },
-  { path: '/upload', labelKey: 'nav.upload' as TranslationKey, icon: Upload },
-  { path: '/lessons', labelKey: 'nav.lessons' as TranslationKey, icon: BookOpen },
-  { path: '/wrongbook', labelKey: 'nav.wrongbook' as TranslationKey, icon: BookX },
-  { path: '/chat', labelKey: 'nav.chat' as TranslationKey, icon: MessageCircle },
-  { path: '/settings', labelKey: 'nav.settings' as TranslationKey, icon: Settings },
-]
+interface SidebarProps {
+  /**
+   * classic：旧版左侧栏，占满整个高度
+   * rail：新版底部 dock 左区，宽度收窄、可竖向展开（同一张卡片长高，不额外覆盖）
+   */
+  variant?: 'classic' | 'rail'
+  /** rail 专用的展开态 */
+  expanded?: boolean
+  onToggleExpand?: () => void
+}
 
-export default function Sidebar() {
+export default function Sidebar({
+  variant = 'classic',
+  expanded = false,
+  onToggleExpand,
+}: SidebarProps = {}) {
   const navigate = useNavigate()
+  const isRail = variant === 'rail'
   const bundle = useCurrentBundle()
+
   const course = bundle?.course
   const progress = bundle?.progress
   const isTeacher = useSettingsStore(s => s.isTeacher)
@@ -139,17 +140,59 @@ export default function Sidebar() {
     setRenaming(false)
   }
 
+  /**
+   * rail 变体下把课程卡片包进一个 0fr→1fr 的网格行：
+   * 折叠时高度真实为 0，展开时随卡片长高一起铺开（同一张卡片内的内容展开）
+   */
+  const railSection = (children: React.ReactNode) =>
+    isRail ? (
+      <div className={`${styles.railCourses} ${expanded ? styles.railCoursesOpen : ''}`}>
+        <div className={styles.railCoursesInner}>{children}</div>
+      </div>
+    ) : (
+      <>{children}</>
+    )
+
   return (
-    <aside className={styles.sidebar}>
-      <div className={`${styles.sidebarInner} liquid-glass ${menuOpen ? styles.menuOpen : ''}`}>
-        {/* Logo */}
+    <aside
+      className={[
+        styles.sidebar,
+        isRail ? styles.rail : '',
+        isRail && expanded ? styles.railExpanded : '',
+      ]
+        .filter(Boolean)
+        .join(' ')}
+    >
+      <div
+        className={[
+          styles.sidebarInner,
+          'liquid-glass',
+          isRail ? styles.railInner : '',
+          menuOpen ? styles.menuOpen : '',
+        ]
+          .filter(Boolean)
+          .join(' ')}
+      >
+        {/* Logo（rail 变体附带竖向展开开关） */}
         <div className={styles.logo}>
           <span className={styles.logoText}>ChillPass</span>
+          {isRail && (
+            <button
+              type="button"
+              className={`${styles.railToggle} ${expanded ? styles.railToggleOpen : ''}`}
+              onClick={onToggleExpand}
+              title={expanded ? t('dock.collapseSidebar') : t('dock.expandSidebar')}
+              aria-label={expanded ? t('dock.collapseSidebar') : t('dock.expandSidebar')}
+              aria-expanded={expanded}
+            >
+              <ChevronUp size={14} strokeWidth={2.2} />
+            </button>
+          )}
         </div>
 
         {/* 导航 */}
         <nav className={styles.nav}>
-          {navItems.map(item => {
+          {(isTeacher ? [...NAV_ITEMS, WORKSPACE_ITEM] : NAV_ITEMS).map(item => {
             const Icon = item.icon
             return (
               <NavLink
@@ -165,22 +208,13 @@ export default function Sidebar() {
               </NavLink>
             )
           })}
-          {isTeacher && (
-            <NavLink
-              to="/teacher"
-              className={({ isActive }) =>
-                `${styles.navItem} ${isActive ? styles.navItemActive : ''}`
-              }
-            >
-              <Briefcase size={20} strokeWidth={1.8} />
-              <span>{t('sidebar.workspace')}</span>
-            </NavLink>
-          )}
         </nav>
 
-        {/* 课程管理 + 进度卡片 */}
-        {course && course.status === 'ready' && (
-          <div className={styles.progressCard} ref={menuRef}>
+        {/* 课程管理 + 进度卡片
+            rail 变体下折进一个 0fr→1fr 的网格行，卡片长高时顺势铺开 */}
+        {railSection(
+          course && course.status === 'ready' && (
+            <div className={styles.progressCard} ref={menuRef}>
             {/* 课程名：点击展开课程列表 */}
             {renaming ? (
               <div className={styles.renameBar}>
@@ -347,6 +381,7 @@ export default function Sidebar() {
               </div>
             )}
           </div>
+          )
         )}
       </div>
     </aside>

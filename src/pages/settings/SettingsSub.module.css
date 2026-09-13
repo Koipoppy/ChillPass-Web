@@ -1263,3 +1263,65 @@
   border-color: rgba(0, 113, 227, 0.4);
   background: rgba(0, 113, 227, 0.16);
 }
+
+/* ============================================================
+   dock 版布局：放开宽度上限，卡片与网格横向铺开
+   ============================================================ */
+:global([data-ui-style='dock']) .subPage {
+  max-width: none;
+  gap: 12px;
+  padding: 0 0 8px;
+}
+
+:global([data-ui-style='dock']) .title {
+  font-size: 18px;
+}
+
+:global([data-ui-style='dock']) .subtitle {
+  font-size: 12.5px;
+}
+
+:global([data-ui-style='dock']) .card {
+  padding: 16px 18px;
+  gap: 14px;
+  border-radius: var(--radius-md);
+}
+
+:global([data-ui-style='dock']) .avatar {
+  width: 44px;
+  height: 44px;
+}
+
+:global([data-ui-style='dock']) .pathBox,
+:global([data-ui-style='dock']) .pathRow {
+  padding: 10px 14px;
+}
+
+/* 子设置入口：两列 → 一行四列 */
+:global([data-ui-style='dock']) .navGrid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+:global([data-ui-style='dock']) .navCard {
+  padding: 12px 14px;
+  gap: 10px;
+}
+
+:global([data-ui-style='dock']) .navCardIcon {
+  width: 32px;
+  height: 32px;
+}
+
+:global([data-ui-style='dock']) .statRow {
+  gap: 22px;
+  padding: 10px 0;
+}
+
+:global([data-ui-style='dock']) .statNum {
+  font-size: 22px;
+}
+
+:global([data-ui-style='dock']) .fileList {
+  max-height: 150px;
+}

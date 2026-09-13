@@ -1551,3 +1551,78 @@
 [data-theme="dark"] .convItemActive {
   background: rgba(0, 113, 227, 0.22);
 }
+
+/* ============================================================
+   dock 版布局：容器本已 height:100%，这里把竖向内容压扁并横排
+   ============================================================ */
+:global([data-ui-style='dock']) .container {
+  gap: 8px;
+  padding: 2px 0 0;
+}
+
+:global([data-ui-style='dock']) .headerIcon,
+:global([data-ui-style='dock']) .headerBtn {
+  width: 34px;
+  height: 34px;
+}
+
+:global([data-ui-style='dock']) .title {
+  font-size: 17px;
+}
+
+/* 欢迎态：图标与文案压扁，建议项横排 */
+:global([data-ui-style='dock']) .emptyState {
+  padding: 12px;
+}
+
+:global([data-ui-style='dock']) .welcomeCard {
+  max-width: none;
+  padding: 18px 24px;
+  gap: 8px;
+}
+
+:global([data-ui-style='dock']) .welcomeIcon {
+  width: 44px;
+  height: 44px;
+  margin-bottom: 8px;
+}
+
+:global([data-ui-style='dock']) .welcomeTitle {
+  font-size: 20px;
+}
+
+:global([data-ui-style='dock']) .welcomeSubtitle {
+  font-size: 13px;
+}
+
+:global([data-ui-style='dock']) .suggestions {
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+:global([data-ui-style='dock']) .taskGrid {
+  margin-top: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+}
+
+:global([data-ui-style='dock']) .taskCard {
+  min-height: 74px;
+  padding: 12px;
+}
+
+/* 气泡在宽容器里放开一点，同时保持可读宽度 */
+:global([data-ui-style='dock']) .bubble {
+  max-width: min(80%, 760px);
+}
+
+:global([data-ui-style='dock']) .messagesList {
+  padding: 2px 0 10px;
+  gap: 12px;
+}
+
+:global([data-ui-style='dock']) .textarea {
+  max-height: 76px;
+}

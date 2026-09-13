@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { Clock, Maximize2, Minimize2, HelpCircle } from 'lucide-react'
 import { useStudyTimeStore, formatStudyTime } from '@stores/studyTimeStore'
+import UiStyleToggle from './UiStyleToggle'
 import { useT } from '../../i18n'
 import styles from './TitleBar.module.css'
 
@@ -94,44 +95,47 @@ export default function TitleBar() {
 
   return (
     <div className={styles.titleBar}>
-      {!isBrowser && (
-        <div className={styles.trafficLights}>
-          <button
-            className={styles.light}
-            style={{ '--light-color': '#ff5f57' } as React.CSSProperties}
-            onClick={handleClose}
-            title={t('titlebar.close')}
-            aria-label={t('titlebar.close')}
-          >
-            <svg width="8" height="8" viewBox="0 0 8 8" fill="none">
-              <path d="M1.5 1.5L6.5 6.5M6.5 1.5L1.5 6.5" stroke="#000" strokeWidth="1.2" strokeLinecap="round" opacity="0.5" />
-            </svg>
-          </button>
-          <button
-            className={styles.light}
-            style={{ '--light-color': '#febc2e' } as React.CSSProperties}
-            onClick={handleMinimize}
-            title={t('titlebar.minimize')}
-            aria-label={t('titlebar.minimize')}
-          >
-            <svg width="8" height="8" viewBox="0 0 8 8" fill="none">
-              <path d="M1.5 4H6.5" stroke="#000" strokeWidth="1.2" strokeLinecap="round" opacity="0.5" />
-            </svg>
-          </button>
-          <button
-            className={styles.light}
-            style={{ '--light-color': '#28c840' } as React.CSSProperties}
-            onClick={handleMaximize}
-            title={isMaximized ? t('titlebar.restore') : t('titlebar.maximize')}
-            aria-label={t('titlebar.maximize')}
-          >
-            <svg width="8" height="8" viewBox="0 0 8 8" fill="none">
-              <path d="M2 2L6 2L6 6M6 2L2 6" stroke="#000" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" opacity="0.5" />
-            </svg>
-          </button>
-        </div>
-      )}
-      {isBrowser && <div style={{ width: 14 }} />}
+      {/* 左上角：窗口控制按钮 + 界面风格开关 */}
+      <div className={styles.leftArea}>
+        {!isBrowser && (
+          <div className={styles.trafficLights}>
+            <button
+              className={styles.light}
+              style={{ '--light-color': '#ff5f57' } as React.CSSProperties}
+              onClick={handleClose}
+              title={t('titlebar.close')}
+              aria-label={t('titlebar.close')}
+            >
+              <svg width="8" height="8" viewBox="0 0 8 8" fill="none">
+                <path d="M1.5 1.5L6.5 6.5M6.5 1.5L1.5 6.5" stroke="#000" strokeWidth="1.2" strokeLinecap="round" opacity="0.5" />
+              </svg>
+            </button>
+            <button
+              className={styles.light}
+              style={{ '--light-color': '#febc2e' } as React.CSSProperties}
+              onClick={handleMinimize}
+              title={t('titlebar.minimize')}
+              aria-label={t('titlebar.minimize')}
+            >
+              <svg width="8" height="8" viewBox="0 0 8 8" fill="none">
+                <path d="M1.5 4H6.5" stroke="#000" strokeWidth="1.2" strokeLinecap="round" opacity="0.5" />
+              </svg>
+            </button>
+            <button
+              className={styles.light}
+              style={{ '--light-color': '#28c840' } as React.CSSProperties}
+              onClick={handleMaximize}
+              title={isMaximized ? t('titlebar.restore') : t('titlebar.maximize')}
+              aria-label={t('titlebar.maximize')}
+            >
+              <svg width="8" height="8" viewBox="0 0 8 8" fill="none">
+                <path d="M2 2L6 2L6 6M6 2L2 6" stroke="#000" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" opacity="0.5" />
+              </svg>
+            </button>
+          </div>
+        )}
+        <UiStyleToggle />
+      </div>
 
       <div className={styles.centerArea}>
         <div className={styles.studyTime}>

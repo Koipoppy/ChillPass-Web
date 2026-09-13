@@ -22,6 +22,7 @@ import {
   Pencil,
 } from 'lucide-react'
 import { useCourseStore, useCurrentBundle } from '@stores/courseStore'
+import { useUiStyleStore } from '@stores/uiStyleStore'
 import { useT } from '../i18n'
 import type { TranslationKey } from '../i18n'
 import { useWrongQuestionStore } from '@stores/wrongQuestionStore'
@@ -52,6 +53,7 @@ export default function Dashboard() {
   const navigate = useNavigate()
   const t = useT()
   const bundle = useCurrentBundle()
+  const isDock = useUiStyleStore(s => s.uiStyle) === 'dock'
   // 课程管理（切换/重命名/导入导出/删除）已迁移到左侧导航栏
   const importCourse = useCourseStore(s => s.importCourse)
 
@@ -243,12 +245,13 @@ export default function Dashboard() {
     setTempDate('')
   }
 
-  // 课程标题（课程管理已迁移到左侧导航栏）
+  // dock 版布局把课程名移到了关卡区左上角，页面内只留问候语；
+  // 旧版布局没有关卡区，仍在这里显示课程名（保持原样）
   const switcher = (
     <header className={styles.header}>
       <div className={styles.switcherWrap}>
         <p className={styles.greeting}>{t('dashboard.welcome')}</p>
-        <h2 className={styles.courseTitle}>{course.name}</h2>
+        {!isDock && <h2 className={styles.courseTitle}>{course.name}</h2>}
       </div>
 
       {progress.currentStreak > 0 && (

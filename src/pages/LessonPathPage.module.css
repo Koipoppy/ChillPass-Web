@@ -468,3 +468,78 @@
   transform: translateY(-2px) scale(1.02);
   box-shadow: var(--shadow-hover);
 }
+
+/* ============================================================
+   dock 版布局：关卡列改为多列网格，去掉竖向连线
+   ============================================================ */
+:global([data-ui-style='dock']) .page {
+  max-width: none;
+  padding: 0 0 8px;
+}
+
+:global([data-ui-style='dock']) .header {
+  gap: 10px;
+}
+
+:global([data-ui-style='dock']) .title {
+  font-size: 18px;
+}
+
+:global([data-ui-style='dock']) .progressRow {
+  gap: 6px;
+}
+
+/* 关卡卡片多列铺开，用横向空间换高度 */
+:global([data-ui-style='dock']) .pathCard {
+  border-radius: var(--radius-lg);
+  padding: 14px 16px;
+}
+
+:global([data-ui-style='dock']) .path {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 8px 16px;
+}
+
+/* 网格里不再需要竖向连线 */
+:global([data-ui-style='dock']) .connector {
+  display: none;
+}
+
+:global([data-ui-style='dock']) .lessonRow {
+  gap: 12px;
+  padding: 4px 6px;
+  border-radius: var(--radius-md);
+  transition: background 0.2s ease;
+}
+
+:global([data-ui-style='dock']) .lessonRow:hover {
+  background: rgba(0, 0, 0, 0.035);
+}
+
+:global([data-ui-style='dock']) .nodeColumn {
+  width: 44px;
+}
+
+:global([data-ui-style='dock']) .nodeCircle {
+  width: 44px;
+  height: 44px;
+  font-size: 15px;
+}
+
+:global([data-ui-style='dock']) .lessonInfo {
+  /* 对齐 44px 圆圈：meta 行约 22px + gap 4px */
+  padding-top: 11px;
+  padding-bottom: 6px;
+}
+
+:global([data-ui-style='dock']) .lessonTitle {
+  font-size: 14px;
+}
+
+:global([data-ui-style='dock']) .empty {
+  max-width: none;
+  margin: 12px auto 0;
+  padding: 24px 24px;
+  border-radius: var(--radius-lg);
+}

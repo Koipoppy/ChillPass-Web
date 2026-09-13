@@ -771,3 +771,47 @@ select.textInput {
 [data-theme="codex"] .exportSummary {
   background: rgba(240, 246, 252, 0.03);
 }
+
+/* ============================================================
+   dock 版布局：放开宽度上限，卡片与字段区压扁
+   ============================================================ */
+:global([data-ui-style='dock']) .container {
+  max-width: none;
+  gap: 12px;
+  padding: 0 0 8px;
+}
+
+:global([data-ui-style='dock']) .headerIcon {
+  width: 40px;
+  height: 40px;
+}
+
+:global([data-ui-style='dock']) .title {
+  font-size: 18px;
+}
+
+:global([data-ui-style='dock']) .card {
+  padding: 16px 18px;
+  gap: 14px;
+  border-radius: var(--radius-md);
+}
+
+:global([data-ui-style='dock']) .courseList {
+  gap: 8px;
+}
+
+:global([data-ui-style='dock']) .courseChip {
+  padding: 8px 12px;
+}
+
+:global([data-ui-style='dock']) .fieldGroup {
+  gap: 6px;
+}
+
+:global([data-ui-style='dock']) .questionGroup {
+  border-radius: var(--radius-md);
+}
+
+:global([data-ui-style='dock']) .questionDetail {
+  padding: 8px 12px 12px 28px;
+}

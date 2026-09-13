@@ -1,0 +1,126 @@
+import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
+import SidebarRail from './SidebarRail'
+import NotificationCenter from './NotificationCenter'
+import { useCurrentBundle } from '@stores/courseStore'
+import { useUiStyleStore } from '@stores/uiStyleStore'
+import { useT } from '../../../i18n'
+import styles from './DockLayout.module.css'
+
+/** dock 高度下限 */
+const MIN_DOCK_H = 220
+/** 顶部为标题栏、底部为外边距，再给关卡区留出的最小高度 */
+const ABOVE_DOCK_H = 38 + 12 + 10 + 120
+
+/**
+ * 新版布局（dock）
+ *
+ * ┌──────────────────────────────────────────────┐
+ * │ 标题栏（含界面风格开关）                        │
+ * ├──────────────────────────────────────────────┤
+ * │ 课程名                                        │
+ * │            课程关卡展示区（预留）                │
+ * │ ⇕ 拖动分隔条可调整底部三栏高度（上边界可拖动）      │
+ * ├───────────┬──────────────────────┬───────────┤
+ * │ 折叠侧边栏 │   导航栏对应的页面      │ 通知中心   │
+ * └───────────┴──────────────────────┴───────────┘
+ */
+export default function DockLayout({ children }: { children: ReactNode }) {
+  const t = useT()
+  const bundle = useCurrentBundle()
+  const course = bundle?.course
+
+  const dockHeight = useUiStyleStore(s => s.dockHeight)
+  const setDockHeight = useUiStyleStore(s => s.setDockHeight)
+
+  const dockRef = useRef<HTMLDivElement>(null)
+  const dragRef = useRef<{ startY: number; startHeight: number } | null>(null)
+  const [resizing, setResizing] = useState(false)
+  const [viewportH, setViewportH] = useState(() => window.innerHeight)
+
+  // 窗口尺寸变化时按新高度重新收放（不改动用户保存的偏好值）
+  useEffect(() => {
+    const onResize = () => setViewportH(window.innerHeight)
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [])
+
+  const clamp = useCallback(
+    (h: number) =>
+      Math.round(Math.min(Math.max(h, MIN_DOCK_H), Math.max(MIN_DOCK_H, viewportH - ABOVE_DOCK_H))),
+    [viewportH]
+  )
+
+  // 保存的是用户偏好，渲染时才按当前窗口钳制：窗口变矮收放，变高自动还原
+  const effectiveHeight =
+    dockHeight === null ? undefined : `${clamp(dockHeight)}px`
+
+  /** 拖动上边界：向上拖高、向下拖矮，三个底边栏高度统一跟随 */
+  const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    dragRef.current = {
+      startY: e.clientY,
+      startHeight: dockRef.current?.offsetHeight ?? MIN_DOCK_H,
+    }
+    setResizing(true)
+    // 供各面板关掉自身的高度过渡，拖动时跟手
+    document.documentElement.setAttribute('data-dock-resizing', '')
+    try {
+      e.currentTarget.setPointerCapture(e.pointerId)
+    } catch {
+      // 不支持指针捕获时退化为普通拖动
+    }
+  }
+
+  const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    const drag = dragRef.current
+    if (!drag) return
+    setDockHeight(clamp(drag.startHeight - (e.clientY - drag.startY)))
+  }
+
+  const handlePointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!dragRef.current) return
+    dragRef.current = null
+    setResizing(false)
+    document.documentElement.removeAttribute('data-dock-resizing')
+    try {
+      e.currentTarget.releasePointerCapture(e.pointerId)
+    } catch {
+      // 未捕获时忽略
+    }
+  }
+
+  return (
+    <div
+      className={styles.root}
+      style={effectiveHeight !== undefined ? ({ '--dock-h': effectiveHeight } as React.CSSProperties) : undefined}
+    >
+      {/* 课程关卡区：课程名直接以文字展示在左上角，其余留待布置关卡地图 */}
+      <section className={styles.stage} data-slot="course-levels">
+        {course && <h1 className={styles.stageTitle}>{course.name}</h1>}
+        <div className={styles.stagePlaceholder} aria-hidden="true">
+          <span>{t('dock.stage')}</span>
+        </div>
+      </section>
+
+      <div className={styles.dock} ref={dockRef}>
+        {/* 上边界拖动条：统一调整底部三栏高度 */}
+        <div
+          className={`${styles.resizer} ${resizing ? styles.resizerActive : ''}`}
+          onPointerDown={handlePointerDown}
+          onPointerMove={handlePointerMove}
+          onPointerUp={handlePointerUp}
+          onPointerCancel={handlePointerUp}
+          role="separator"
+          aria-orientation="horizontal"
+          aria-label={t('dock.resizeTip')}
+          title={t('dock.resizeTip')}
+        >
+          <span className={styles.resizerGrip} />
+        </div>
+
+        <SidebarRail />
+        <main className={styles.pageArea}>{children}</main>
+        <NotificationCenter />
+      </div>
+    </div>
+  )
+}

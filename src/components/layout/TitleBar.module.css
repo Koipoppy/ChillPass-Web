@@ -12,6 +12,18 @@
   pointer-events: none;
 }
 
+/* ===== 左上角区域：窗口控制 + 界面风格开关 =====
+ * pointer-events: none 让空白处可以穿透（并保持标题栏可拖动），
+ * 交互元素各自 pointer-events: auto + no-drag。
+ */
+.leftArea {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  pointer-events: none;
+}
+
 .trafficLights {
   display: flex;
   gap: 8px;
@@ -47,9 +59,13 @@
   opacity: 1;
 }
 
-/* ===== 中间学习时长 ===== */
+/* ===== 中间学习时长 =====
+ * 绝对居中：左右两侧内容宽度不一致时也不会把时长推偏。
+ */
 .centerArea {
-  flex: 1;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -73,6 +89,7 @@
 
 /* ===== 右侧专注模式按钮 ===== */
 .rightArea {
+  margin-left: auto;
   flex-shrink: 0;
   display: flex;
   align-items: center;
