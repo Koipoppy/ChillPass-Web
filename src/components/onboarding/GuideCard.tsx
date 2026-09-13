@@ -120,6 +120,8 @@ export default function GuideCard() {
   const [dragging, setDragging] = useState(false)
   // 拖动过程中置位，用于抑制紧随其后的 click（避免拖动被当成展开/收起）
   const movedRef = useRef(false)
+  const captureRef = useRef<HTMLElement | null>(null)
+  const capturePointerIdRef = useRef<number>(0)
 
   /** 把位置钳制在视口内，避免拖出屏幕 */
   const clampPos = useCallback((next: { right: number; bottom: number }) => {
@@ -142,12 +144,12 @@ export default function GuideCard() {
     return () => window.removeEventListener('resize', onResize)
   }, [clampPos])
 
-  /** 开始拖动（指针事件：支持鼠标 / 触屏 / 触控笔） */
+  /**
+   * 按下指针：只记录起点，不立即捕获指针。
+   * 若在按下时就 setPointerCapture，后续 click 会被重定向到捕获元素，
+   * 导致卡片头部里的「收起」按钮点不动。
+   */
   const handleDragStart = (e: React.PointerEvent) => {
-    // 卡片内在做文字选择或点击按钮时不启动拖动
-    if ((e.target as HTMLElement).closest('button') && !(e.target as HTMLElement).closest('[data-drag-handle]')) {
-      return
-    }
     dragRef.current = {
       startX: e.clientX,
       startY: e.clientY,
@@ -155,12 +157,8 @@ export default function GuideCard() {
       startBottom: pos.bottom,
     }
     movedRef.current = false
-    setDragging(true)
-    try {
-      ;(e.currentTarget as HTMLElement).setPointerCapture(e.pointerId)
-    } catch {
-      // 某些环境下不支持指针捕获，退化为普通拖动
-    }
+    captureRef.current = e.currentTarget as HTMLElement
+    capturePointerIdRef.current = e.pointerId
   }
 
   const handleDragMove = (e: React.PointerEvent) => {
@@ -168,14 +166,31 @@ export default function GuideCard() {
     if (!drag) return
     const dx = e.clientX - drag.startX
     const dy = e.clientY - drag.startY
-    if (!movedRef.current && Math.abs(dx) + Math.abs(dy) > 4) movedRef.current = true
-    if (!movedRef.current) return
+
+    // 超过阈值才算拖动：既区分点击，也在此刻才捕获指针
+    if (!movedRef.current) {
+      if (Math.abs(dx) + Math.abs(dy) <= 4) return
+      movedRef.current = true
+      setDragging(true)
+      try {
+        captureRef.current?.setPointerCapture(capturePointerIdRef.current)
+      } catch {
+        // 某些环境不支持指针捕获，退化为普通拖动
+      }
+    }
     setPos(clampPos({ right: drag.startRight - dx, bottom: drag.startBottom - dy }))
   }
 
   const handleDragEnd = () => {
     if (!dragRef.current) return
     dragRef.current = null
+    if (movedRef.current) {
+      try {
+        captureRef.current?.releasePointerCapture(capturePointerIdRef.current)
+      } catch {
+        // 未捕获时忽略
+      }
+    }
     setDragging(false)
     setPos(p => {
       try {
@@ -346,7 +361,10 @@ export default function GuideCard() {
           <button
             type="button"
             className={styles.iconBtn}
-            onClick={handleCollapse}
+            onClick={() => {
+              if (movedRef.current) return
+              handleCollapse()
+            }}
             aria-label={t('guide.collapse')}
             title={t('guide.collapse')}
           >

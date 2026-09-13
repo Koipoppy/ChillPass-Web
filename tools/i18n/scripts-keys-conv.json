@@ -1,0 +1,6 @@
+{
+  "athena.conversation": { "zh": "会话", "en": "Conversation", "ru": "Беседа", "ja": "会話", "ko": "대화" },
+  "athena.newChat": { "zh": "新会话", "en": "New chat", "ru": "Новая беседа", "ja": "新しい会話", "ko": "새 대화" },
+  "athena.deleteChat": { "zh": "删除该会话", "en": "Delete this conversation", "ru": "Удалить эту беседу", "ja": "この会話を削除", "ko": "이 대화 삭제" },
+  "athena.messageCount": { "zh": "{count} 条消息", "en": "{count} messages", "ru": "сообщений: {count}", "ja": "{count} 件のメッセージ", "ko": "메시지 {count}개" }
+}

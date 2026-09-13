@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import type { KeyboardEvent as ReactKeyboardEvent, ChangeEvent as ReactChangeEvent, PointerEvent as ReactPointerEvent } from 'react'
 import { useLocation } from 'react-router-dom'
-import { Send, Trash2, Sparkles, ImageIcon, X, Brain, Zap, Download, Upload, Plus, FileText, BookOpen, Calendar, MessageCircle, Shield, Waves } from 'lucide-react'
+import { Send, Trash2, Sparkles, ImageIcon, X, Brain, Zap, Download, Upload, Plus, FileText, BookOpen, Calendar, MessageCircle, Shield, Waves, ChevronDown } from 'lucide-react'
 import { useChatStore } from '@stores/chatStore'
 import { useCurrentBundle } from '@stores/courseStore'
 import { useAthenaStore } from '@stores/athenaStore'
@@ -50,6 +50,9 @@ const TASK_FORMS: Record<string, { labelKey: string; placeholderKey: string; req
     { labelKey: 'athena.fMastered', placeholderKey: 'athena.fMasteredPh', required: false },
   ],
 }
+
+/** 空消息数组常量：选择器返回稳定引用 */
+const EMPTY_CHAT_MESSAGES: ChatMessage[] = []
 
 /** 单条消息气泡 */
 function MessageBubble({
@@ -107,12 +110,25 @@ function MessageBubble({
 /** AI 助教聊天页面 */
 export default function AIChatPage() {
   const t = useT()
-  const messages = useChatStore(s => s.messages)
+  // 会话：消息从当前会话读取（引用稳定，避免重渲染抖动）
+  const conversations = useChatStore(s => s.conversations)
+  const currentId = useChatStore(s => s.currentId)
+  const messages = useChatStore(s =>
+    s.conversations.find(c => c.id === s.currentId)?.messages ?? EMPTY_CHAT_MESSAGES,
+  )
   const isStreaming = useChatStore(s => s.isStreaming)
   const addMessage = useChatStore(s => s.addMessage)
   const updateMessage = useChatStore(s => s.updateMessage)
   const setStreaming = useChatStore(s => s.setStreaming)
   const clearMessages = useChatStore(s => s.clearMessages)
+  const createConversation = useChatStore(s => s.createConversation)
+  const switchConversation = useChatStore(s => s.switchConversation)
+  const deleteConversation = useChatStore(s => s.deleteConversation)
+
+  // 会话下拉开关
+  const [convMenuOpen, setConvMenuOpen] = useState(false)
+  const convMenuRef = useRef<HTMLDivElement>(null)
+  const currentConversation = conversations.find(c => c.id === currentId)
 
   const bundle = useCurrentBundle()
   const rawText = bundle?.rawText ?? ''
@@ -172,6 +188,25 @@ export default function AIChatPage() {
       behavior: isNewMessage ? 'smooth' : 'auto',
     })
   }, [messages])
+
+  // 会话下拉：点击外部或 Esc 关闭
+  useEffect(() => {
+    if (!convMenuOpen) return
+    const onPointerDown = (e: PointerEvent) => {
+      if (convMenuRef.current && !convMenuRef.current.contains(e.target as Node)) {
+        setConvMenuOpen(false)
+      }
+    }
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setConvMenuOpen(false)
+    }
+    document.addEventListener('pointerdown', onPointerDown)
+    document.addEventListener('keydown', onKeyDown)
+    return () => {
+      document.removeEventListener('pointerdown', onPointerDown)
+      document.removeEventListener('keydown', onKeyDown)
+    }
+  }, [convMenuOpen])
 
   // 输入框自适应高度 + 检测是否溢出
   useEffect(() => {
@@ -359,6 +394,71 @@ export default function AIChatPage() {
           </div>
           <div className={styles.headerText}>
             <h1 className={styles.title}>Athena</h1>
+            {/* 会话管理：切换 / 新建 / 删除 */}
+            <div className={styles.convSelect} ref={convMenuRef}>
+              <button
+                type="button"
+                className={styles.convTrigger}
+                onClick={() => setConvMenuOpen(o => !o)}
+                aria-haspopup="listbox"
+                aria-expanded={convMenuOpen}
+                title={t('athena.conversation')}
+              >
+                <MessageCircle size={13} strokeWidth={2} />
+                <span className={styles.convTriggerText}>
+                  {currentConversation?.title || t('athena.newChat')}
+                </span>
+                <ChevronDown size={13} strokeWidth={2} />
+              </button>
+
+              {convMenuOpen && (
+                <div className={styles.convMenu} role="listbox">
+                  <button
+                    type="button"
+                    className={styles.convNew}
+                    onClick={() => {
+                      createConversation()
+                      setConvMenuOpen(false)
+                    }}
+                  >
+                    <Plus size={14} strokeWidth={2.2} />
+                    <span>{t('athena.newChat')}</span>
+                  </button>
+                  <div className={styles.convList}>
+                    {conversations.map(conv => (
+                      <div
+                        key={conv.id}
+                        className={`${styles.convItem} ${conv.id === currentId ? styles.convItemActive : ''}`}
+                      >
+                        <button
+                          type="button"
+                          className={styles.convItemMain}
+                          onClick={() => {
+                            switchConversation(conv.id)
+                            setConvMenuOpen(false)
+                          }}
+                        >
+                          <span className={styles.convItemTitle}>
+                            {conv.title || t('athena.newChat')}
+                          </span>
+                          <span className={styles.convItemMeta}>
+                            {t('athena.messageCount').replace('{count}', String(conv.messages.length))}
+                          </span>
+                        </button>
+                        <button
+                          type="button"
+                          className={styles.convDelete}
+                          title={t('athena.deleteChat')}
+                          onClick={() => deleteConversation(conv.id)}
+                        >
+                          <Trash2 size={13} strokeWidth={1.9} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
             <p className={styles.subtitle}>
               {isStreaming
                 ? t('athena.thinking')
@@ -569,7 +669,7 @@ export default function AIChatPage() {
       {/* Ability Panel */}
       {showAbilityPanel && (
         <div className={styles.modalOverlay} onClick={() => setShowAbilityPanel(false)}>
-          <div className={`${styles.modal} liquid-glass`} onClick={e => e.stopPropagation()}>
+          <div className={styles.modal} onClick={e => e.stopPropagation()}>
             <div className={styles.modalHeader}>
               <div className={styles.modalTitle}>
                 <Zap size={18} strokeWidth={2} />
@@ -589,7 +689,7 @@ export default function AIChatPage() {
       {/* Memory Panel */}
       {showMemoryPanel && (
         <div className={styles.modalOverlay} onClick={() => setShowMemoryPanel(false)}>
-          <div className={`${styles.modal} liquid-glass`} onClick={e => e.stopPropagation()}>
+          <div className={styles.modal} onClick={e => e.stopPropagation()}>
             <div className={styles.modalHeader}>
               <div className={styles.modalTitle}>
                 <Brain size={18} strokeWidth={2} />
@@ -609,7 +709,7 @@ export default function AIChatPage() {
       {/* Task Form Modal */}
       {showTaskForm && (
         <div className={styles.modalOverlay} onClick={() => setShowTaskForm(false)}>
-          <div className={`${styles.modal} liquid-glass`} onClick={e => e.stopPropagation()}>
+          <div className={styles.modal} onClick={e => e.stopPropagation()}>
             <div className={styles.modalHeader}>
               <div className={styles.modalTitle}>
                 {(() => { const Icon = TASKS.find(t => t.type === activeTask)?.icon || Sparkles; return <Icon size={18} strokeWidth={2} /> })()}

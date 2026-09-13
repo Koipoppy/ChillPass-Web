@@ -665,6 +665,11 @@ export type TranslationKey =
 
   | 'guide.dragHint'
 
+  | 'athena.conversation'
+  | 'athena.newChat'
+  | 'athena.deleteChat'
+  | 'athena.messageCount'
+
 const zh: Record<TranslationKey, string> = {
   'nav.dashboard': '首页',
   'nav.upload': '导入课件',
@@ -873,6 +878,10 @@ const zh: Record<TranslationKey, string> = {
   'notify.lessonsDoneTitle': '关卡生成完成',
   'notify.lessonsDoneBody': '「{course}」的 {count} 个关卡已生成完毕，开始学习吧',
   'notify.newNotice': '新通知',
+  'athena.conversation': "会话",
+  'athena.newChat': "新会话",
+  'athena.deleteChat': "删除该会话",
+  'athena.messageCount': "{count} 条消息",
   'guide.dragHint': "按住可拖动到任意位置",
   'chat.svgSource': "查看 SVG 源码",
   'img.invalidFormat': "无法读取该图片，请改用 PNG、JPEG、WebP 或 GIF 格式",
@@ -1517,6 +1526,10 @@ const en: Record<TranslationKey, string> = {
   'notify.lessonsDoneTitle': 'Lessons ready',
   'notify.lessonsDoneBody': '{count} lessons for "{course}" are ready — start learning',
   'notify.newNotice': 'New notice',
+  'athena.conversation': "Conversation",
+  'athena.newChat': "New chat",
+  'athena.deleteChat': "Delete this conversation",
+  'athena.messageCount': "{count} messages",
   'guide.dragHint': "Drag to move anywhere",
   'chat.svgSource': "View SVG source",
   'img.invalidFormat': "Could not read this image — please use PNG, JPEG, WebP or GIF",
@@ -2163,6 +2176,10 @@ const ru: Record<TranslationKey, string> = {
   'notify.lessonsDoneTitle': 'Уровни готовы',
   'notify.lessonsDoneBody': '{count} уровней для «{course}» готовы — начинайте учиться',
   'notify.newNotice': 'Новое уведомление',
+  'athena.conversation': "Беседа",
+  'athena.newChat': "Новая беседа",
+  'athena.deleteChat': "Удалить эту беседу",
+  'athena.messageCount': "сообщений: {count}",
   'guide.dragHint': "Перетащите в любое место",
   'chat.svgSource': "Показать исходник SVG",
   'img.invalidFormat': "Не удалось прочитать изображение — используйте PNG, JPEG, WebP или GIF",
@@ -2809,6 +2826,10 @@ const ja: Record<TranslationKey, string> = {
   'notify.lessonsDoneTitle': 'レベル生成完了',
   'notify.lessonsDoneBody': '「{course}」の{count}個のレベルが生成されました。学習を始めましょう',
   'notify.newNotice': '新着通知',
+  'athena.conversation': "会話",
+  'athena.newChat': "新しい会話",
+  'athena.deleteChat': "この会話を削除",
+  'athena.messageCount': "{count} 件のメッセージ",
   'guide.dragHint': "ドラッグして好きな位置へ移動できます",
   'chat.svgSource': "SVG ソースを表示",
   'img.invalidFormat': "この画像を読み込めません。PNG・JPEG・WebP・GIF をご利用ください",
@@ -3455,6 +3476,10 @@ const ko: Record<TranslationKey, string> = {
   'notify.lessonsDoneTitle': '레벨 생성 완료',
   'notify.lessonsDoneBody': '"{course}"의 {count}개 레벨이 생성되었습니다. 학습을 시작하세요',
   'notify.newNotice': '새 알림',
+  'athena.conversation': "대화",
+  'athena.newChat': "새 대화",
+  'athena.deleteChat': "이 대화 삭제",
+  'athena.messageCount': "메시지 {count}개",
   'guide.dragHint': "드래그하여 원하는 위치로 이동하세요",
   'chat.svgSource': "SVG 소스 보기",
   'img.invalidFormat': "이 이미지를 읽을 수 없습니다. PNG, JPEG, WebP, GIF를 사용하세요",

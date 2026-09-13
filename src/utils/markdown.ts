@@ -68,8 +68,14 @@ function restoreMath(html: string, placeholders: MathPlaceholder[]): string {
 
 /* ===================== SVG 图形渲染 ===================== */
 
-/** 从 AI 回复中抽取 SVG（```svg 代码块，或直接输出的 <svg>…</svg>） */
-const SVG_FENCE_RE = /```(?:svg|xml)?[ \t]*\r?\n([\s\S]*?)```/g
+/**
+ * 从 AI 回复中抽取 SVG
+ * 匹配三类写法（AI 输出的围栏语言标签并不稳定，必须放宽）：
+ *   1. 围栏代码块（```svg / ```xml / ```html / 任意标签，只要内容含 <svg>）
+ *   2. 未闭合的围栏（回复被截断时没有收尾的 ```）
+ *   3. 直接输出的裸 <svg>…</svg>
+ */
+const SVG_FENCE_RE = /```[^\n`]*\r?\n([\s\S]*?)(?:```|$)/g
 const SVG_BARE_RE = /<svg[\s\S]*?<\/svg>/gi
 
 /** SVG 消毒配置：仅允许图形相关标签/属性，脚本与事件处理器一律移除 */
@@ -117,20 +123,22 @@ function extractSvg(text: string): { text: string; svgs: MathPlaceholder[] } {
   const svgs: MathPlaceholder[] = []
   let counter = 0
 
+  /** 内容确为 SVG 时替换为占位符 */
   const stash = (source: string): string => {
-    const trimmed = source.trim()
-    // 代码块里必须真的含 <svg>，否则留给 marked 当普通代码处理
-    if (!/<svg[\s>]/i.test(trimmed)) return source
+    // 只取 <svg>…</svg> 片段：未闭合围栏时捕获内容可能混入后续正文
+    const match = source.match(/<svg[\s\S]*<\/svg>/i)
     const id = `CHARTSVG${counter}ENDSVG`
     counter++
-    svgs.push({ id, html: renderSvgBlock(trimmed) })
+    svgs.push({ id, html: renderSvgBlock((match ? match[0] : source).trim()) })
     return id
   }
 
-  // ```svg / ```xml 代码块
-  text = text.replace(SVG_FENCE_RE, (match, body: string) => stash(body))
+  // 围栏代码块：只有内容确实是 SVG 才替换，否则原样返回整段（保留 ``` 标记）
+  text = text.replace(SVG_FENCE_RE, (match, body: string) =>
+    /<svg[\s>]/i.test(body) ? stash(body) : match,
+  )
   // 直接输出的裸 <svg>
-  text = text.replace(SVG_BARE_RE, (match) => stash(match))
+  text = text.replace(SVG_BARE_RE, match => stash(match))
 
   return { text, svgs }
 }
