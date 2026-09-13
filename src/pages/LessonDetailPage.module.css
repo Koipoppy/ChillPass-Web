@@ -437,9 +437,17 @@
   opacity: 0.4;
 }
 
-.quizOptionSelected {
+/* 选中态需覆盖 :hover 的白色背景（hover 选择器特异性更高），故显式重复 hover 形态 */
+.quizOptionSelected,
+.quizOptionSelected:hover:not(:disabled) {
   border-color: var(--accent-text);
-  background: rgba(0, 113, 227, 0.06);
+  background: rgba(0, 113, 227, 0.12);
+  box-shadow: inset 0 0 0 1px rgba(0, 113, 227, 0.35);
+}
+
+.quizOptionSelected .optionLabel {
+  background: var(--accent-text);
+  color: #ffffff;
 }
 
 .optionLabel {
@@ -946,16 +954,121 @@
   display: none;
 }
 
-/* ===== AI 复核进行中 ===== */
-.adjudicating {
+/* ===== 用户主动发起的 AI 复核 ===== */
+.reviewBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 14px;
+  border: 1px solid rgba(139, 92, 246, 0.35);
+  border-radius: var(--radius-pill);
+  background: rgba(139, 92, 246, 0.08);
+  color: #8b5cf6;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.25s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.reviewBtn:hover {
+  background: rgba(139, 92, 246, 0.16);
+  transform: translateY(-1px);
+}
+
+.reviewBtn:active {
+  transform: translateY(0);
+}
+
+/* 复核结果框：可收起 */
+.reviewBox {
+  margin-top: 12px;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(139, 92, 246, 0.3);
+  background: rgba(139, 92, 246, 0.06);
+  overflow: hidden;
+  animation: reviewBoxIn 0.25s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+@keyframes reviewBoxIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.reviewBoxCorrect {
+  border-color: rgba(52, 199, 89, 0.35);
+  background: rgba(52, 199, 89, 0.07);
+}
+
+.reviewBoxWrong {
+  border-color: rgba(0, 113, 227, 0.3);
+  background: rgba(0, 113, 227, 0.06);
+}
+
+.reviewBoxError {
+  border-color: rgba(255, 59, 48, 0.3);
+  background: rgba(255, 59, 48, 0.06);
+}
+
+.reviewHeader {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-top: 12px;
-  padding: 9px 12px;
-  border-radius: var(--radius-md);
-  background: rgba(0, 113, 227, 0.06);
-  border: 1px solid rgba(0, 113, 227, 0.15);
+  gap: 7px;
+  width: 100%;
+  padding: 10px 13px;
+  border: none;
+  background: transparent;
+  color: #8b5cf6;
   font-size: 12.5px;
+  font-weight: 700;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.reviewBoxCorrect .reviewHeader {
+  color: var(--success-text);
+}
+
+.reviewBoxWrong .reviewHeader {
   color: var(--accent-text);
+}
+
+.reviewBoxError .reviewHeader {
+  color: var(--danger-text);
+}
+
+.reviewTitleText {
+  flex: 1;
+  min-width: 0;
+}
+
+.reviewChevron {
+  flex-shrink: 0;
+  transition: transform 0.28s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.reviewChevronOpen {
+  transform: rotate(180deg);
+}
+
+.reviewBody {
+  padding: 0 13px 11px;
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+
+.reviewBody p {
+  margin: 0 0 6px;
+}
+
+.reviewBody p:last-child {
+  margin-bottom: 0;
 }

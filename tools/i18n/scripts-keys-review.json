@@ -1,0 +1,8 @@
+{
+  "lesson.review": { "zh": "复核", "en": "Review", "ru": "Перепроверить", "ja": "再審査", "ko": "재검토" },
+  "lesson.reviewTitle": { "zh": "对参考答案有疑问？让 AI 独立重做一遍这道题", "en": "Doubt the answer key? Have the AI independently re-solve this question", "ru": "Сомневаетесь в ответе? Попросите ИИ решить вопрос заново", "ja": "参考答案に疑問がありますか？AI に独立して解き直させます", "ko": "참고 답안이 의심되나요? AI가 독립적으로 다시 풀게 합니다" },
+  "lesson.reviewRunning": { "zh": "AI 正在独立复核这道题…", "en": "AI is independently double-checking this question…", "ru": "ИИ独立но перепроверяет вопрос…", "ja": "AI が独立して再審査中です…", "ko": "AI가 독립적으로 재검토 중입니다…" },
+  "lesson.reviewFailed": { "zh": "复核失败", "en": "Review failed", "ru": "Не удалось перепроверить", "ja": "再審査に失敗しました", "ko": "재검토 실패" },
+  "lesson.reviewYouWereRight": { "zh": "复核结果：你答对了", "en": "Verdict: you were right", "ru": "Вердикт: вы были правы", "ja": "再審査の結果：あなたが正解でした", "ko": "판정: 당신이 맞았습니다" },
+  "lesson.reviewYouWereWrong": { "zh": "复核结果：参考答案无误", "en": "Verdict: the answer key stands", "ru": "Вердикт: эталонный ответ верен", "ja": "再審査の結果：参考答案は正しいです", "ko": "판정: 참고 답안이 맞습니다" }
+}

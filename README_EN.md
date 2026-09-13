@@ -337,7 +337,9 @@ tray.ps1                     System tray icon (WinForms NotifyIcon)
 <summary><strong>v0.1.0</strong> — 2026-09-12</summary>
 
 - **Live model list**: the API settings page can now fetch the models actually available to your account straight from the provider (auto-fetched once a key is saved). The built-in list was also fixed — `deepseek-chat` / `deepseek-reasoner` were retired on 2026-07-24, current models are `deepseek-flash` and `deepseek-v4-pro`, and saved configs migrate automatically. The dropdown is now a custom list that shows a model description on hover
-- **Answer adjudication**: when a quiz answer disagrees with the reference key, the AI now independently re-solves the question before judging — if the stored key itself is wrong (e.g. maxterm/minterm mix-up) and the user is right, the verdict is corrected, the question key is fixed in place, and nothing goes to the mistake notebook; generation prompts gained consistency rules so explanations can no longer contradict correctIndex
+- **Answer review on demand**: a "Review" button appears after a wrong choice answer, so the AI double-check runs only when you doubt the key. Its verdict shows in a separate box under the question that you can collapse. If the review finds the stored key wrong (e.g. maxterm/minterm mix-up) and you were right, the answer is corrected, the question key is fixed, and the recorded mistake is withdrawn. Generation prompts also gained consistency rules so explanations can no longer contradict the answer
+- **More reliable regeneration**: new questions must keep the **same question type and same knowledge point** as the original; incomplete fields or a mismatched type trigger an automatic retry, and the new question is now persisted (previously lost when leaving the page)
+- **Better answering feedback**: option highlighting is instant on click (fixing the selected state being masked by hover, which required moving the cursor away to see); added a click sound for options and a satisfying chime for correct answers
 </details>
 
 <details>

@@ -12,6 +12,8 @@ import {
   AlertCircle,
   RefreshCw,
   SkipForward,
+  Sparkles,
+  ChevronDown,
 } from 'lucide-react'
 import { useCourseStore, useCurrentBundle } from '@stores/courseStore'
 import { useWrongQuestionStore } from '@stores/wrongQuestionStore'
@@ -23,6 +25,7 @@ import {
 } from '@services/deepseek'
 import type { Priority, QuizQuestion, QuizType } from '@types/index'
 import { renderMarkdown, renderInlineMarkdown } from '../utils/markdown'
+import { playClickSound, playCorrectSound } from '@services/sound'
 import { useT } from '../i18n'
 import type { TranslationKey } from '../i18n'
 import styles from './LessonDetailPage.module.css'
@@ -79,6 +82,7 @@ export default function LessonDetailPage() {
   const setLessonContent = useCourseStore(s => s.setLessonContent)
   const spendCoins = useCourseStore(s => s.spendCoins)
   const addWrongQuestion = useWrongQuestionStore(s => s.addWrongQuestion)
+  const removeQuestion = useWrongQuestionStore(s => s.removeQuestion)
 
   const lesson = lessons.find(l => l.id === lessonId)
   const content = lesson?.content ?? null
@@ -97,8 +101,19 @@ export default function LessonDetailPage() {
   const [multiSelected, setMultiSelected] = useState<Set<number>>(new Set())
   const [multiSubmitted, setMultiSubmitted] = useState(false)
   const [revealed, setRevealed] = useState(false)
-  // AI 复核进行中（学生答案与参考答案不一致时触发）
-  const [adjudicating, setAdjudicating] = useState(false)
+
+  /**
+   * 用户主动发起的 AI 复核（答错后点「复核」按钮才触发）
+   * 结果展示在题目下方独立框内，可收起
+   */
+  const [review, setReview] = useState<{
+    state: 'running' | 'done' | 'error'
+    userCorrect?: boolean
+    text: string
+    collapsed: boolean
+  } | null>(null)
+  // 本题被记入错题本的记录 id（复核改判成功时需要撤回）
+  const wrongEntryIdsRef = useRef<Map<number, string>>(new Map())
 
   // 切换关卡时重置本地状态
   useEffect(() => {
@@ -112,7 +127,7 @@ export default function LessonDetailPage() {
     setFeedback(null)
     setChoiceSelected(null)
     setRevealed(false)
-    setAdjudicating(false)
+    setReview(null)
   }, [lessonId])
 
   // 同步小测题目（内容加载或重新生成时）
@@ -131,7 +146,7 @@ export default function LessonDetailPage() {
       setFeedback(null)
       setChoiceSelected(null)
       setRevealed(false)
-      setAdjudicating(false)
+      setReview(null)
     }
   }, [content])
 
@@ -182,7 +197,8 @@ export default function LessonDetailPage() {
 
   /** 多选题：切换选项选择 */
   const handleMultiToggle = (optionIndex: number) => {
-    if (multiSubmitted || adjudicating) return
+    if (multiSubmitted) return
+    playClickSound()
     setMultiSelected(prev => {
       const next = new Set(prev)
       if (next.has(optionIndex)) {
@@ -194,40 +210,62 @@ export default function LessonDetailPage() {
     })
   }
 
-  /** 把（可能被复核修正的）小测题写回本地状态与课程存储 */
-  const patchQuizQuestion = (patched: QuizQuestion) => {
+  /**
+   * 把（复核修正或重新生成的）小测题写回本地状态与课程存储
+   * 按下标替换而非按 id：重新生成的题目是全新 id，在存储中匹配不到 id
+   * 本地 quizQuestions 与 content.quiz 始终同序（初始同源，后续都在原位置替换）
+   */
+  const patchQuizQuestion = (patched: QuizQuestion, index = quizPage) => {
     skipQuizSyncRef.current = true
-    setQuizQuestions(prev => prev.map((item, i) => (i === quizPage ? patched : item)))
+    setQuizQuestions(prev => prev.map((item, i) => (i === index ? patched : item)))
     if (content) {
       setLessonContent(lesson.id, {
         ...content,
-        quiz: content.quiz.map(item => (item.id === patched.id ? patched : item)),
+        quiz: content.quiz.map((item, i) => (i === index ? patched : item)),
       })
     }
   }
 
-  /**
-   * AI 复核：学生答案与参考答案不一致时，独立裁定真正正确的选项。
-   * 参考答案可能是生成出题时就标错了（如混淆最大项/最小项），不能盲判学生错误。
-   */
-  const adjudicateMismatch = async (
-    q: QuizQuestion,
-    userSelectedIndex?: number,
-    userSelectedIndices?: number[],
-  ): Promise<void> => {
-    setAdjudicating(true)
+  /** 记录错题并保存 id，便于复核改判后撤回 */
+  const recordWrongQuestion = (q: QuizQuestion, selectedIndex?: number, selectedIndices?: number[]) => {
+    if (!examPoint || !bundle) return
+    const id = addWrongQuestion({
+      courseId: bundle.course.id,
+      courseName: bundle.course.name,
+      lessonId: lesson.id,
+      lessonTitle: lesson.title,
+      question: q.question,
+      quizType: q.type,
+      options: q.options,
+      correctIndex: q.correctIndex,
+      correctIndices: q.correctIndices,
+      selectedIndex,
+      selectedIndices,
+      explanation: q.explanation,
+      examPointTitle: examPoint.title,
+      priority: lesson.priority,
+    })
+    if (id) wrongEntryIdsRef.current.set(quizPage, id)
+  }
+
+  /** 用户主动复核：独立裁定本题参考答案是否正确、用户是否其实答对 */
+  const handleReview = async () => {
+    const q = quizQuestions[quizPage]
+    if (!q || !q.options || review?.state === 'running') return
+
+    setReview({ state: 'running', text: '', collapsed: false })
     try {
       const result = await adjudicateAnswer({
         questionType: q.type === 'multi' ? 'multi' : 'choice',
         question: q.question,
-        options: q.options ?? [],
+        options: q.options,
         storedCorrectIndex: q.correctIndex,
         storedCorrectIndices: q.correctIndices,
-        userSelectedIndex,
-        userSelectedIndices,
+        userSelectedIndex: choiceSelected ?? undefined,
+        userSelectedIndices: q.type === 'multi' ? [...multiSelected] : undefined,
       })
 
-      // 用复核结果修正题目的参考答案（本地状态 + 课程存储）
+      // 复核给出新的正确答案时，修正题目答案（本地 + 课程存储）
       const patched: QuizQuestion = { ...q }
       if (q.type === 'multi' && result.correctIndices) {
         patched.correctIndices = result.correctIndices
@@ -237,63 +275,32 @@ export default function LessonDetailPage() {
       const hasCorrection =
         q.type === 'multi' ? !!result.correctIndices : result.correctIndex !== undefined
       if (hasCorrection) patchQuizQuestion(patched)
-      if (q.type === 'multi') setMultiSubmitted(true)
-      setRevealed(true)
+
+      setReview({
+        state: 'done',
+        userCorrect: result.userCorrect,
+        text: hasCorrection && result.userCorrect ? `${t('lesson.keyFixedNote')}
+
+${result.feedback}` : result.feedback,
+        collapsed: false,
+      })
 
       if (result.userCorrect) {
-        // 参考答案标错、学生答对了：改判为正确，不计入错题本
+        // 复核确认用户答对：改判正确、撤回错题记录、播放正确音
         setPageSolved(prev => new Set(prev).add(quizPage))
-        setFeedback({
-          correct: true,
-          text: `${t('lesson.keyFixedNote')}
-
-${result.feedback}`,
-        })
-      } else {
-        // 学生确实答错（参考答案无误，或正确选项另有其他）
-        setFeedback({ correct: false, text: result.feedback })
-        if (examPoint && bundle) {
-          addWrongQuestion({
-            courseId: bundle.course.id,
-            courseName: bundle.course.name,
-            lessonId: lesson.id,
-            lessonTitle: lesson.title,
-            question: q.question,
-            quizType: q.type,
-            options: q.options,
-            correctIndex: patched.correctIndex,
-            correctIndices: patched.correctIndices,
-            selectedIndex: userSelectedIndex,
-            selectedIndices: userSelectedIndices,
-            explanation: result.feedback,
-            examPointTitle: examPoint.title,
-            priority: lesson.priority,
-          })
+        const wrongId = wrongEntryIdsRef.current.get(quizPage)
+        if (wrongId) {
+          removeQuestion(wrongId)
+          wrongEntryIdsRef.current.delete(quizPage)
         }
+        playCorrectSound()
       }
-    } catch {
-      // 复核失败（网络/接口异常）：按参考答案判定，保持原有行为
-      setRevealed(true)
-      if (examPoint && bundle) {
-        addWrongQuestion({
-          courseId: bundle.course.id,
-          courseName: bundle.course.name,
-          lessonId: lesson.id,
-          lessonTitle: lesson.title,
-          question: q.question,
-          quizType: q.type,
-          options: q.options,
-          correctIndex: q.correctIndex,
-          correctIndices: q.correctIndices,
-          selectedIndex: userSelectedIndex,
-          selectedIndices: userSelectedIndices,
-          explanation: q.explanation,
-          examPointTitle: examPoint.title,
-          priority: lesson.priority,
-        })
-      }
-    } finally {
-      setAdjudicating(false)
+    } catch (err) {
+      setReview({
+        state: 'error',
+        text: err instanceof Error ? err.message : t('about.unknownError'),
+        collapsed: false,
+      })
     }
   }
 
@@ -302,17 +309,18 @@ ${result.feedback}`,
     const q = quizQuestions[quizPage]
     if (!q || !q.correctIndices || multiSelected.size === 0) return
 
+    setMultiSubmitted(true)
     const correctSet = new Set(q.correctIndices)
     const isCorrect =
       multiSelected.size === correctSet.size &&
       [...multiSelected].every(i => correctSet.has(i))
 
     if (isCorrect) {
-      setMultiSubmitted(true)
       setPageSolved(prev => new Set(prev).add(quizPage))
+      playCorrectSound()
     } else {
-      // 与参考答案不一致：先复核再判定
-      adjudicateMismatch(q, undefined, [...multiSelected])
+      // 按参考答案判错并记入错题本；如有疑问可点「复核」按钮请 AI 独立裁定
+      recordWrongQuestion(q, undefined, [...multiSelected])
     }
   }
 
@@ -325,23 +333,25 @@ ${result.feedback}`,
     setQuizQuestions(prev => prev.map((item, i) => (i === quizPage ? shuffled : item)))
     setMultiSelected(new Set())
     setMultiSubmitted(false)
+    setReview(null)
   }
 
   /** 选择题：点击选项 */
   const handleChoiceAnswer = (optionIndex: number) => {
-    if (revealed || adjudicating) return
+    if (revealed) return
     const q = quizQuestions[quizPage]
     if (!q || q.correctIndex === undefined) return
 
+    playClickSound()
     setChoiceSelected(optionIndex)
+    setRevealed(true)
 
     if (optionIndex === q.correctIndex) {
-      // 与参考答案一致，直接判定正确
-      setRevealed(true)
       setPageSolved(prev => new Set(prev).add(quizPage))
+      playCorrectSound()
     } else {
-      // 与参考答案不一致：先 AI 复核再判定
-      adjudicateMismatch(q, optionIndex)
+      // 按参考答案判错并记入错题本；如有疑问可点「复核」按钮请 AI 独立裁定
+      recordWrongQuestion(q, optionIndex)
     }
   }
 
@@ -353,6 +363,7 @@ ${result.feedback}`,
     setQuizQuestions(prev => prev.map((item, i) => (i === quizPage ? shuffled : item)))
     setChoiceSelected(null)
     setRevealed(false)
+    setReview(null)
   }
 
   /** 填空/简答题：提交答案 */
@@ -371,8 +382,9 @@ ${result.feedback}`,
       setFeedback({ correct: result.correct, text: result.feedback })
       if (result.correct) {
         setPageSolved(prev => new Set(prev).add(quizPage))
+        playCorrectSound()
       } else if (examPoint && bundle) {
-        addWrongQuestion({
+        const id = addWrongQuestion({
           courseId: bundle.course.id,
           courseName: bundle.course.name,
           lessonId: lesson.id,
@@ -385,6 +397,7 @@ ${result.feedback}`,
           examPointTitle: examPoint.title,
           priority: lesson.priority,
         })
+        if (id) wrongEntryIdsRef.current.set(quizPage, id)
       }
     } catch {
       setFeedback({ correct: false, text: t('lesson.gradeFailed') })
@@ -400,12 +413,17 @@ ${result.feedback}`,
 
     setGrading(true)
     try {
+      // 新题与原题题型、知识点保持一致（服务层强校验，不一致会自动重试）
       const newQ = await regenerateQuizQuestion(
         q.examPointTitle || examPoint.title,
         q.question,
-        rawText
+        q.type,
+        rawText,
+        q.id,
+        q.explanation
       )
-      setQuizQuestions(prev => prev.map((item, i) => (i === quizPage ? newQ : item)))
+      // 同时更新界面状态与课程存储，避免离开页面后新题丢失
+      patchQuizQuestion(newQ)
       // 重置所有答题状态
       setTextAnswer('')
       setFeedback(null)
@@ -413,6 +431,8 @@ ${result.feedback}`,
       setMultiSelected(new Set())
       setMultiSubmitted(false)
       setRevealed(false)
+      setReview(null)
+      wrongEntryIdsRef.current.delete(quizPage)
     } catch {
       setFeedback({ correct: false, text: t('lesson.regenerateFailed') })
     } finally {
@@ -440,6 +460,7 @@ ${result.feedback}`,
       setMultiSelected(new Set())
       setMultiSubmitted(false)
       setRevealed(false)
+      setReview(null)
     }
   }
 
@@ -688,7 +709,7 @@ ${result.feedback}`,
                                   key={oi}
                                   className={cls}
                                   onClick={() => handleChoiceAnswer(oi)}
-                                  disabled={revealed || adjudicating}
+                                  disabled={revealed}
                                 >
                                   <span className={styles.optionLabel}>
                                     {String.fromCharCode(65 + oi)}
@@ -733,7 +754,7 @@ ${result.feedback}`,
                                     key={oi}
                                     className={cls}
                                     onClick={() => handleMultiToggle(oi)}
-                                    disabled={multiSubmitted || adjudicating}
+                                    disabled={multiSubmitted}
                                   >
                                     <span className={styles.optionLabel}>
                                       {String.fromCharCode(65 + oi)}
@@ -808,14 +829,6 @@ ${result.feedback}`,
                           />
                         )}
 
-                        {/* AI 复核进行中（学生答案与参考答案不一致时） */}
-                        {adjudicating && (
-                          <div className={styles.adjudicating}>
-                            <Loader size={14} className={styles.submitSpinner} />
-                            <span>{t('lesson.adjudicating')}</span>
-                          </div>
-                        )}
-
                         {/* 操作行：左侧重新生成+跳过，右侧提交答案 */}
                         <div className={styles.quizActionRow}>
                           <div className={styles.quizNavLeft}>
@@ -823,7 +836,7 @@ ${result.feedback}`,
                             <button
                               className={styles.regenerateBtn}
                               onClick={handleRegenerateQuestion}
-                              disabled={grading || adjudicating}
+                              disabled={grading}
                               title={t('lesson.regenerateTitle')}
                             >
                               {grading ? (
@@ -837,12 +850,28 @@ ${result.feedback}`,
                             <button
                               className={styles.skipBtn}
                               onClick={handleSkipQuestion}
-                              disabled={grading || adjudicating}
+                              disabled={grading}
                               title={t('lesson.skipTitle')}
                             >
                               <SkipForward size={14} strokeWidth={2} />
                               <span>{t('lesson.skipCost')}</span>
                             </button>
+                            {/* 答错后的 AI 复核：用户有疑问时自主发起 */}
+                            {(qType === 'choice' || qType === 'multi') &&
+                              revealed &&
+                              !review &&
+                              (qType === 'multi'
+                                ? multiSubmitted && multiSelected.size > 0
+                                : choiceSelected !== q.correctIndex) && (
+                                <button
+                                  className={styles.reviewBtn}
+                                  onClick={handleReview}
+                                  title={t('lesson.reviewTitle')}
+                                >
+                                  <Sparkles size={14} strokeWidth={2} />
+                                  <span>{t('lesson.review')}</span>
+                                </button>
+                              )}
                             {/* 答错后的再试一次 */}
                             {qType === 'choice' &&
                               revealed &&
@@ -920,6 +949,57 @@ ${result.feedback}`,
                                 __html: renderInlineMarkdown(q.answer),
                               }}
                             />
+                          </div>
+                        )}
+
+                        {/* AI 复核结果框：可收起 */}
+                        {review && (
+                          <div
+                            className={`${styles.reviewBox} ${
+                              review.state === 'error'
+                                ? styles.reviewBoxError
+                                : review.userCorrect
+                                  ? styles.reviewBoxCorrect
+                                  : styles.reviewBoxWrong
+                            }`}
+                          >
+                            <button
+                              type="button"
+                              className={styles.reviewHeader}
+                              onClick={() =>
+                                setReview(prev => (prev ? { ...prev, collapsed: !prev.collapsed } : prev))
+                              }
+                              aria-expanded={!review.collapsed}
+                            >
+                              <Sparkles size={14} strokeWidth={2} />
+                              <span className={styles.reviewTitleText}>
+                                {review.state === 'running'
+                                  ? t('lesson.reviewRunning')
+                                  : review.state === 'error'
+                                    ? t('lesson.reviewFailed')
+                                    : review.userCorrect
+                                      ? t('lesson.reviewYouWereRight')
+                                      : t('lesson.reviewYouWereWrong')}
+                              </span>
+                              {review.state !== 'running' && (
+                                <ChevronDown
+                                  size={15}
+                                  strokeWidth={2}
+                                  className={`${styles.reviewChevron} ${review.collapsed ? '' : styles.reviewChevronOpen}`}
+                                />
+                              )}
+                            </button>
+                            {!review.collapsed && review.state !== 'running' && (
+                              <div
+                                className={styles.reviewBody}
+                                dangerouslySetInnerHTML={{ __html: renderMarkdown(review.text) }}
+                              />
+                            )}
+                            {review.state === 'running' && (
+                              <div className={styles.reviewBody}>
+                                <Loader size={14} className={styles.submitSpinner} />
+                              </div>
+                            )}
                           </div>
                         )}
 

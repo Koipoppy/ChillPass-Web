@@ -661,6 +661,13 @@ export type TranslationKey =
   | 'lesson.adjudicating'
   | 'lesson.keyFixedNote'
 
+  | 'lesson.review'
+  | 'lesson.reviewTitle'
+  | 'lesson.reviewRunning'
+  | 'lesson.reviewFailed'
+  | 'lesson.reviewYouWereRight'
+  | 'lesson.reviewYouWereWrong'
+
 const zh: Record<TranslationKey, string> = {
   'nav.dashboard': '首页',
   'nav.upload': '导入课件',
@@ -869,6 +876,12 @@ const zh: Record<TranslationKey, string> = {
   'notify.lessonsDoneTitle': '关卡生成完成',
   'notify.lessonsDoneBody': '「{course}」的 {count} 个关卡已生成完毕，开始学习吧',
   'notify.newNotice': '新通知',
+  'lesson.review': "复核",
+  'lesson.reviewTitle': "对参考答案有疑问？让 AI 独立重做一遍这道题",
+  'lesson.reviewRunning': "AI 正在独立复核这道题…",
+  'lesson.reviewFailed': "复核失败",
+  'lesson.reviewYouWereRight': "复核结果：你答对了",
+  'lesson.reviewYouWereWrong': "复核结果：参考答案无误",
   'lesson.adjudicating': "你的答案与参考答案不一致，AI 正在独立复核这道题…",
   'lesson.keyFixedNote': "复核结果：题目标注的参考答案有误，你的回答是正确的。本题答案已修正，且不计入错题本。",
   'model.deepseekFlash': "deepseek-flash — V4.1 Flash，响应快、成本低，支持图像理解",
@@ -1514,6 +1527,12 @@ const en: Record<TranslationKey, string> = {
   'notify.lessonsDoneTitle': 'Lessons ready',
   'notify.lessonsDoneBody': '{count} lessons for "{course}" are ready — start learning',
   'notify.newNotice': 'New notice',
+  'lesson.review': "Review",
+  'lesson.reviewTitle': "Doubt the answer key? Have the AI independently re-solve this question",
+  'lesson.reviewRunning': "AI is independently double-checking this question…",
+  'lesson.reviewFailed': "Review failed",
+  'lesson.reviewYouWereRight': "Verdict: you were right",
+  'lesson.reviewYouWereWrong': "Verdict: the answer key stands",
   'lesson.adjudicating': "Your answer differs from the reference answer — AI is double-checking this question…",
   'lesson.keyFixedNote': "Verdict: the reference answer on this question was wrong, and your answer is correct. The question has been fixed and will not be added to the mistake notebook.",
   'model.deepseekFlash': "deepseek-flash — V4.1 Flash, fast and low-cost, supports image understanding",
@@ -2161,6 +2180,12 @@ const ru: Record<TranslationKey, string> = {
   'notify.lessonsDoneTitle': 'Уровни готовы',
   'notify.lessonsDoneBody': '{count} уровней для «{course}» готовы — начинайте учиться',
   'notify.newNotice': 'Новое уведомление',
+  'lesson.review': "Перепроверить",
+  'lesson.reviewTitle': "Сомневаетесь в ответе? Попросите ИИ решить вопрос заново",
+  'lesson.reviewRunning': "ИИ независимо перепроверяет вопрос…",
+  'lesson.reviewFailed': "Не удалось перепроверить",
+  'lesson.reviewYouWereRight': "Вердикт: вы были правы",
+  'lesson.reviewYouWereWrong': "Вердикт: эталонный ответ верен",
   'lesson.adjudicating': "Ваш ответ отличается от эталонного — ИИ перепроверяет вопрос…",
   'lesson.keyFixedNote': "Вердикт: эталонный ответ в вопросе был неверным, а ваш — правильным. Вопрос исправлен и не попадёт в тетрадь ошибок.",
   'model.deepseekFlash': "deepseek-flash — V4.1 Flash: быстрая и недорогая, поддерживает распознавание изображений",
@@ -2808,6 +2833,12 @@ const ja: Record<TranslationKey, string> = {
   'notify.lessonsDoneTitle': 'レベル生成完了',
   'notify.lessonsDoneBody': '「{course}」の{count}個のレベルが生成されました。学習を始めましょう',
   'notify.newNotice': '新着通知',
+  'lesson.review': "再審査",
+  'lesson.reviewTitle': "参考答案に疑問がありますか？AI に独立して解き直させます",
+  'lesson.reviewRunning': "AI が独立して再審査中です…",
+  'lesson.reviewFailed': "再審査に失敗しました",
+  'lesson.reviewYouWereRight': "再審査の結果：あなたが正解でした",
+  'lesson.reviewYouWereWrong': "再審査の結果：参考答案は正しいです",
   'lesson.adjudicating': "あなたの答えと参考答案が一致しないため、AI が独立に复核中です…",
   'lesson.keyFixedNote': "复核結果：この問題の参考答案は誤っており、あなたの回答が正解です。問題は修正され、間違いノートには記録されません。",
   'model.deepseekFlash': "deepseek-flash — V4.1 Flash。高速・低コストで画像理解にも対応",
@@ -3455,6 +3486,12 @@ const ko: Record<TranslationKey, string> = {
   'notify.lessonsDoneTitle': '레벨 생성 완료',
   'notify.lessonsDoneBody': '"{course}"의 {count}개 레벨이 생성되었습니다. 학습을 시작하세요',
   'notify.newNotice': '새 알림',
+  'lesson.review': "재검토",
+  'lesson.reviewTitle': "참고 답안이 의심되나요? AI가 독립적으로 다시 풀게 합니다",
+  'lesson.reviewRunning': "AI가 독립적으로 재검토 중입니다…",
+  'lesson.reviewFailed': "재검토 실패",
+  'lesson.reviewYouWereRight': "판정: 당신이 맞았습니다",
+  'lesson.reviewYouWereWrong': "판정: 참고 답안이 맞습니다",
   'lesson.adjudicating': "답안이 참고 답안과 일치하지 않아 AI가 재검토 중입니다…",
   'lesson.keyFixedNote': "판정: 이 문제의 참고 답안이 잘못되었으며 당신의 답이 맞습니다. 문제가 수정되었고 오답 노트에는 기록되지 않습니다.",
   'model.deepseekFlash': "deepseek-flash — V4.1 Flash. 빠르고 저렴하며 이미지 이해를 지원",

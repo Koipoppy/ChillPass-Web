@@ -5,8 +5,8 @@ import type { WrongQuestion } from '@types/index'
 
 interface WrongQuestionState {
   questions: WrongQuestion[]
-  /** 添加错题 */
-  addWrongQuestion: (q: Omit<WrongQuestion, 'id' | 'createdAt' | 'resolved'>) => void
+  /** 添加错题，返回记录 id（已存在同样题目时返回既有 id） */
+  addWrongQuestion: (q: Omit<WrongQuestion, 'id' | 'createdAt' | 'resolved'>) => string | null
   /** 标记为已掌握（移除） */
   resolveQuestion: (id: string) => void
   /** 删除错题 */
@@ -23,11 +23,11 @@ export const useWrongQuestionStore = create<WrongQuestionState>()(
       questions: [],
 
       addWrongQuestion: (q) => {
-        // 去重：同课程同题目不重复添加
-        const exists = get().questions.some(
+        // 去重：同课程同题目不重复添加，直接复用既有记录
+        const existing = get().questions.find(
           item => item.courseId === q.courseId && item.question === q.question
         )
-        if (exists) return
+        if (existing) return existing.id
 
         const wrongQ: WrongQuestion = {
           ...q,
@@ -36,6 +36,7 @@ export const useWrongQuestionStore = create<WrongQuestionState>()(
           resolved: false,
         }
         set(state => ({ questions: [wrongQ, ...state.questions] }))
+        return wrongQ.id
       },
 
       resolveQuestion: (id) => {

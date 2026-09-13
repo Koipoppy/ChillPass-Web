@@ -1,4 +1,4 @@
-import type { ExamPoint, LessonContent, QuizQuestion, ExamQuestion } from '@types/index'
+import type { ExamPoint, LessonContent, QuizQuestion, ExamQuestion, QuizType } from '@types/index'
 import { useSettingsStore } from '@stores/settingsStore'
 import { useTokenStore } from '@stores/tokenStore'
 import { translate, type TranslationKey } from '../i18n'
@@ -702,53 +702,192 @@ ${optionLines}
 /**
  * 重新生成一道考察相同知识点的小测题
  */
-export async function regenerateQuizQuestion(
-  examPointTitle: string,
-  previousQuestion: string,
-  courseText: string
-): Promise<QuizQuestion> {
-  const systemPrompt = `你是一位大学考试辅导老师。请生成一道新的小测题，考察与以下题目相同的知识点。
-
-之前的题目：${previousQuestion}
-考点：${examPointTitle}
-
-要求：
-- 新题目必须考察相同的知识点，但题目内容和表述不同
-- 数学公式使用 LaTeX 语法（$...$ 或 $$...$$）
-- 选择题的options数组只写选项内容本身，不要包含A. B. C. D.等前缀
-- 出题自洽：先独立推导正确选项再设置 correctIndex，explanation 必须与之完全一致，不得出现更正或质疑 correctIndex 的表述
-- 返回 JSON 格式，包含 type、question、options/correctIndex（选择题）或 answer/acceptableAnswers（填空/简答题）、explanation
-
-返回 JSON：
-{
+/** 各题型的 JSON 输出模板与字段要求（重新生成时按原题题型严格约束） */
+const REGEN_SCHEMA: Record<'choice' | 'multi' | 'fill' | 'short', string> = {
+  choice: `{
   "type": "choice",
   "question": "新题目",
   "options": ["选项内容A", "选项内容B", "选项内容C", "选项内容D"],
   "correctIndex": 0,
   "explanation": "解析"
-}`
+}`,
+  multi: `{
+  "type": "multi",
+  "question": "新题目",
+  "options": ["选项内容A", "选项内容B", "选项内容C", "选项内容D", "选项内容E"],
+  "correctIndices": [0, 2],
+  "explanation": "解析"
+}`,
+  fill: `{
+  "type": "fill",
+  "question": "新题目（含空格）",
+  "answer": "标准答案",
+  "acceptableAnswers": ["其他可接受答案"],
+  "explanation": "解析"
+}`,
+  short: `{
+  "type": "short",
+  "question": "新题目",
+  "answer": "参考答案",
+  "acceptableAnswers": ["关键词1", "关键词2"],
+  "explanation": "解析"
+}`,
+}
 
-  const result = await callDeepSeek(
-    [
-      { role: 'system', content: systemPrompt },
-      { role: 'user', content: `课件相关内容：\n${courseText.slice(0, 3000)}` },
-    ],
-    { temperature: 0.7, maxTokens: 2048 }
-  )
+const TYPE_LABEL: Record<'choice' | 'multi' | 'fill' | 'short', string> = {
+  choice: '单选题',
+  multi: '多选题',
+  fill: '填空题',
+  short: '简答题',
+}
 
-  try {
-    const jsonMatch = result.match(/\{[\s\S]*\}/)
-    const json = jsonMatch ? jsonMatch[0] : result
-    const parsed = JSON.parse(json)
-    return {
-      ...parsed,
-      type: parsed.type || 'choice',
-      id: `quiz-regen-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-      examPointTitle,
-    }
-  } catch {
-    throw serviceError('service.regenQuestionFailed')
+/**
+ * 校验并规范化重新生成的题目
+ * 题型必须与原题一致，且该题型的必填字段齐备，否则视为生成失败
+ */
+function normalizeRegeneratedQuestion(
+  parsed: any,
+  expectedType: 'choice' | 'multi' | 'fill' | 'short',
+  examPointTitle: string,
+  previousId: string,
+): QuizQuestion {
+  const fail = (): never => {
+    throw new Error('invalid-regenerated-question')
   }
+
+  if (!parsed || typeof parsed !== 'object') fail()
+  if (parsed.type !== expectedType) fail()
+
+  const question = typeof parsed.question === 'string' ? parsed.question.trim() : ''
+  if (!question) fail()
+
+  const base: QuizQuestion = {
+    ...parsed,
+    type: expectedType,
+    question,
+    id: `quiz-regen-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+    examPointTitle,
+    explanation: typeof parsed.explanation === 'string' ? parsed.explanation : '',
+  }
+
+  if (expectedType === 'choice' || expectedType === 'multi') {
+    const options: unknown = parsed.options
+    const minOptions = expectedType === 'choice' ? 2 : 3
+    if (!Array.isArray(options) || options.length < minOptions) fail()
+    if (!(options as unknown[]).every(o => typeof o === 'string' && o.trim().length > 0)) fail()
+    base.options = options as string[]
+  }
+
+  if (expectedType === 'choice') {
+    const idx: unknown = parsed.correctIndex
+    if (typeof idx !== 'number' || !Number.isInteger(idx) || idx < 0 || idx >= base.options!.length) {
+      fail()
+    }
+    base.correctIndex = idx as number
+    delete base.correctIndices
+    delete base.answer
+    delete base.acceptableAnswers
+  } else if (expectedType === 'multi') {
+    const idxs: unknown = parsed.correctIndices
+    const valid =
+      Array.isArray(idxs) &&
+      idxs.length >= 2 &&
+      idxs.every((n: unknown) => typeof n === 'number' && Number.isInteger(n) && n >= 0 && n < base.options!.length) &&
+      new Set(idxs as number[]).size === (idxs as number[]).length
+    if (!valid) fail()
+    base.correctIndices = (idxs as number[]).slice().sort((a, b) => a - b)
+    delete base.correctIndex
+    delete base.answer
+    delete base.acceptableAnswers
+  } else {
+    // 填空 / 简答：必须有参考答案
+    const answer = typeof parsed.answer === 'string' ? parsed.answer.trim() : ''
+    if (!answer) fail()
+    base.answer = answer
+    base.acceptableAnswers = Array.isArray(parsed.acceptableAnswers)
+      ? (parsed.acceptableAnswers as unknown[]).filter((a): a is string => typeof a === 'string')
+      : []
+    delete base.options
+    delete base.correctIndex
+    delete base.correctIndices
+  }
+
+  void previousId
+  return base
+}
+
+/**
+ * 重新生成一道小测题
+ * 硬性要求：与原题【题型相同】、【考察知识点相同】，仅题目内容与表述不同
+ * 题型不一致或字段不完整时会自动重试，避免出现无法作答的新题
+ */
+export async function regenerateQuizQuestion(
+  examPointTitle: string,
+  previousQuestion: string,
+  previousType: QuizType,
+  courseText: string,
+  previousId: string,
+  previousExplanation?: string,
+): Promise<QuizQuestion> {
+  const expectedType = (previousType || 'choice') as 'choice' | 'multi' | 'fill' | 'short'
+  const typeLabel = TYPE_LABEL[expectedType]
+  const schema = REGEN_SCHEMA[expectedType]
+
+  const systemPrompt = `你是一位大学考试辅导老师。请生成一道新的小测题，替代以下旧题。
+
+【知识点】${examPointTitle}
+【旧题（${typeLabel}）】${previousQuestion}
+${previousExplanation ? `【旧题解析】${previousExplanation}` : ''}
+
+硬性要求（必须全部满足）：
+1. 题型必须是「${typeLabel}」，type 字段固定为 "${expectedType}"，不得改成其它题型
+2. 考察的知识点必须与旧题完全相同（同一个考点、同一条公式/概念的运用），只是题目背景、数值或问法不同
+3. 数学公式使用 LaTeX 语法（$...$ 或 $$...$$）
+4. 出题自洽：先独立推导出正确答案，再据此设置答案字段；explanation 必须与该答案完全一致，不得出现更正或质疑答案的表述${expectedType === 'choice' || expectedType === 'multi' ? '\n5. options 数组只写选项内容本身，不要包含A. B. C. D.等前缀' : ''}
+${expectedType === 'multi' ? '6. correctIndices 至少包含 2 个正确选项索引（从 0 开始）' : ''}
+${expectedType === 'choice' ? '5. correctIndex 为唯一正确选项的索引（从 0 开始）' : ''}
+${expectedType === 'fill' || expectedType === 'short' ? '5. answer 为标准答案，acceptableAnswers 列出其他可接受的答案或关键词' : ''}
+
+只返回如下 JSON，不要包含任何其他文字：
+${schema}`
+
+  const maxAttempts = 2
+  let lastError: unknown = null
+
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      const result = await callDeepSeek(
+        [
+          { role: 'system', content: systemPrompt },
+          {
+            role: 'user',
+            content: `课件相关内容：
+${courseText.slice(0, 3000)}${
+              attempt > 1 ? `
+
+注意：上一次生成未通过校验（必须是${typeLabel}且字段完整），请严格按 JSON 模板与硬性要求重新生成。` : ''
+            }`,
+          },
+        ],
+        { temperature: attempt > 1 ? 0.4 : 0.7, maxTokens: 2048 }
+      )
+
+      const jsonMatch = result.match(/\{[\s\S]*\}/)
+      const json = jsonMatch ? jsonMatch[0] : result
+      const parsed = JSON.parse(json)
+      return normalizeRegeneratedQuestion(parsed, expectedType, examPointTitle, previousId)
+    } catch (err) {
+      lastError = err
+      // 字段不合规：重试一次；网络/接口错误：直接抛出，避免无谓等待
+      const retriable = err instanceof Error && err.message === 'invalid-regenerated-question'
+      if (!retriable || attempt === maxAttempts) break
+    }
+  }
+
+  if (lastError instanceof Error && lastError.message !== 'invalid-regenerated-question') {
+    throw lastError
+  }
+  throw serviceError('service.regenQuestionFailed')
 }
 
 /**
