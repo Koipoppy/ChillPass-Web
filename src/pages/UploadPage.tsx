@@ -1,8 +1,9 @@
-import { useState, useCallback } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useState, useCallback, useEffect, useRef } from 'react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { nanoid } from 'nanoid'
 import { Upload, FileText, Loader, X, ChevronRight, ChevronDown, CheckCircle, Settings } from 'lucide-react'
 import { useCourseStore, useCurrentBundle } from '@stores/courseStore'
+import { useUiStyleStore } from '@stores/uiStyleStore'
 import { parseFile, cleanText } from '@services/fileParser'
 import { extractExamPoints } from '@services/deepseek'
 import { generateAllLessonsInBackground } from '@services/lessonGenerator'
@@ -50,9 +51,25 @@ export default function UploadPage() {
   const mergeExamPoints = useCourseStore(s => s.mergeExamPoints)
   const switchCourse = useCourseStore(s => s.switchCourse)
 
-  const [mode, setMode] = useState<ImportMode>(courses.length > 0 ? 'append' : 'create')
-  const [selectedCourseId, setSelectedCourseId] = useState<string>(
-    courses.length > 0 ? courses[0].course.id : ''
+  const [searchParams] = useSearchParams()
+  // 新版布局把「新建课程」收敛到导航栏的课程管理里（跳转时带 ?mode=create），
+  // 导入页本身不再提供模式切换
+  const isDock = useUiStyleStore(s => s.uiStyle) === 'dock'
+  const requestedMode = searchParams.get('mode')
+
+  const [mode, setMode] = useState<ImportMode>(() =>
+    requestedMode === 'create' || requestedMode === 'append'
+      ? requestedMode
+      : courses.length > 0
+        ? 'append'
+        : 'create'
+  )
+  const [selectedCourseId, setSelectedCourseId] = useState<string>(() =>
+    isDock
+      ? (bundle?.course.id ?? courses[0]?.course.id ?? '')
+      : courses.length > 0
+        ? courses[0].course.id
+        : ''
   )
   const [courseName, setCourseName] = useState(currentCourse?.name ?? '')
   // 增量模式下只显示新选择的文件，不显示已有文件
@@ -66,6 +83,28 @@ export default function UploadPage() {
 
   const isBusy = phase !== 'idle'
   const hasExistingCourses = courses.length > 0
+
+  // 已经在导入页时又点了课程管理里的「新建课程」，路由不变、只有 query 变，这里补一次同步
+  const prevRequestedRef = useRef(requestedMode)
+  useEffect(() => {
+    const prev = prevRequestedRef.current
+    prevRequestedRef.current = requestedMode
+    if (isBusy) return
+    if (requestedMode === 'create' || requestedMode === 'append') {
+      setMode(requestedMode)
+    } else if (prev !== null) {
+      setMode(courses.length > 0 ? 'append' : 'create')
+    }
+    // courses.length 故意不入依赖：导入完成会新增课程，不能让模式跟着跳
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [requestedMode, isBusy])
+
+  // 新版布局以课程为对象：导入课件就是向当前课程导入，导入目标始终跟随当前课程
+  useEffect(() => {
+    if (!isDock) return
+    const id = bundle?.course.id
+    if (id) setSelectedCourseId(id)
+  }, [isDock, bundle?.course.id])
 
   /** 计算模式按钮样式 */
   const getModeButtonStyle = (isActive: boolean, disabled: boolean): React.CSSProperties => ({
@@ -350,6 +389,27 @@ export default function UploadPage() {
     }
   }
 
+  /**
+   * 新版布局：导入课件就是导入当前课程，没有需要确认的选项，
+   * 所以选好文件就自动开始，页面上不再常驻提交按钮。
+   * 用「文件集签名」去重，保证同一批文件只触发一次（出错后不会自动重试刷接口）。
+   */
+  const autoStartedRef = useRef('')
+  useEffect(() => {
+    if (!isDock || mode !== 'append' || isBusy) return
+    if (files.length === 0) return
+    const signature = files.map(f => `${f.name}:${f.size}`).join('|')
+    if (autoStartedRef.current === signature) return
+    // 稍等片刻：一次性拖入多个文件只触发一次导入
+    const timer = setTimeout(() => {
+      autoStartedRef.current = signature
+      void handleAppendParse()
+    }, 450)
+    return () => clearTimeout(timer)
+    // handleAppendParse 每次渲染都是新函数，不入依赖
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isDock, mode, isBusy, files])
+
   const startButtonText = isBusy
     ? t('upload.processing')
     : mode === 'create'
@@ -371,29 +431,31 @@ export default function UploadPage() {
       </header>
 
       <div className={`${styles.card} liquid-glass`}>
-        {/* 模式选择器 */}
-        <div style={modeSelectorStyle}>
-          <button
-            type="button"
-            style={getModeButtonStyle(mode === 'create', isBusy)}
-            onClick={() => handleModeChange('create')}
-            disabled={isBusy}
-          >
-            <FileText size={16} strokeWidth={2} />
-            <span>{t('upload.modeCreate')}</span>
-          </button>
-          <button
-            type="button"
-            style={getModeButtonStyle(mode === 'append', isBusy || !hasExistingCourses)}
-            onClick={() => handleModeChange('append')}
-            disabled={isBusy || !hasExistingCourses}
-            title={!hasExistingCourses ? t('upload.noExisting') : t('upload.appendTip')}
-          >
-            <CheckCircle size={16} strokeWidth={2} />
-            <span>{t('upload.modeAppendFull')}</span>
-          </button>
-        </div>
-        {!hasExistingCourses && (
+        {/* 模式选择器：新版布局下移除，新建课程改从导航栏的课程管理进入 */}
+        {!isDock && (
+          <div style={modeSelectorStyle}>
+            <button
+              type="button"
+              style={getModeButtonStyle(mode === 'create', isBusy)}
+              onClick={() => handleModeChange('create')}
+              disabled={isBusy}
+            >
+              <FileText size={16} strokeWidth={2} />
+              <span>{t('upload.modeCreate')}</span>
+            </button>
+            <button
+              type="button"
+              style={getModeButtonStyle(mode === 'append', isBusy || !hasExistingCourses)}
+              onClick={() => handleModeChange('append')}
+              disabled={isBusy || !hasExistingCourses}
+              title={!hasExistingCourses ? t('upload.noExisting') : t('upload.appendTip')}
+            >
+              <CheckCircle size={16} strokeWidth={2} />
+              <span>{t('upload.modeAppendFull')}</span>
+            </button>
+          </div>
+        )}
+        {!hasExistingCourses && !isDock && (
           <div style={hintStyle}>{t('upload.appendModeHint')}</div>
         )}
 
@@ -412,8 +474,8 @@ export default function UploadPage() {
           </div>
         )}
 
-        {/* 增量导入模式：课程选择 */}
-        {mode === 'append' && (
+        {/* 增量导入模式：课程选择（新版布局以课程为对象，导入即导入当前课程，不提供选择） */}
+        {mode === 'append' && !isDock && (
           <div className={styles.field}>
             <label className={styles.label}>{t('upload.selectExisting')}</label>
             <div style={selectWrapperStyle}>
@@ -599,15 +661,19 @@ export default function UploadPage() {
           </div>
         )}
 
-        {/* 开始按钮 */}
-        <button
-          className={styles.parseButton}
-          onClick={handleStartParse}
-          disabled={isBusy}
-        >
-          {startButtonText}
-          {!isBusy && <ChevronRight size={18} strokeWidth={2} />}
-        </button>
+        {/* 开始按钮
+            新版布局下导入是自动触发的，这里只在出错时留一个重试入口，
+            平时不占位、页面也就不用滚动了 */}
+        {(!isDock || error) && (
+          <button
+            className={styles.parseButton}
+            onClick={handleStartParse}
+            disabled={isBusy}
+          >
+            {error && !isBusy ? t('settings.retry') : startButtonText}
+            {!isBusy && <ChevronRight size={18} strokeWidth={2} />}
+          </button>
+        )}
       </div>
     </div>
   )

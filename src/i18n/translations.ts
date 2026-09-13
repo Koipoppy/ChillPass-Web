@@ -684,6 +684,7 @@ export type TranslationKey =
   | 'dock.expandSidebar'
   | 'dock.collapseSidebar'
   | 'dock.resizeTip'
+  | 'dock.expandPanel'
 
 const zh: Record<TranslationKey, string> = {
   'nav.dashboard': '首页',
@@ -1346,6 +1347,7 @@ const zh: Record<TranslationKey, string> = {
   'dock.markAllRead': "全部已读",
   'dock.expandSidebar': "展开侧边栏",
   'dock.collapseSidebar': "收起侧边栏",
+  'dock.expandPanel': "展开",
   'dock.resizeTip': "上下拖动可调整底部三栏高度",
 }
 
@@ -2010,6 +2012,7 @@ const en: Record<TranslationKey, string> = {
   'dock.markAllRead': "Mark all read",
   'dock.expandSidebar': "Expand sidebar",
   'dock.collapseSidebar': "Collapse sidebar",
+  'dock.expandPanel': "Expand",
   'dock.resizeTip': "Drag up or down to resize the bottom panels",
 }
 
@@ -2674,6 +2677,7 @@ const ru: Record<TranslationKey, string> = {
   'dock.markAllRead': "Прочитать все",
   'dock.expandSidebar': "Развернуть панель",
   'dock.collapseSidebar': "Свернуть панель",
+  'dock.expandPanel': "Развернуть",
   'dock.resizeTip': "Потяните вверх или вниз, чтобы изменить высоту нижних панелей",
 }
 
@@ -3338,6 +3342,7 @@ const ja: Record<TranslationKey, string> = {
   'dock.markAllRead': "すべて既読",
   'dock.expandSidebar': "サイドバーを展開",
   'dock.collapseSidebar': "サイドバーを畳む",
+  'dock.expandPanel': "展開",
   'dock.resizeTip': "上下にドラッグして下部パネルの高さを調整",
 }
 
@@ -4002,6 +4007,7 @@ const ko: Record<TranslationKey, string> = {
   'dock.markAllRead': "모두 읽음",
   'dock.expandSidebar': "사이드바 펼치기",
   'dock.collapseSidebar': "사이드바 접기",
+  'dock.expandPanel': "펼치기",
   'dock.resizeTip': "위아래로 드래그하여 하단 패널 높이 조절",
 }
 

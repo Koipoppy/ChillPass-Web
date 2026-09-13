@@ -67,7 +67,8 @@
 /* ===== 上边界拖动条：统一调整底部三栏高度 ===== */
 .resizer {
   position: absolute;
-  top: -7px;
+  /* 落在关卡区下边界与底边栏卡片上边界之间那道 10px 缝里 */
+  top: -12px;
   left: 0;
   right: 0;
   height: 14px;
@@ -77,8 +78,15 @@
   justify-content: center;
   cursor: ns-resize;
   touch-action: none;
+  transition: opacity 0.22s ease;
   /* 只做视觉提示，空白处不额外拦截（自身仍是拖动热区） */
   background: transparent;
+}
+
+/* 卡片展开时dock 上边界已被盖住：拖动条整体让位（不显示也不拦截点击） */
+.resizerHidden {
+  opacity: 0;
+  pointer-events: none;
 }
 
 .resizerGrip {
@@ -113,12 +121,83 @@
   background: var(--bg-surface);
   border: 1px solid rgba(0, 0, 0, 0.06);
   box-shadow: var(--shadow-ambient);
+  /* 贴住 dock 底部：展开时与左侧栏卡片一样只向上长高 */
+  align-self: flex-end;
+  height: var(--dock-h);
+  transition: height 0.34s cubic-bezier(0.32, 0.72, 0, 1);
+  will-change: height;
 }
 
-/* 页面内容较窄时需要横向滚动时保持在卡片内 */
+/* 启用 Athena 时自动展开，用与侧边栏一致的回弹曲线 */
+.pageAreaExpanded {
+  height: calc(100vh - 50px);
+  transition: height 0.62s cubic-bezier(0.34, 1.38, 0.64, 1);
+}
+
+/* 拖动 dock 上边界时高度要跟手 */
+:global([data-dock-resizing]) .pageArea {
+  transition: none;
+}
+
+/* 页面内容保持在卡片内（含 z-index，必须排在下面的头部栏之前） */
 .pageArea > * {
   position: relative;
   z-index: 1;
+}
+
+/* 展开态的头部栏：页面名 + 收起按钮 */
+.pageBar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  /* 收起按钮靠右；标题绝对定位居中以避开按钮宽度的影响 */
+  justify-content: flex-end;
+  padding: 0 10px;
+  /* 不透明底：页面内容滚上来时被它挡住 */
+  background: var(--bg-surface);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.pageBarTitle {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  max-width: calc(100% - 120px);
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--text-tertiary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pageCollapse {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 22px;
+  padding: 0;
+  border: 1px solid rgba(0, 0, 0, 0.07);
+  border-radius: var(--radius-pill);
+  background: rgba(0, 0, 0, 0.03);
+  color: var(--text-tertiary);
+  cursor: pointer;
+  transition: color 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+}
+
+.pageCollapse:hover {
+  color: var(--text-primary);
+  background: rgba(0, 0, 0, 0.07);
+  border-color: rgba(0, 0, 0, 0.14);
 }
 
 /* ===== 主题覆盖 ===== */
@@ -127,16 +206,45 @@
   border-color: rgba(255, 255, 255, 0.08);
 }
 
+[data-theme="dark"] .pageBar {
+  background: #1c1c1e;
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="dark"] .pageCollapse {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+[data-theme="dark"] .pageCollapse:hover {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
 [data-theme="vista"] .pageArea {
   background: rgba(255, 255, 255, 0.82);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
 }
 
+[data-theme="vista"] .pageBar {
+  background: rgba(255, 255, 255, 0.9);
+}
+
 [data-theme="codex"] .pageArea {
   background: #161b22;
   border-color: rgba(240, 246, 252, 0.1);
   box-shadow: none;
+}
+
+[data-theme="codex"] .pageBar {
+  background: #161b22;
+  border-bottom-color: rgba(240, 246, 252, 0.1);
+}
+
+[data-theme="codex"] .pageCollapse {
+  background: rgba(240, 246, 252, 0.08);
+  border-color: rgba(240, 246, 252, 0.12);
 }
 
 [data-theme="codex"] .stagePlaceholder {

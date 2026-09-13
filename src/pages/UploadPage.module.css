@@ -362,11 +362,12 @@
    ============================================================ */
 :global([data-ui-style='dock']) .page {
   max-width: none;
-  padding: 0 0 8px;
+  /* 去掉上下留白，让整页刚好落在卡片里、不需要滚动 */
+  padding: 0;
 }
 
 :global([data-ui-style='dock']) .header {
-  gap: 2px;
+  margin-bottom: 10px;
 }
 
 :global([data-ui-style='dock']) .title {
@@ -383,14 +384,14 @@
   border-radius: var(--radius-md);
 }
 
-/* 拖放区与步骤提示并排，省下竖向空间 */
+/* 拖放区压缩，配合去掉的提交按钮让整页免滚动 */
 :global([data-ui-style='dock']) .dropzone {
-  padding: 20px 20px;
+  padding: 16px 18px;
 }
 
 :global([data-ui-style='dock']) .dropzoneIcon {
-  width: 40px;
-  height: 40px;
+  width: 34px;
+  height: 34px;
 }
 
 :global([data-ui-style='dock']) .fileItem {

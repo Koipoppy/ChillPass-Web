@@ -238,6 +238,14 @@
 /* 紧凑排版：窄卡片里一行放得下「图标 + 文字」 */
 .rail .nav {
   gap: 2px;
+  /* 面板高度可被拖到很小，导航要能自己滚动（隐藏滚动条） */
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.rail .nav::-webkit-scrollbar {
+  display: none;
 }
 
 .rail .navItem {

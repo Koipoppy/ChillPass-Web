@@ -36,6 +36,14 @@
   left: 18px;
   right: 18px;
   bottom: 16px;
+  /* 中部卡片带头部栏时（Athena）顶部让出 34px 给展开/收起开关 */
+  padding-top: 0;
+  transition: padding-top 0.34s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+:global([data-page-bar]) .pageWrapperDock {
+  padding-top: 34px;
+  transition: padding-top 0.62s cubic-bezier(0.34, 1.38, 0.64, 1);
 }
 
 /*

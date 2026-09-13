@@ -1,8 +1,11 @@
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
-import SidebarRail from './SidebarRail'
+import { useLocation } from 'react-router-dom'
+import { ChevronDown, ChevronUp } from 'lucide-react'
+import Sidebar from '../Sidebar'
 import NotificationCenter from './NotificationCenter'
 import { useCurrentBundle } from '@stores/courseStore'
 import { useUiStyleStore } from '@stores/uiStyleStore'
+import { NAV_ITEMS, WORKSPACE_ITEM } from '../navItems'
 import { useT } from '../../../i18n'
 import styles from './DockLayout.module.css'
 
@@ -54,6 +57,30 @@ export default function DockLayout({ children }: { children: ReactNode }) {
   const effectiveHeight =
     dockHeight === null ? undefined : `${clamp(dockHeight)}px`
 
+  // ── 中间卡片（页面区）的展开态 ──
+  // 进入 Athena 时自动展开（与左侧栏一样只向上长高），用户可手动收起
+  const location = useLocation()
+  const isChat = location.pathname.startsWith('/chat')
+  const [pageExpanded, setPageExpanded] = useState(false)
+  // 左侧栏的展开态提到这里，便于判断「有没有卡片长到 dock 上边界之上」
+  const [railExpanded, setRailExpanded] = useState(false)
+
+  useEffect(() => {
+    setPageExpanded(isChat)
+  }, [isChat])
+
+  /** 任一卡片展开后都会盖住 dock 的上边界，此时拖动条要让位 */
+  const anyCardExpanded = railExpanded || pageExpanded
+
+  /** 只有 Athena 这一页带可展开的头部栏 */
+  const canExpandPage = isChat
+
+  /** 头部栏里的页面名 */
+  const pageLabel = (() => {
+    const item = [...NAV_ITEMS, WORKSPACE_ITEM].find(i => i.path === location.pathname)
+    return item ? t(item.labelKey) : null
+  })()
+
   /** 拖动上边界：向上拖高、向下拖矮，三个底边栏高度统一跟随 */
   const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
     dragRef.current = {
@@ -102,9 +129,16 @@ export default function DockLayout({ children }: { children: ReactNode }) {
       </section>
 
       <div className={styles.dock} ref={dockRef}>
-        {/* 上边界拖动条：统一调整底部三栏高度 */}
+        {/* 上边界拖动条：统一调整底部三栏高度；
+            有卡片展开盖住上边界时隐去，避免压住卡片内容也避免误触 */}
         <div
-          className={`${styles.resizer} ${resizing ? styles.resizerActive : ''}`}
+          className={[
+            styles.resizer,
+            resizing ? styles.resizerActive : '',
+            anyCardExpanded ? styles.resizerHidden : '',
+          ]
+            .filter(Boolean)
+            .join(' ')}
           onPointerDown={handlePointerDown}
           onPointerMove={handlePointerMove}
           onPointerUp={handlePointerUp}
@@ -113,12 +147,43 @@ export default function DockLayout({ children }: { children: ReactNode }) {
           aria-orientation="horizontal"
           aria-label={t('dock.resizeTip')}
           title={t('dock.resizeTip')}
+          aria-hidden={anyCardExpanded}
         >
           <span className={styles.resizerGrip} />
         </div>
 
-        <SidebarRail />
-        <main className={styles.pageArea}>{children}</main>
+        <Sidebar
+          variant="rail"
+          expanded={railExpanded}
+          onToggleExpand={() => setRailExpanded(v => !v)}
+        />
+        <main
+          className={`${styles.pageArea} ${pageExpanded ? styles.pageAreaExpanded : ''}`}
+          data-page-bar={canExpandPage ? '' : undefined}
+        >
+          {/* 可展开的页面（Athena）常驻一条头部栏：既是页面名，也是展开/收起的开关本身，
+              收起后仍留在这里，避免「收起就再也展不开」 */}
+          {canExpandPage && (
+            <div className={styles.pageBar}>
+              <span className={styles.pageBarTitle}>{pageLabel}</span>
+              <button
+                type="button"
+                className={styles.pageCollapse}
+                onClick={() => setPageExpanded(v => !v)}
+                title={pageExpanded ? t('guide.collapse') : t('dock.expandPanel')}
+                aria-label={pageExpanded ? t('guide.collapse') : t('dock.expandPanel')}
+                aria-expanded={pageExpanded}
+              >
+                {pageExpanded ? (
+                  <ChevronDown size={14} strokeWidth={2.2} />
+                ) : (
+                  <ChevronUp size={14} strokeWidth={2.2} />
+                )}
+              </button>
+            </div>
+          )}
+          {children}
+        </main>
         <NotificationCenter />
       </div>
     </div>

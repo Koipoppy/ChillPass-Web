@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import type { LucideIcon } from 'lucide-react'
 import {
@@ -61,8 +61,36 @@ export default function NotificationCenter() {
 
   const unreadCount = notifications.filter(n => !n.read).length
 
+  // ── 悬停自动展开 ──
+  // 轻微延迟，避免鼠标扫过右边缘时误触发；离开卡片即收起（面板本身在卡片内，
+  // 所以从铃铛移到面板不会触发离开）
+  const hoverTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const clearHoverTimer = () => {
+    if (hoverTimerRef.current) {
+      clearTimeout(hoverTimerRef.current)
+      hoverTimerRef.current = null
+    }
+  }
+  useEffect(() => clearHoverTimer, [])
+
+  const handleMouseEnter = () => {
+    if (open || hoverTimerRef.current) return
+    hoverTimerRef.current = setTimeout(() => {
+      hoverTimerRef.current = null
+      setOpen(true)
+    }, 120)
+  }
+
+  /** 移开只是「瞄一眼」，不标记已读；显式关闭才标记 */
+  const handleMouseLeave = () => {
+    clearHoverTimer()
+    if (!open) return
+    setOpen(false)
+  }
+
   /** 收起面板即视为已读：铃铛上的红点随之消失 */
   const close = () => {
+    clearHoverTimer()
     setOpen(false)
     if (unreadCount > 0) markAllRead()
   }
@@ -99,7 +127,11 @@ export default function NotificationCenter() {
   }
 
   return (
-    <aside className={`${styles.zone} ${open ? styles.zoneOpen : ''}`}>
+    <aside
+      className={`${styles.zone} ${open ? styles.zoneOpen : ''}`}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
       {/* 点击面板外区域收起 */}
       {open && <div className={styles.clickAway} onClick={close} aria-hidden="true" />}
 

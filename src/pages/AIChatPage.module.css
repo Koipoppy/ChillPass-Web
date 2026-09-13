@@ -1626,3 +1626,8 @@
 :global([data-ui-style='dock']) .textarea {
   max-height: 76px;
 }
+
+/* 展开态的头部栏已经显示了页面名，聊天头部不再重复一遍标题 */
+:global([data-ui-style='dock']) .title {
+  display: none;
+}

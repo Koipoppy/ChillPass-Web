@@ -153,6 +153,12 @@ export default function Sidebar({
       <>{children}</>
     )
 
+  // rail 变体去掉「闯关冲刺」：关卡入口改由关卡区承担
+  const navItems = [
+    ...NAV_ITEMS.filter(item => !(isRail && item.path === '/lessons')),
+    ...(isTeacher ? [WORKSPACE_ITEM] : []),
+  ]
+
   return (
     <aside
       className={[
@@ -192,7 +198,7 @@ export default function Sidebar({
 
         {/* 导航 */}
         <nav className={styles.nav}>
-          {(isTeacher ? [...NAV_ITEMS, WORKSPACE_ITEM] : NAV_ITEMS).map(item => {
+          {navItems.map(item => {
             const Icon = item.icon
             return (
               <NavLink
@@ -355,7 +361,8 @@ export default function Sidebar({
                     className={styles.courseMenuBtn}
                     onClick={() => {
                       setMenuOpen(false)
-                      navigate('/upload')
+                      // 新建课程的入口收敛到课程管理里；带上 mode 让导入页直接进入新建流程
+                      navigate('/upload?mode=create')
                     }}
                   >
                     <Plus size={13} strokeWidth={2.2} />
