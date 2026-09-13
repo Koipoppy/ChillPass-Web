@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import {
@@ -100,6 +100,93 @@ export default function GuideCard() {
   // 引导完成后默认收起为小徽章（未读通知会以黄色感叹号提示）；引导中默认展开
   const [collapsed, setCollapsed] = useState(allDone)
 
+  // ── 可拖动定位：默认右下角，位置以「距右边/下边的距离」保存，随窗口自适应 ──
+  const POS_KEY = 'chillpass-guidecard-pos'
+  const DEFAULT_POS = { right: 24, bottom: 24 }
+  const [pos, setPos] = useState<{ right: number; bottom: number }>(() => {
+    try {
+      const raw = localStorage.getItem(POS_KEY)
+      if (raw) {
+        const parsed = JSON.parse(raw)
+        if (typeof parsed?.right === 'number' && typeof parsed?.bottom === 'number') return parsed
+      }
+    } catch {
+      // 读取失败时用默认位置
+    }
+    return DEFAULT_POS
+  })
+  const anchorRef = useRef<HTMLDivElement>(null)
+  const dragRef = useRef<{ startX: number; startY: number; startRight: number; startBottom: number } | null>(null)
+  const [dragging, setDragging] = useState(false)
+  // 拖动过程中置位，用于抑制紧随其后的 click（避免拖动被当成展开/收起）
+  const movedRef = useRef(false)
+
+  /** 把位置钳制在视口内，避免拖出屏幕 */
+  const clampPos = useCallback((next: { right: number; bottom: number }) => {
+    const el = anchorRef.current
+    const margin = 8
+    const w = el?.offsetWidth ?? 60
+    const h = el?.offsetHeight ?? 60
+    const maxRight = Math.max(margin, window.innerWidth - w - margin)
+    const maxBottom = Math.max(margin, window.innerHeight - h - margin)
+    return {
+      right: Math.min(Math.max(next.right, margin), maxRight),
+      bottom: Math.min(Math.max(next.bottom, margin), maxBottom),
+    }
+  }, [])
+
+  // 窗口尺寸变化时重新钳制，防止卡片留在可视区之外
+  useEffect(() => {
+    const onResize = () => setPos(p => clampPos(p))
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [clampPos])
+
+  /** 开始拖动（指针事件：支持鼠标 / 触屏 / 触控笔） */
+  const handleDragStart = (e: React.PointerEvent) => {
+    // 卡片内在做文字选择或点击按钮时不启动拖动
+    if ((e.target as HTMLElement).closest('button') && !(e.target as HTMLElement).closest('[data-drag-handle]')) {
+      return
+    }
+    dragRef.current = {
+      startX: e.clientX,
+      startY: e.clientY,
+      startRight: pos.right,
+      startBottom: pos.bottom,
+    }
+    movedRef.current = false
+    setDragging(true)
+    try {
+      ;(e.currentTarget as HTMLElement).setPointerCapture(e.pointerId)
+    } catch {
+      // 某些环境下不支持指针捕获，退化为普通拖动
+    }
+  }
+
+  const handleDragMove = (e: React.PointerEvent) => {
+    const drag = dragRef.current
+    if (!drag) return
+    const dx = e.clientX - drag.startX
+    const dy = e.clientY - drag.startY
+    if (!movedRef.current && Math.abs(dx) + Math.abs(dy) > 4) movedRef.current = true
+    if (!movedRef.current) return
+    setPos(clampPos({ right: drag.startRight - dx, bottom: drag.startBottom - dy }))
+  }
+
+  const handleDragEnd = () => {
+    if (!dragRef.current) return
+    dragRef.current = null
+    setDragging(false)
+    setPos(p => {
+      try {
+        localStorage.setItem(POS_KEY, JSON.stringify(p))
+      } catch {
+        // 存储不可用时仅本次生效
+      }
+      return p
+    })
+  }
+
   const unreadCount = notifications.filter(n => !n.read).length
 
   // 收起动作即视为已读：黄色感叹号提示随之消失
@@ -159,11 +246,20 @@ export default function GuideCard() {
   // ── 折叠态：圆形小徽章（与展开卡片通过 AnimatePresence 做形变衔接）──
   if (collapsed) {
     return (
-      <div className={styles.cardAnchor}>
+      <div
+        className={`${styles.cardAnchor} ${dragging ? styles.dragging : ''}`}
+        style={{ right: pos.right, bottom: pos.bottom }}
+        ref={anchorRef}
+        onPointerDown={handleDragStart}
+        onPointerMove={handleDragMove}
+        onPointerUp={handleDragEnd}
+        onPointerCancel={handleDragEnd}
+      >
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key="badge"
             className={styles.badgeWrap}
+            title={t('guide.dragHint')}
             initial={{ scale: 0.4, opacity: 0 }}
             animate={{
               scale: 1,
@@ -180,7 +276,10 @@ export default function GuideCard() {
             <button
               type="button"
               className={`liquid-glass ${styles.collapsedCard}`}
-              onClick={() => setCollapsed(false)}
+              onClick={() => {
+                if (movedRef.current) return
+                setCollapsed(false)
+              }}
               aria-label={unreadCount > 0 ? t('notify.newNotice') : t('guide.expand')}
               title={unreadCount > 0 ? t('notify.newNotice') : t('guide.expand')}
             >
@@ -204,7 +303,11 @@ export default function GuideCard() {
   }
 
   return (
-    <div className={styles.cardAnchor}>
+    <div
+      className={`${styles.cardAnchor} ${dragging ? styles.dragging : ''}`}
+      style={{ right: pos.right, bottom: pos.bottom }}
+      ref={anchorRef}
+    >
       <AnimatePresence mode="wait" initial={false}>
         <motion.div
           key="card"
@@ -224,7 +327,15 @@ export default function GuideCard() {
           }}
           style={{ transformOrigin: '85% 100%' }}
         >
-        <div className={styles.header}>
+        <div
+          className={styles.header}
+          data-drag-handle
+          title={t('guide.dragHint')}
+          onPointerDown={handleDragStart}
+          onPointerMove={handleDragMove}
+          onPointerUp={handleDragEnd}
+          onPointerCancel={handleDragEnd}
+        >
           <div className={styles.headerTitle}>
             <span className={styles.headerIcon}>
               <Target size={15} strokeWidth={2} />

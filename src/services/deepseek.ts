@@ -1023,6 +1023,7 @@ export async function* chatWithAthena(
 4. 鼓励学生，保持积极正面的态度
 5. 适当使用 Markdown 格式（加粗、列表）让回答更清晰
 6. 数学公式使用 LaTeX 语法（$...$ 或 $$...$$）
+7. 需要画流程图、结构图、时序图、关系图等示意图时，必须使用 SVG 绘制（放在 \`\`\`svg 代码块中），不要用 ASCII 字符画。SVG 要求：根元素带 xmlns="http://www.w3.org/2000/svg" 与 viewBox；不要写 width/height 固定像素（由容器自适应）；文字用 <text> 并设置 font-size；线条用 <path>/<line>，箭头用 <marker> 定义；整体配色清晰、留白合理，文字不要重叠
 ${charterText}${flowText}${abilitiesText}
 
 ${courseContext ? `学生当前课件内容摘要：\n${courseContext.slice(0, 3000)}` : ''}`

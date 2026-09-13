@@ -2,9 +2,35 @@
 /* 固定定位锚点：全局 .liquid-glass 自带 position:relative，故定位放在外层容器 */
 .cardAnchor {
   position: fixed;
-  right: 24px;
+  right: 24px; /* 实际位置由内联样式覆盖（可拖动） */
   bottom: 24px;
   z-index: 990; /* 高于页面内容，低于现有弹窗层（1000/10000） */
+  touch-action: none; /* 触屏拖动时不触发页面滚动 */
+}
+
+/* 拖动中：提升层级并给出抓取反馈 */
+.dragging {
+  z-index: 995;
+  cursor: grabbing;
+}
+
+/* 展开卡片的头部作为拖动手柄 */
+.header[data-drag-handle] {
+  cursor: grab;
+  user-select: none;
+}
+
+.dragging .header[data-drag-handle] {
+  cursor: grabbing;
+}
+
+.dragging .badgeWrap {
+  cursor: grabbing;
+}
+
+.dragging .collapsedCard {
+  transform: scale(1.04);
+  box-shadow: var(--shadow-hover);
 }
 
 /* 提高特异性：global.css 的 .liquid-glass 运行时可能晚于本文件注入，避免背景被覆盖 */
@@ -36,6 +62,7 @@
 /* 徽章动画包装层：作为 collapsedCount 的绝对定位参照 */
 .badgeWrap {
   position: relative;
+  cursor: grab;
 }
 
 .collapsedCard:global(.liquid-glass) {

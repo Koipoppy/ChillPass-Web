@@ -661,6 +661,10 @@ export type TranslationKey =
   | 'img.invalidFormat'
   | 'img.tooLarge'
 
+  | 'chat.svgSource'
+
+  | 'guide.dragHint'
+
 const zh: Record<TranslationKey, string> = {
   'nav.dashboard': '首页',
   'nav.upload': '导入课件',
@@ -869,6 +873,8 @@ const zh: Record<TranslationKey, string> = {
   'notify.lessonsDoneTitle': '关卡生成完成',
   'notify.lessonsDoneBody': '「{course}」的 {count} 个关卡已生成完毕，开始学习吧',
   'notify.newNotice': '新通知',
+  'guide.dragHint': "按住可拖动到任意位置",
+  'chat.svgSource': "查看 SVG 源码",
   'img.invalidFormat': "无法读取该图片，请改用 PNG、JPEG、WebP 或 GIF 格式",
   'img.tooLarge': "图片过大，压缩后仍无法发送，请换一张更小的图片",
   'athena.imageDirectSend': "图片将直接发送给多模态模型解析",
@@ -1511,6 +1517,8 @@ const en: Record<TranslationKey, string> = {
   'notify.lessonsDoneTitle': 'Lessons ready',
   'notify.lessonsDoneBody': '{count} lessons for "{course}" are ready — start learning',
   'notify.newNotice': 'New notice',
+  'guide.dragHint': "Drag to move anywhere",
+  'chat.svgSource': "View SVG source",
   'img.invalidFormat': "Could not read this image — please use PNG, JPEG, WebP or GIF",
   'img.tooLarge': "The image is too large to send even after compression — please use a smaller one",
   'athena.imageDirectSend': "The image will be sent straight to the multimodal model",
@@ -2155,6 +2163,8 @@ const ru: Record<TranslationKey, string> = {
   'notify.lessonsDoneTitle': 'Уровни готовы',
   'notify.lessonsDoneBody': '{count} уровней для «{course}» готовы — начинайте учиться',
   'notify.newNotice': 'Новое уведомление',
+  'guide.dragHint': "Перетащите в любое место",
+  'chat.svgSource': "Показать исходник SVG",
   'img.invalidFormat': "Не удалось прочитать изображение — используйте PNG, JPEG, WebP или GIF",
   'img.tooLarge': "Изображение слишком большое даже после сжатия — выберите файл меньше",
   'athena.imageDirectSend': "Изображение будет отправлено напрямую мультимодальной модели",
@@ -2799,6 +2809,8 @@ const ja: Record<TranslationKey, string> = {
   'notify.lessonsDoneTitle': 'レベル生成完了',
   'notify.lessonsDoneBody': '「{course}」の{count}個のレベルが生成されました。学習を始めましょう',
   'notify.newNotice': '新着通知',
+  'guide.dragHint': "ドラッグして好きな位置へ移動できます",
+  'chat.svgSource': "SVG ソースを表示",
   'img.invalidFormat': "この画像を読み込めません。PNG・JPEG・WebP・GIF をご利用ください",
   'img.tooLarge': "画像が大きすぎて圧縮後も送信できません。より小さい画像をご利用ください",
   'athena.imageDirectSend': "画像はマルチモーダルモデルに直接送信されます",
@@ -3443,6 +3455,8 @@ const ko: Record<TranslationKey, string> = {
   'notify.lessonsDoneTitle': '레벨 생성 완료',
   'notify.lessonsDoneBody': '"{course}"의 {count}개 레벨이 생성되었습니다. 학습을 시작하세요',
   'notify.newNotice': '새 알림',
+  'guide.dragHint': "드래그하여 원하는 위치로 이동하세요",
+  'chat.svgSource': "SVG 소스 보기",
   'img.invalidFormat': "이 이미지를 읽을 수 없습니다. PNG, JPEG, WebP, GIF를 사용하세요",
   'img.tooLarge': "이미지가 너무 커서 압축 후에도 전송할 수 없습니다. 더 작은 이미지를 사용하세요",
   'athena.imageDirectSend': "이미지가 멀티모달 모델로 바로 전송됩니다",
