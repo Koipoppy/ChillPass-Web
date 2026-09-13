@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://img.shields.io/badge/version-0.1.0-blue?style=flat-square" alt="版本" />
+  <img src="https://img.shields.io/badge/version-0.1.1-blue?style=flat-square" alt="版本" />
   <img src="https://img.shields.io/badge/Node.js-SEA-339933?style=flat-square&logo=node.js" alt="Node.js SEA" />
   <img src="https://img.shields.io/badge/React-18-61DAFB?style=flat-square&logo=react" alt="React" />
   <img src="https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript" alt="TypeScript" />
@@ -29,7 +29,7 @@
 
 <p align="center">
   <a href="https://github.com/Koipoppy/ChillPass-Web/releases/latest">
-    <img src="https://img.shields.io/badge/%E4%B8%8B%E8%BD%BD-ChillPass%20Setup%200.1.0.exe-blue?style=for-the-badge" alt="下载" />
+    <img src="https://img.shields.io/badge/%E4%B8%8B%E8%BD%BD-ChillPass%20Setup%200.1.1.exe-blue?style=for-the-badge" alt="下载" />
   </a>
 </p>
 
@@ -189,7 +189,7 @@ Athena 不只是聊天机器人，而是拥有**能力**、**记忆**和**任务
 
 ### 下载安装（推荐）
 
-前往 [Releases](https://github.com/Koipoppy/ChillPass-Web/releases) → 下载 `ChillPass-Setup-0.1.0.exe` → 安装。
+前往 [Releases](https://github.com/Koipoppy/ChillPass-Web/releases) → 下载 `ChillPass-Setup-0.1.1.exe` → 安装。
 
 > Windows 10/11（64 位）。按用户安装（无需管理员权限）。安装后自动在桌面创建快捷方式。更新时数据自动保留。
 
@@ -334,12 +334,9 @@ tray.ps1                     系统托盘图标（WinForms NotifyIcon）
 ## 更新日志
 
 <details>
-<summary><strong>v0.1.0</strong> — 2026-09-12</summary>
+<summary><strong>v0.1.1</strong> — 2026-09-13</summary>
 
-- **模型选项实时拉取**：API 配置页可一键从服务商接口拉取账号当前可用的模型列表（已保存 Key 时自动拉取），并修复了内置列表——`deepseek-chat` / `deepseek-reasoner` 已于 2026-07-24 退役，最新模型为 `deepseek-flash` 与 `deepseek-v4-pro`，旧配置会自动迁移；模型下拉改为自定义列表，光标驻留选项即显示模型说明
-- **答题复核（按需触发）**：选择题答错后出现「复核」按钮，用户对参考答案有疑问时自主发起；复核结论展示在题目下方独立框中，可随时收起。若复核确认参考答案标错（如混淆最大项/最小项）而用户答对，自动改判为正确、修正题目答案并撤回已记入的错题；出题提示词同步加入自洽性约束，避免解析与答案互相矛盾
-- **重新生成更可靠**：新题强制与原题**题型相同、知识点相同**，字段不完整或题型不符会自动重试，并将新题持久化保存（此前离开页面会丢失）
-- **作答交互优化**：选项点击即时高亮（修复鼠标悬停时选中态被覆盖、需移开光标才变色的问题）；新增选项点击音效与答对时的爽快提示音
+- **弹窗层级修复**：技能/记忆/任务表单弹窗改为挂载到页面根节点，修复卡片被全局模糊层盖住而发虚的问题（遮罩同时真正覆盖整个视口）
 - **全局面纱模糊层**：修复弹窗打开时模糊区域边缘锐利的问题（原因是 `position: fixed` 被带动画的页面容器裁切），改为 App 层级的全局模糊层——覆盖整个视口、无锐利边界，且位于侧边栏与卡片之下，导航栏与卡片保持清晰
 - **课程管理迁移到导航栏**：课程切换、重命名、导出、删除、新建与导入统一收纳在左侧导航栏底部的课程卡片中，任何页面都能直接管理课程（首页不再重复提供）
 - **Athena 会话管理**：标题栏可选择历史会话、新建会话、删除会话；会话标题自动取自首条提问，消息按会话隔离保存，旧数据自动迁移为一个会话
@@ -349,6 +346,15 @@ tray.ps1                     系统托盘图标（WinForms NotifyIcon）
 - **技能/记忆面板**：改为不透明白卡并叠一层高斯模糊遮罩，去掉液体玻璃折射滤镜造成的异常阴影
 - **复核覆盖全部题型**：填空/简答也可复核——系统判分可能漏判合理表述或参考答案过严，点「复核」后由 AI 独立复判，必要时修正参考答案并撤回错题
 - **Athena 图片改为多模态直传**：移除本地 OCR 引擎（tesseract.js 依赖已删除），图片直接以多模态内容发给模型解析，读图更准更快、无需加载识别引擎；发送前会自动把 BMP/TIFF/HEIC 等不受支持的格式与超大图片转换为模型可接受的 PNG/JPEG（并压缩尺寸），修复了此类图片被接口以 400 拒绝的问题
+</details>
+
+<details>
+<summary><strong>v0.1.0</strong> — 2026-09-12</summary>
+
+- **模型选项实时拉取**：API 配置页可一键从服务商接口拉取账号当前可用的模型列表（已保存 Key 时自动拉取），并修复了内置列表——`deepseek-chat` / `deepseek-reasoner` 已于 2026-07-24 退役，最新模型为 `deepseek-flash` 与 `deepseek-v4-pro`，旧配置会自动迁移；模型下拉改为自定义列表，光标驻留选项即显示模型说明
+- **答题复核（按需触发）**：选择题答错后出现「复核」按钮，用户对参考答案有疑问时自主发起；复核结论展示在题目下方独立框中，可随时收起。若复核确认参考答案标错（如混淆最大项/最小项）而用户答对，自动改判为正确、修正题目答案并撤回已记入的错题；出题提示词同步加入自洽性约束，避免解析与答案互相矛盾
+- **重新生成更可靠**：新题强制与原题**题型相同、知识点相同**，字段不完整或题型不符会自动重试，并将新题持久化保存（此前离开页面会丢失）
+- **作答交互优化**：选项点击即时高亮（修复鼠标悬停时选中态被覆盖、需移开光标才变色的问题）；新增选项点击音效与答对时的爽快提示音
 </details>
 
 <details>

@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://img.shields.io/badge/version-0.1.0-blue?style=flat-square" alt="버전" />
+  <img src="https://img.shields.io/badge/version-0.1.1-blue?style=flat-square" alt="버전" />
   <img src="https://img.shields.io/badge/Node.js-SEA-339933?style=flat-square&logo=node.js" alt="Node.js SEA" />
   <img src="https://img.shields.io/badge/React-18-61DAFB?style=flat-square&logo=react" alt="React" />
   <img src="https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript" alt="TypeScript" />
@@ -37,7 +37,7 @@
 
 <p align="center">
   <a href="https://github.com/Koipoppy/ChillPass-Web/releases/latest">
-    <img src="https://img.shields.io/badge/다운로드-ChillPass%20Setup%200.1.0.exe-blue?style=for-the-badge" alt="다운로드" />
+    <img src="https://img.shields.io/badge/다운로드-ChillPass%20Setup%200.1.1.exe-blue?style=for-the-badge" alt="다운로드" />
   </a>
 </p>
 
@@ -189,7 +189,7 @@ Athena는 단순한 챗봇이 아니라 **능력**, **기억**, **태스크 워�
 
 ### 다운로드 후 설치 (권장)
 
-[Releases](https://github.com/Koipoppy/ChillPass-Web/releases)로 이동 → `ChillPass-Setup-0.1.0.exe` 다운로드 → 설치.
+[Releases](https://github.com/Koipoppy/ChillPass-Web/releases)로 이동 → `ChillPass-Setup-0.1.1.exe` 다운로드 → 설치.
 
 > Windows 10/11 (64비트). 사용자 단위 설치(관리자 권한 불필요). 설치 후 바탕화면 바로가기가 자동 생성됩니다. 업데이트 시에도 데이터는 자동으로 보존됩니다.
 
@@ -334,12 +334,9 @@ tray.ps1                     시스템 트레이 아이콘 (WinForms NotifyIcon)
 ## 변경 로그
 
 <details>
-<summary><strong>v0.1.0</strong> — 2026-09-12</summary>
+<summary><strong>v0.1.1</strong> — 2026-09-13</summary>
 
-- **모델 목록 실시간 조회**: API 설정 페이지에서 계정이 실제 사용할 수 있는 모델을 공급자 API에서 바로 가져올 수 있습니다(키가 저장되어 있으면 자동 조회). 내장 목록도 수정했습니다 — `deepseek-chat` / `deepseek-reasoner`는 2026-07-24에 종료되었고 현재 모델은 `deepseek-flash`와 `deepseek-v4-pro`이며, 기존 설정은 자동 마이그레이션됩니다. 드롭다운이 사용자 지정 목록으로 바뀌어 항목에 커서를 올리면 설명이 표시됩니다
-- **필요할 때만 재검토**: 선택형 문제를 틀리면 "재검토" 버튼이 나타나, 참고 답안이 의심될 때만 AI가 확인합니다. 결과는 문제 아래 별도 상자에 표시되며 언제든 접을 수 있습니다. 참고 답안이 틀렸고 사용자가 맞았다면 정답으로 변경하고, 문제의 답을 수정하며 이미 기록된 오답을 취소합니다. 출제 프롬프트에도 자기 일관성 규칙을 추가
-- **재생성 신뢰성 향상**: 새 문제는 원래 문제와 **같은 문제 유형·같은 지식 포인트**를 반드시 유지하며, 필드가 불완전하거나 유형이 다르면 자동으로 재시도합니다. 또한 새 문제를 저장하여(기존에는 페이지를 떠나면 사라졌습니다) 유지되도록 했습니다
-- **답안 조작 개선**: 클릭하는 즉시 선택지가 강조됩니다(호버 때문에 선택 상태가 가려져 커서를 옮겨야 색이 바뀌던 문제를 수정). 선택지 클릭음과 정답 시의 경쾌한 효과음을 추가했습니다
+- **대화상자 겹침 순서 수정**: 능력·기억·작업 대화상자를 문서 루트에 마운트하여 전체 화면 블러 레이어에 가려지던 문제를 해결했습니다(배경도 화면 전체를 덮습니다)
 - **전체 화면 블러 레이어**: 대화상자를 열 때 블러 영역 가장자리가 날카롭던 문제를 수정했습니다(`position: fixed`가 애니메이션되는 페이지 컨테이너에 잘렸습니다). 앱 계층의 전체 화면 블러 레이어로 바꿔 경계가 없고, 사이드바와 카드 아래에 위치해 내비게이션과 카드는 선명하게 유지됩니다
 - **코스 관리를 사이드바로 이동**: 코스 전환·이름 변경·내보내기·삭제·새로 만들기·가져오기를 왼쪽 내비게이션 하단 코스 카드에 모아 어느 페이지에서든 관리할 수 있습니다(홈의 중복 제거)
 - **Athena 대화 관리**: 제목 표시줄에서 이전 대화를 선택하거나 새로 만들거나 삭제할 수 있습니다. 제목은 첫 질문에서 자동 생성되고 메시지는 대화별로 분리 저장되며, 기존 기록은 하나의 대화로 자동 이전됩니다
@@ -349,6 +346,15 @@ tray.ps1                     시스템 트레이 아이콘 (WinForms NotifyIcon)
 - **능력/기억 패널**: 불투명 카드와 가우시안 블러 배경으로 변경하여 리퀴드 글래스 굴절 필터로 인한 이상한 그림자를 제거
 - **모든 문제 유형으로 확대된 재검토**: 빈칸 채우기와 단답형도 재검토할 수 있습니다. 자동 채점이 타당한 표현을 놓칠 수 있으므로, 버튼 한 번으로 AI가 독립적으로 다시 판정하고 필요하면 참고 답안을 수정하며 오답 기록을 취소합니다
 - **Athena 이미지는 멀티모달로 직접 전송**: 로컬 OCR 엔진을 제거했습니다(tesseract.js 의존성 삭제). 이미지는 멀티모달 콘텐츠로 모델에 바로 전달되어 모델이 직접 읽습니다. 더 정확하고 빠르며 엔진 로딩도 필요 없습니다. 지원되지 않는 형식(BMP/TIFF/HEIC)과 너무 큰 이미지는 전송 전에 자동으로 지원 형식인 PNG/JPEG로 변환·축소하여 400 오류를 해결했습니다
+</details>
+
+<details>
+<summary><strong>v0.1.0</strong> — 2026-09-12</summary>
+
+- **모델 목록 실시간 조회**: API 설정 페이지에서 계정이 실제 사용할 수 있는 모델을 공급자 API에서 바로 가져올 수 있습니다(키가 저장되어 있으면 자동 조회). 내장 목록도 수정했습니다 — `deepseek-chat` / `deepseek-reasoner`는 2026-07-24에 종료되었고 현재 모델은 `deepseek-flash`와 `deepseek-v4-pro`이며, 기존 설정은 자동 마이그레이션됩니다. 드롭다운이 사용자 지정 목록으로 바뀌어 항목에 커서를 올리면 설명이 표시됩니다
+- **필요할 때만 재검토**: 선택형 문제를 틀리면 "재검토" 버튼이 나타나, 참고 답안이 의심될 때만 AI가 확인합니다. 결과는 문제 아래 별도 상자에 표시되며 언제든 접을 수 있습니다. 참고 답안이 틀렸고 사용자가 맞았다면 정답으로 변경하고, 문제의 답을 수정하며 이미 기록된 오답을 취소합니다. 출제 프롬프트에도 자기 일관성 규칙을 추가
+- **재생성 신뢰성 향상**: 새 문제는 원래 문제와 **같은 문제 유형·같은 지식 포인트**를 반드시 유지하며, 필드가 불완전하거나 유형이 다르면 자동으로 재시도합니다. 또한 새 문제를 저장하여(기존에는 페이지를 떠나면 사라졌습니다) 유지되도록 했습니다
+- **답안 조작 개선**: 클릭하는 즉시 선택지가 강조됩니다(호버 때문에 선택 상태가 가려져 커서를 옮겨야 색이 바뀌던 문제를 수정). 선택지 클릭음과 정답 시의 경쾌한 효과음을 추가했습니다
 </details>
 
 <details>

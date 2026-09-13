@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://img.shields.io/badge/version-0.1.0-blue?style=flat-square" alt="Version" />
+  <img src="https://img.shields.io/badge/version-0.1.1-blue?style=flat-square" alt="Version" />
   <img src="https://img.shields.io/badge/Node.js-SEA-339933?style=flat-square&logo=node.js" alt="Node.js SEA" />
   <img src="https://img.shields.io/badge/React-18-61DAFB?style=flat-square&logo=react" alt="React" />
   <img src="https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript" alt="TypeScript" />
@@ -37,7 +37,7 @@
 
 <p align="center">
   <a href="https://github.com/Koipoppy/ChillPass-Web/releases/latest">
-    <img src="https://img.shields.io/badge/Download-ChillPass%20Setup%200.1.0.exe-blue?style=for-the-badge" alt="Download" />
+    <img src="https://img.shields.io/badge/Download-ChillPass%20Setup%200.1.1.exe-blue?style=for-the-badge" alt="Download" />
   </a>
 </p>
 
@@ -189,7 +189,7 @@ The round help button next to the focus-mode button opens a help dialog with:
 
 ### Download & install (recommended)
 
-Head to [Releases](https://github.com/Koipoppy/ChillPass-Web/releases) → download `ChillPass-Setup-0.1.0.exe` → install.
+Head to [Releases](https://github.com/Koipoppy/ChillPass-Web/releases) → download `ChillPass-Setup-0.1.1.exe` → install.
 
 > Windows 10/11 (64-bit). Per-user install (no admin rights required). A desktop shortcut is created automatically after install. Your data is preserved when updating.
 
@@ -334,12 +334,9 @@ tray.ps1                     System tray icon (WinForms NotifyIcon)
 ## Changelog
 
 <details>
-<summary><strong>v0.1.0</strong> — 2026-09-12</summary>
+<summary><strong>v0.1.1</strong> — 2026-09-13</summary>
 
-- **Live model list**: the API settings page can now fetch the models actually available to your account straight from the provider (auto-fetched once a key is saved). The built-in list was also fixed — `deepseek-chat` / `deepseek-reasoner` were retired on 2026-07-24, current models are `deepseek-flash` and `deepseek-v4-pro`, and saved configs migrate automatically. The dropdown is now a custom list that shows a model description on hover
-- **Answer review on demand**: a "Review" button appears after a wrong choice answer, so the AI double-check runs only when you doubt the key. Its verdict shows in a separate box under the question that you can collapse. If the review finds the stored key wrong (e.g. maxterm/minterm mix-up) and you were right, the answer is corrected, the question key is fixed, and the recorded mistake is withdrawn. Generation prompts also gained consistency rules so explanations can no longer contradict the answer
-- **More reliable regeneration**: new questions must keep the **same question type and same knowledge point** as the original; incomplete fields or a mismatched type trigger an automatic retry, and the new question is now persisted (previously lost when leaving the page)
-- **Better answering feedback**: option highlighting is instant on click (fixing the selected state being masked by hover, which required moving the cursor away to see); added a click sound for options and a satisfying chime for correct answers
+- **Dialog stacking fix**: the abilities, memories and task dialogs now mount at the document root, fixing them being covered by the global blur layer (their backdrop also covers the full viewport now)
 - **Global frosted-blur layer**: fixed the sharp edge around the blurred area when a dialog opens (the `position: fixed` overlay was being clipped by the animated page container). Blur now lives on an App-level layer covering the whole viewport with no hard boundary, sitting below the sidebar and the dialog card so the nav and card stay crisp
 - **Course management moved to the sidebar**: switching, renaming, exporting, deleting, creating and importing courses now live in the course card at the bottom of the left nav, available from any page (no longer duplicated on the dashboard)
 - **Athena conversation management**: pick a past conversation from the title bar, start a new one, or delete one; titles come from the first question automatically, messages are kept per conversation, and existing history migrates into a single conversation
@@ -349,6 +346,15 @@ tray.ps1                     System tray icon (WinForms NotifyIcon)
 - **Abilities / memories panels**: now an opaque card with a gaussian blur backdrop, removing the odd shadow caused by the liquid-glass refraction filter
 - **Review covers every question type**: fill-in and short-answer questions can be reviewed too — automated grading may miss valid wording or be too strict, so the AI re-judges independently on demand, correcting the reference answer and withdrawing the mistake when needed
 - **Athena images now go straight to the model**: the local OCR engine is gone (tesseract.js dependency removed); images are sent as multimodal content and read by the model itself — more accurate, faster, no engine to load. Unsupported formats (BMP/TIFF/HEIC) and oversized images are automatically converted to a supported PNG/JPEG and downscaled before sending, fixing the 400 errors they used to cause
+</details>
+
+<details>
+<summary><strong>v0.1.0</strong> — 2026-09-12</summary>
+
+- **Live model list**: the API settings page can now fetch the models actually available to your account straight from the provider (auto-fetched once a key is saved). The built-in list was also fixed — `deepseek-chat` / `deepseek-reasoner` were retired on 2026-07-24, current models are `deepseek-flash` and `deepseek-v4-pro`, and saved configs migrate automatically. The dropdown is now a custom list that shows a model description on hover
+- **Answer review on demand**: a "Review" button appears after a wrong choice answer, so the AI double-check runs only when you doubt the key. Its verdict shows in a separate box under the question that you can collapse. If the review finds the stored key wrong (e.g. maxterm/minterm mix-up) and you were right, the answer is corrected, the question key is fixed, and the recorded mistake is withdrawn. Generation prompts also gained consistency rules so explanations can no longer contradict the answer
+- **More reliable regeneration**: new questions must keep the **same question type and same knowledge point** as the original; incomplete fields or a mismatched type trigger an automatic retry, and the new question is now persisted (previously lost when leaving the page)
+- **Better answering feedback**: option highlighting is instant on click (fixing the selected state being masked by hover, which required moving the cursor away to see); added a click sound for options and a satisfying chime for correct answers
 </details>
 
 <details>
