@@ -134,6 +134,8 @@ export interface ChatMessage {
   content: string
   timestamp: number
   courseId?: string
+  /** 用户附带的图片（data URL），随消息一同发给多模态模型 */
+  images?: string[]
 }
 
 // ===== Athena 智能助手类型 =====

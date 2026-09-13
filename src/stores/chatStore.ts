@@ -7,7 +7,7 @@ interface ChatState {
   messages: ChatMessage[]
   isStreaming: boolean
 
-  addMessage: (role: 'user' | 'assistant', content: string, courseId?: string) => string
+  addMessage: (role: 'user' | 'assistant', content: string, courseId?: string, images?: string[]) => string
   updateMessage: (id: string, content: string) => void
   setStreaming: (streaming: boolean) => void
   clearMessages: () => void
@@ -19,7 +19,7 @@ export const useChatStore = create<ChatState>()(
       messages: [],
       isStreaming: false,
 
-      addMessage: (role, content, courseId) => {
+      addMessage: (role, content, courseId, images) => {
         const id = nanoid()
         const message: ChatMessage = {
           id,
@@ -27,6 +27,7 @@ export const useChatStore = create<ChatState>()(
           content,
           timestamp: Date.now(),
           courseId,
+          ...(images && images.length > 0 ? { images } : {}),
         }
         set(state => ({ messages: [...state.messages, message] }))
         return id

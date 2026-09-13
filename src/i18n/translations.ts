@@ -431,14 +431,6 @@ export type TranslationKey =
   | 'teacher.translatingExport'
   | 'teacher.exportPdf'
 
-  | 'athena.ocrLoadingEngine'
-  | 'athena.ocrLoadingCore'
-  | 'athena.ocrInitializing'
-  | 'athena.ocrLoadingLang'
-  | 'athena.ocrPreparing'
-  | 'athena.ocrRecognizing'
-  | 'athena.ocrFailed'
-  | 'athena.ocrPrefix'
   | 'athena.noReply'
   | 'athena.unknownError'
   | 'athena.errorPrefix'
@@ -448,8 +440,6 @@ export type TranslationKey =
   | 'athena.welcomeMsg'
   | 'athena.currentTask'
   | 'athena.attachedImage'
-  | 'athena.ocrResult'
-  | 'athena.ocrFailedRetry'
   | 'athena.removeImage'
   | 'athena.insertImage'
   | 'athena.thinkingPlaceholder'
@@ -555,7 +545,6 @@ export type TranslationKey =
   | 'storage.startMigrate'
 
   | 'app.docTitle'
-  | 'athena.ocrFallback'
   | 'athena.memCategoryCustom'
   | 'athena.noAbilitiesHint'
   | 'athena.autoTag'
@@ -620,8 +609,6 @@ export type TranslationKey =
   | 'parse.docInvalid'
   | 'parse.docNoText'
   | 'parse.docInvalidOle'
-  | 'img.ocrTimeout'
-  | 'img.ocrFailed'
   | 'img.apiUnavailable'
   | 'store.insufficientCoins'
   | 'model.glmFlash'
@@ -667,6 +654,9 @@ export type TranslationKey =
   | 'lesson.reviewFailed'
   | 'lesson.reviewYouWereRight'
   | 'lesson.reviewYouWereWrong'
+
+  | 'athena.imageDirectSend'
+  | 'athena.visionUnsupported'
 
 const zh: Record<TranslationKey, string> = {
   'nav.dashboard': '首页',
@@ -876,6 +866,8 @@ const zh: Record<TranslationKey, string> = {
   'notify.lessonsDoneTitle': '关卡生成完成',
   'notify.lessonsDoneBody': '「{course}」的 {count} 个关卡已生成完毕，开始学习吧',
   'notify.newNotice': '新通知',
+  'athena.imageDirectSend': "图片将直接发送给多模态模型解析",
+  'athena.visionUnsupported': "当前模型 {model} 不支持图片理解，请在设置中切换到支持视觉的模型（如 deepseek-flash）",
   'lesson.review': "复核",
   'lesson.reviewTitle': "对参考答案有疑问？让 AI 独立重做一遍这道题",
   'lesson.reviewRunning': "AI 正在独立复核这道题…",
@@ -901,7 +893,6 @@ const zh: Record<TranslationKey, string> = {
   'api.modelHoverHint': "将光标停在选项上可查看模型说明",
   'app.docTitle': "ChillPass — 期末冲刺助手",
   'wrongbook.subtitle': "按课程归类，逐个击破",
-  'athena.ocrFallback': "识别中...",
   'athena.memCategoryCustom': "自定义",
   'athena.noAbilitiesHint': "暂无技能，Athena 会在对话中自动发现新技能",
   'athena.autoTag': "自动发现",
@@ -966,8 +957,6 @@ const zh: Record<TranslationKey, string> = {
   'parse.docInvalid': "该文件不是有效的 Word 97-2003 文档",
   'parse.docNoText': "未能从 DOC 文件中提取到有效文本，建议用 Word 将文件另存为 .docx 后重新导入",
   'parse.docInvalidOle': "该文件不是有效的 Word 97-2003 文档（缺少 OLE 复合文档头）",
-  'img.ocrTimeout': "图片识别超时（60秒），请检查网络连接后重试",
-  'img.ocrFailed': "图片识别失败: {msg}",
   'img.apiUnavailable': "无法读取文件，文件 API 不可用",
   'store.insufficientCoins': "Chill币不足，需要 {cost} 枚",
   'model.glmFlash': "glm-5.3-flash（高速响应，性价比高）",
@@ -1053,14 +1042,6 @@ const zh: Record<TranslationKey, string> = {
   'athena.fSummaryScopePh': "例如：第一章到第三章 / 全部课件",
   'athena.fOutputFormat': "输出格式",
   'athena.fOutputFormatPh': "例如：表格 / 思维导图 / 列表",
-  'athena.ocrLoadingEngine': "正在加载识别引擎...",
-  'athena.ocrLoadingCore': "加载识别核心...",
-  'athena.ocrInitializing': "初始化引擎...",
-  'athena.ocrLoadingLang': "加载语言包...",
-  'athena.ocrPreparing': "准备识别...",
-  'athena.ocrRecognizing': "识别中... {percent}%",
-  'athena.ocrFailed': "图片识别失败，请重试",
-  'athena.ocrPrefix': "[图片识别内容]",
   'athena.noReply': "抱歉，我没有收到回复内容，请重试。",
   'athena.unknownError': "发生未知错误",
   'athena.errorPrefix': "出错了：{msg}",
@@ -1070,8 +1051,6 @@ const zh: Record<TranslationKey, string> = {
   'athena.welcomeMsg': "我是你的智能学伴，选择一个任务开始吧",
   'athena.currentTask': "当前任务：{task}",
   'athena.attachedImage': "附加图片",
-  'athena.ocrResult': "已识别图片文字",
-  'athena.ocrFailedRetry': "识别失败，可移除后重试",
   'athena.removeImage': "移除图片",
   'athena.insertImage': "插入图片",
   'athena.thinkingPlaceholder': "Athena 正在思考...",
@@ -1527,6 +1506,8 @@ const en: Record<TranslationKey, string> = {
   'notify.lessonsDoneTitle': 'Lessons ready',
   'notify.lessonsDoneBody': '{count} lessons for "{course}" are ready — start learning',
   'notify.newNotice': 'New notice',
+  'athena.imageDirectSend': "The image will be sent straight to the multimodal model",
+  'athena.visionUnsupported': "The current model {model} cannot read images — switch to a vision-capable model (e.g. deepseek-flash) in Settings",
   'lesson.review': "Review",
   'lesson.reviewTitle': "Doubt the answer key? Have the AI independently re-solve this question",
   'lesson.reviewRunning': "AI is independently double-checking this question…",
@@ -1554,7 +1535,6 @@ const en: Record<TranslationKey, string> = {
   'athena.flowMemory': 'Flow Memory',
   'wrongbook.subtitle': "Grouped by course — tackle them one by one",
   'app.docTitle': "ChillPass — Final Exam Sprint Assistant",
-  'athena.ocrFallback': "Recognizing...",
   'athena.memCategoryCustom': "Custom",
   'athena.noAbilitiesHint': "No abilities yet — Athena will discover new ones from your chats",
   'athena.autoTag': "Auto-discovered",
@@ -1619,8 +1599,6 @@ const en: Record<TranslationKey, string> = {
   'parse.docInvalid': "Not a valid Word 97-2003 document",
   'parse.docNoText': "No valid text extracted from the DOC file — save it as .docx in Word and import again",
   'parse.docInvalidOle': "Not a valid Word 97-2003 document (OLE compound header missing)",
-  'img.ocrTimeout': "Image recognition timed out (60 s) — check your connection and try again",
-  'img.ocrFailed': "Image recognition failed: {msg}",
   'img.apiUnavailable': "Cannot read the file — file API unavailable",
   'store.insufficientCoins': "Not enough Chill Coins — {cost} required",
   'model.glmFlash': "glm-5.3-flash (fast response, great value)",
@@ -1706,14 +1684,6 @@ const en: Record<TranslationKey, string> = {
   'athena.fSummaryScopePh': "e.g. chapters 1-3 / all courseware",
   'athena.fOutputFormat': "Output format",
   'athena.fOutputFormatPh': "e.g. table / mind map / list",
-  'athena.ocrLoadingEngine': "Loading OCR engine...",
-  'athena.ocrLoadingCore': "Loading OCR core...",
-  'athena.ocrInitializing': "Initializing engine...",
-  'athena.ocrLoadingLang': "Loading language pack...",
-  'athena.ocrPreparing': "Preparing recognition...",
-  'athena.ocrRecognizing': "Recognizing... {percent}%",
-  'athena.ocrFailed': "Image recognition failed, please retry",
-  'athena.ocrPrefix': "[Text recognized from image]",
   'athena.noReply': "Sorry, I didn't receive a reply. Please try again.",
   'athena.unknownError': "An unknown error occurred",
   'athena.errorPrefix': "Error: {msg}",
@@ -1723,8 +1693,6 @@ const en: Record<TranslationKey, string> = {
   'athena.welcomeMsg': "I'm your AI study companion — pick a task to start",
   'athena.currentTask': "Current task: {task}",
   'athena.attachedImage': "Attached image",
-  'athena.ocrResult': "Text recognized from image",
-  'athena.ocrFailedRetry': "Recognition failed — remove and retry",
   'athena.removeImage': "Remove image",
   'athena.insertImage': "Insert image",
   'athena.thinkingPlaceholder': "Athena is thinking...",
@@ -2180,6 +2148,8 @@ const ru: Record<TranslationKey, string> = {
   'notify.lessonsDoneTitle': 'Уровни готовы',
   'notify.lessonsDoneBody': '{count} уровней для «{course}» готовы — начинайте учиться',
   'notify.newNotice': 'Новое уведомление',
+  'athena.imageDirectSend': "Изображение будет отправлено напрямую мультимодальной модели",
+  'athena.visionUnsupported': "Модель {model} не понимает изображения — переключитесь на модель со зрением (например, deepseek-flash) в настройках",
   'lesson.review': "Перепроверить",
   'lesson.reviewTitle': "Сомневаетесь в ответе? Попросите ИИ решить вопрос заново",
   'lesson.reviewRunning': "ИИ независимо перепроверяет вопрос…",
@@ -2207,7 +2177,6 @@ const ru: Record<TranslationKey, string> = {
   'athena.flowMemory': 'Текущая память',
   'wrongbook.subtitle': "Сгруппировано по курсам — разбирайте по порядку",
   'app.docTitle': "ChillPass — помощник для финального рывка к экзамену",
-  'athena.ocrFallback': "Распознавание...",
   'athena.memCategoryCustom': "Своё",
   'athena.noAbilitiesHint': "Пока нет способностей — Athena будет открывать новые в беседах",
   'athena.autoTag': "Авто",
@@ -2272,8 +2241,6 @@ const ru: Record<TranslationKey, string> = {
   'parse.docInvalid': "Некорректный документ Word 97-2003",
   'parse.docNoText': "Не удалось извлечь текст из DOC — сохраните как .docx в Word и импортируйте снова",
   'parse.docInvalidOle': "Некорректный документ Word 97-2003 (отсутствует заголовок OLE)",
-  'img.ocrTimeout': "Распознавание изображения превысило лимит времени (60 с) — проверьте сеть",
-  'img.ocrFailed': "Ошибка распознавания изображения: {msg}",
   'img.apiUnavailable': "Не удалось прочитать файл — файловый API недоступен",
   'store.insufficientCoins': "Недостаточно Chill-монет — нужно {cost}",
   'model.glmFlash': "glm-5.3-flash (быстрый отклик, выгодная)",
@@ -2359,14 +2326,6 @@ const ru: Record<TranslationKey, string> = {
   'athena.fSummaryScopePh': "напр. главы 1-3 / все материалы",
   'athena.fOutputFormat': "Формат вывода",
   'athena.fOutputFormatPh': "напр. таблица / майнд-карта / список",
-  'athena.ocrLoadingEngine': "Загрузка движка распознавания...",
-  'athena.ocrLoadingCore': "Загрузка ядра распознавания...",
-  'athena.ocrInitializing': "Инициализация движка...",
-  'athena.ocrLoadingLang': "Загрузка языкового пакета...",
-  'athena.ocrPreparing': "Подготовка распознавания...",
-  'athena.ocrRecognizing': "Распознавание... {percent}%",
-  'athena.ocrFailed': "Не удалось распознать изображение, попробуйте снова",
-  'athena.ocrPrefix': "[Текст с изображения]",
   'athena.noReply': "Извините, ответ не получен. Попробуйте снова.",
   'athena.unknownError': "Произошла неизвестная ошибка",
   'athena.errorPrefix': "Ошибка: {msg}",
@@ -2376,8 +2335,6 @@ const ru: Record<TranslationKey, string> = {
   'athena.welcomeMsg': "Я ваш ИИ-помощник — выберите задачу, чтобы начать",
   'athena.currentTask': "Текущая задача: {task}",
   'athena.attachedImage': "Прикреплённое изображение",
-  'athena.ocrResult': "Текст с изображения распознан",
-  'athena.ocrFailedRetry': "Ошибка распознавания — удалите и повторите",
   'athena.removeImage': "Удалить изображение",
   'athena.insertImage': "Вставить изображение",
   'athena.thinkingPlaceholder': "Athena думает...",
@@ -2833,6 +2790,8 @@ const ja: Record<TranslationKey, string> = {
   'notify.lessonsDoneTitle': 'レベル生成完了',
   'notify.lessonsDoneBody': '「{course}」の{count}個のレベルが生成されました。学習を始めましょう',
   'notify.newNotice': '新着通知',
+  'athena.imageDirectSend': "画像はマルチモーダルモデルに直接送信されます",
+  'athena.visionUnsupported': "現在のモデル {model} は画像を理解できません。設定で視覚対応モデル（例：deepseek-flash）に切り替えてください",
   'lesson.review': "再審査",
   'lesson.reviewTitle': "参考答案に疑問がありますか？AI に独立して解き直させます",
   'lesson.reviewRunning': "AI が独立して再審査中です…",
@@ -2860,7 +2819,6 @@ const ja: Record<TranslationKey, string> = {
   'athena.flowMemory': 'フローメモリ',
   'wrongbook.subtitle': "コース別に分類し、ひとつずつ克服",
   'app.docTitle': "ChillPass — 期末試験ラストスパート助手",
-  'athena.ocrFallback': "認識中...",
   'athena.memCategoryCustom': "カスタム",
   'athena.noAbilitiesHint': "まだスキルがありません。Athena が会話から自動的に見つけます",
   'athena.autoTag': "自動検出",
@@ -2925,8 +2883,6 @@ const ja: Record<TranslationKey, string> = {
   'parse.docInvalid': "有効な Word 97-2003 文書ではありません",
   'parse.docNoText': "DOC ファイルから有効なテキストを抽出できませんでした。Word で .docx として保存して再度インポートしてください",
   'parse.docInvalidOle': "有効な Word 97-2003 文書ではありません（OLE 複合ドキュメントヘッダーが不足）",
-  'img.ocrTimeout': "画像認識がタイムアウトしました（60秒）。接続を確認して再試行してください",
-  'img.ocrFailed': "画像認識に失敗しました: {msg}",
   'img.apiUnavailable': "ファイルを読み取れません。ファイル API を利用できません",
   'store.insufficientCoins': "Chillコインが不足しています。{cost} 枚必要です",
   'model.glmFlash': "glm-5.3-flash（高速応答・コスパ重視）",
@@ -3012,14 +2968,6 @@ const ja: Record<TranslationKey, string> = {
   'athena.fSummaryScopePh': "例：第1〜3章 / 全資料",
   'athena.fOutputFormat': "出力形式",
   'athena.fOutputFormatPh': "例：表 / マインドマップ / リスト",
-  'athena.ocrLoadingEngine': "認識エンジンを読み込み中...",
-  'athena.ocrLoadingCore': "認識コアを読み込み中...",
-  'athena.ocrInitializing': "エンジンを初期化中...",
-  'athena.ocrLoadingLang': "言語パックを読み込み中...",
-  'athena.ocrPreparing': "認識を準備中...",
-  'athena.ocrRecognizing': "認識中... {percent}%",
-  'athena.ocrFailed': "画像認識に失敗しました。再試行してください",
-  'athena.ocrPrefix': "[画像から認識したテキスト]",
   'athena.noReply': "申し訳ありません、応答を受け取れませんでした。再試行してください。",
   'athena.unknownError': "不明なエラーが発生しました",
   'athena.errorPrefix': "エラー：{msg}",
@@ -3029,8 +2977,6 @@ const ja: Record<TranslationKey, string> = {
   'athena.welcomeMsg': "私はあなたのAI学習パートナーです。タスクを選んで始めましょう",
   'athena.currentTask': "現在のタスク：{task}",
   'athena.attachedImage': "添付画像",
-  'athena.ocrResult': "画像テキストを認識しました",
-  'athena.ocrFailedRetry': "認識失敗。削除して再試行できます",
   'athena.removeImage': "画像を削除",
   'athena.insertImage': "画像を挿入",
   'athena.thinkingPlaceholder': "Athena が思考中...",
@@ -3486,6 +3432,8 @@ const ko: Record<TranslationKey, string> = {
   'notify.lessonsDoneTitle': '레벨 생성 완료',
   'notify.lessonsDoneBody': '"{course}"의 {count}개 레벨이 생성되었습니다. 학습을 시작하세요',
   'notify.newNotice': '새 알림',
+  'athena.imageDirectSend': "이미지가 멀티모달 모델로 바로 전송됩니다",
+  'athena.visionUnsupported': "현재 모델 {model}은(는) 이미지를 이해하지 못합니다. 설정에서 비전 지원 모델(예: deepseek-flash)로 전환하세요",
   'lesson.review': "재검토",
   'lesson.reviewTitle': "참고 답안이 의심되나요? AI가 독립적으로 다시 풀게 합니다",
   'lesson.reviewRunning': "AI가 독립적으로 재검토 중입니다…",
@@ -3513,7 +3461,6 @@ const ko: Record<TranslationKey, string> = {
   'athena.flowMemory': '흐름 메모리',
   'wrongbook.subtitle': "과목별로 분류하여 하나씩 정복하세요",
   'app.docTitle': "ChillPass — 기말고사 마지막 스퍼트 도우미",
-  'athena.ocrFallback': "인식 중...",
   'athena.memCategoryCustom': "사용자 지정",
   'athena.noAbilitiesHint': "아직 능력이 없습니다. Athena가 대화에서 자동으로 발견합니다",
   'athena.autoTag': "자동 발견",
@@ -3578,8 +3525,6 @@ const ko: Record<TranslationKey, string> = {
   'parse.docInvalid': "유효한 Word 97-2003 문서가 아닙니다",
   'parse.docNoText': "DOC 파일에서 유효한 텍스트를 추출하지 못했습니다. Word에서 .docx로 저장한 후 다시 가져오세요",
   'parse.docInvalidOle': "유효한 Word 97-2003 문서가 아닙니다(OLE 복합 문서 헤더 없음)",
-  'img.ocrTimeout': "이미지 인식 시간이 초과되었습니다(60초). 네트워크를 확인하고 다시 시도하세요",
-  'img.ocrFailed': "이미지 인식에 실패했습니다: {msg}",
   'img.apiUnavailable': "파일을 읽을 수 없습니다. 파일 API를 사용할 수 없습니다",
   'store.insufficientCoins': "Chill코인이 부족합니다. {cost}개가 필요합니다",
   'model.glmFlash': "glm-5.3-flash(빠른 응답, 높은 가성비)",
@@ -3665,14 +3610,6 @@ const ko: Record<TranslationKey, string> = {
   'athena.fSummaryScopePh': "예: 1-3장 / 전체 자료",
   'athena.fOutputFormat': "출력 형식",
   'athena.fOutputFormatPh': "예: 표 / 마인드맵 / 목록",
-  'athena.ocrLoadingEngine': "인식 엔진 로드 중...",
-  'athena.ocrLoadingCore': "인식 코어 로드 중...",
-  'athena.ocrInitializing': "엔진 초기화 중...",
-  'athena.ocrLoadingLang': "언어 팩 로드 중...",
-  'athena.ocrPreparing': "인식 준비 중...",
-  'athena.ocrRecognizing': "인식 중... {percent}%",
-  'athena.ocrFailed': "이미지 인식 실패, 다시 시도하세요",
-  'athena.ocrPrefix': "[이미지에서 인식된 텍스트]",
   'athena.noReply': "죄송합니다, 응답을 받지 못했습니다. 다시 시도해 주세요.",
   'athena.unknownError': "알 수 없는 오류가 발생했습니다",
   'athena.errorPrefix': "오류: {msg}",
@@ -3682,8 +3619,6 @@ const ko: Record<TranslationKey, string> = {
   'athena.welcomeMsg': "저는 당신의 AI 학습 파트너입니다. 작업을 선택해 시작하세요",
   'athena.currentTask': "현재 작업: {task}",
   'athena.attachedImage': "첨부 이미지",
-  'athena.ocrResult': "이미지 텍스트 인식됨",
-  'athena.ocrFailedRetry': "인식 실패, 제거 후 재시도하세요",
   'athena.removeImage': "이미지 제거",
   'athena.insertImage': "이미지 삽입",
   'athena.thinkingPlaceholder': "Athena 생각 중...",

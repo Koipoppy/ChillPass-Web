@@ -340,6 +340,8 @@ tray.ps1                     System tray icon (WinForms NotifyIcon)
 - **Answer review on demand**: a "Review" button appears after a wrong choice answer, so the AI double-check runs only when you doubt the key. Its verdict shows in a separate box under the question that you can collapse. If the review finds the stored key wrong (e.g. maxterm/minterm mix-up) and you were right, the answer is corrected, the question key is fixed, and the recorded mistake is withdrawn. Generation prompts also gained consistency rules so explanations can no longer contradict the answer
 - **More reliable regeneration**: new questions must keep the **same question type and same knowledge point** as the original; incomplete fields or a mismatched type trigger an automatic retry, and the new question is now persisted (previously lost when leaving the page)
 - **Better answering feedback**: option highlighting is instant on click (fixing the selected state being masked by hover, which required moving the cursor away to see); added a click sound for options and a satisfying chime for correct answers
+- **Review covers every question type**: fill-in and short-answer questions can be reviewed too — automated grading may miss valid wording or be too strict, so the AI re-judges independently on demand, correcting the reference answer and withdrawing the mistake when needed
+- **Athena images now go straight to the model**: the local OCR engine is gone (tesseract.js dependency removed); images are sent as multimodal content and read by the model itself — more accurate, faster, no engine to load
 </details>
 
 <details>

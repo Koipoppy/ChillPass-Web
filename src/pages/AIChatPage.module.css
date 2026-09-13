@@ -435,13 +435,6 @@
   line-height: 1.4;
 }
 
-.imageRecognizing {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 13px;
-  color: var(--text-secondary);
-}
 
 .spin {
   animation: spin 1s linear infinite;
@@ -1357,4 +1350,20 @@
 .requiredMark {
   color: #ff3b30;
   margin-left: 2px;
+}
+
+/* ===== 用户消息中附带的图片 ===== */
+.bubbleImages {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.bubbleImage {
+  max-width: 100%;
+  max-height: 220px;
+  border-radius: var(--radius-md);
+  object-fit: contain;
+  display: block;
 }

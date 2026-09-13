@@ -7,9 +7,30 @@ import { useLanguageStore } from '@stores/languageStore'
 const DEEPSEEK_API_URL = 'https://api.deepseek.com/chat/completions'
 const ZHIPU_API_URL = 'https://open.bigmodel.cn/api/paas/v4/chat/completions'
 
+/** OpenAI 兼容的多模态内容片段 */
+export type ContentPart =
+  | { type: 'text'; text: string }
+  | { type: 'image_url'; image_url: { url: string } }
+
 interface ChatMessage {
   role: 'system' | 'user' | 'assistant'
-  content: string
+  content: string | ContentPart[]
+}
+
+/**
+ * 构建用户消息内容
+ * 附带图片时按 OpenAI 兼容格式发送多模态内容，由模型直接读图（无需本地 OCR）
+ */
+function buildUserContent(
+  text: string,
+  images?: string[],
+): string | ContentPart[] {
+  const valid = (images ?? []).filter(url => typeof url === 'string' && url.startsWith('data:'))
+  if (valid.length === 0) return text
+  return [
+    { type: 'text', text },
+    ...valid.map(url => ({ type: 'image_url' as const, image_url: { url } })),
+  ]
 }
 
 /** 服务层抛错的本地化文本 */
@@ -817,6 +838,84 @@ function normalizeRegeneratedQuestion(
 }
 
 /**
+ * 填空/简答答案复核
+ * 判分与复核分两步：先由 gradeAnswer 判分，用户对结果有疑问时再由本函数独立复判。
+ * 复核会同时指出参考答案是否需要修正（参考答案本身可能有误或过于苛刻）。
+ */
+export interface TextAnswerAdjudication {
+  /** 学生的答案是否应当算作正确 */
+  userCorrect: boolean
+  /** 复核后更准确的参考答案（需要修正时给出） */
+  correctedAnswer?: string
+  /** 可接受答案补充 */
+  additionalAcceptableAnswers?: string[]
+  /** 面向学生的复核说明 */
+  feedback: string
+}
+
+export async function adjudicateTextAnswer(params: {
+  question: string
+  userAnswer: string
+  referenceAnswer: string
+  acceptableAnswers?: string[]
+  explanation?: string
+}): Promise<TextAnswerAdjudication> {
+  const { question, userAnswer, referenceAnswer, acceptableAnswers, explanation } = params
+
+  const systemPrompt = `你是一位严谨的阅卷复核老师。学生做了一道填空/简答题，系统已判定其答案不正确，但学生对结果有疑问，请你独立复核。
+
+题目：
+${question}
+
+参考答案：${referenceAnswer}
+${acceptableAnswers && acceptableAnswers.length > 0 ? `系统认可的其他答案：${acceptableAnswers.join('、')}` : ''}
+${explanation ? `题目解析：${explanation}` : ''}
+
+学生答案：${userAnswer}
+
+复核要求：
+1. 独立判断学生的答案在语义上是否正确、是否可接受（不要求与参考答案字面完全一致）
+2. 若参考答案本身有误、表述不严谨或过于苛刻，请给出更准确的参考答案
+3. 若学生的答案属于另一种合理表述，应判为正确，并把该表述补入可接受答案
+
+只返回如下 JSON，不要包含任何其他文字：
+{
+  "userCorrect": true,
+  "correctedAnswer": "更准确的参考答案（无需修正时与该参考答案相同）",
+  "additionalAcceptableAnswers": ["应视为正确的其他表述"],
+  "feedback": "面向学生的复核说明：先给出结论与理由，必要时说明参考答案的修正"
+}`
+
+  const result = await callDeepSeek(
+    [{ role: 'system', content: systemPrompt }],
+    { temperature: 0.1, maxTokens: 800 }
+  )
+
+  const jsonMatch = result.match(/\{[\s\S]*\}/)
+  const json = jsonMatch ? jsonMatch[0] : result
+  const parsed = JSON.parse(json)
+
+  const corrected =
+    typeof parsed.correctedAnswer === 'string' && parsed.correctedAnswer.trim()
+      ? parsed.correctedAnswer.trim()
+      : undefined
+
+  return {
+    userCorrect: !!parsed.userCorrect,
+    correctedAnswer: corrected && corrected !== referenceAnswer.trim() ? corrected : undefined,
+    additionalAcceptableAnswers: Array.isArray(parsed.additionalAcceptableAnswers)
+      ? (parsed.additionalAcceptableAnswers as unknown[]).filter(
+          (a): a is string => typeof a === 'string' && a.trim().length > 0,
+        )
+      : undefined,
+    feedback:
+      typeof parsed.feedback === 'string' && parsed.feedback.trim()
+        ? parsed.feedback
+        : serviceText(parsed.userCorrect ? 'service.answerFeedbackOk' : 'service.answerFeedbackBad'),
+  }
+}
+
+/**
  * 重新生成一道小测题
  * 硬性要求：与原题【题型相同】、【考察知识点相同】，仅题目内容与表述不同
  * 题型不一致或字段不完整时会自动重试，避免出现无法作答的新题
@@ -901,6 +1000,7 @@ export async function* chatWithAthena(
   abilities?: { name: string; description: string }[],
   charterMemories?: string[],
   flowMemories?: string[],
+  images?: string[],
 ): AsyncGenerator<string> {
   const abilitiesText = abilities && abilities.length > 0
     ? `\n\n你已掌握的技能：\n${abilities.map(a => `- ${a.name}: ${a.description}`).join('\n')}`
@@ -930,7 +1030,7 @@ ${courseContext ? `学生当前课件内容摘要：\n${courseContext.slice(0, 3
   const messages: ChatMessage[] = [
     { role: 'system', content: systemPrompt },
     ...history.slice(-10), // 保留最近 10 条历史
-    { role: 'user', content: userMessage },
+    { role: 'user', content: buildUserContent(userMessage, images) },
   ]
 
   yield* callDeepSeekStream(messages, { temperature: 0.7 })
@@ -994,6 +1094,7 @@ export async function* executeTask(
   courseContext: string,
   history: ChatMessage[],
   charterMemories?: string[],
+  images?: string[],
 ): AsyncGenerator<string> {
   const taskConfig = {
     paper: {
@@ -1029,7 +1130,7 @@ ${courseContext ? `课件参考内容：\n${courseContext.slice(0, 4000)}` : ''}
   const messages: ChatMessage[] = [
     { role: 'system', content: systemPrompt },
     ...history.slice(-5), // 任务场景保留最近 5 条历史
-    { role: 'user', content: taskInput },
+    { role: 'user', content: buildUserContent(taskInput, images) },
   ]
 
   // 与 chatWithAthena 相同的流式实现

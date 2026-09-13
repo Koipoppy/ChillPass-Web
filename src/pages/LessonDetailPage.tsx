@@ -19,6 +19,7 @@ import { useCourseStore, useCurrentBundle } from '@stores/courseStore'
 import { useWrongQuestionStore } from '@stores/wrongQuestionStore'
 import {
   adjudicateAnswer,
+  adjudicateTextAnswer,
   generateLessonContent,
   gradeAnswer,
   regenerateQuizQuestion,
@@ -251,7 +252,13 @@ export default function LessonDetailPage() {
   /** 用户主动复核：独立裁定本题参考答案是否正确、用户是否其实答对 */
   const handleReview = async () => {
     const q = quizQuestions[quizPage]
-    if (!q || !q.options || review?.state === 'running') return
+    if (!q || review?.state === 'running') return
+    // 填空/简答按文本答案复核；选择/多选按选项复核
+    if (q.type === 'fill' || q.type === 'short') {
+      await handleReviewTextAnswer(q)
+      return
+    }
+    if (!q.options) return
 
     setReview({ state: 'running', text: '', collapsed: false })
     try {
@@ -287,6 +294,70 @@ ${result.feedback}` : result.feedback,
 
       if (result.userCorrect) {
         // 复核确认用户答对：改判正确、撤回错题记录、播放正确音
+        setPageSolved(prev => new Set(prev).add(quizPage))
+        const wrongId = wrongEntryIdsRef.current.get(quizPage)
+        if (wrongId) {
+          removeQuestion(wrongId)
+          wrongEntryIdsRef.current.delete(quizPage)
+        }
+        playCorrectSound()
+      }
+    } catch (err) {
+      setReview({
+        state: 'error',
+        text: err instanceof Error ? err.message : t('about.unknownError'),
+        collapsed: false,
+      })
+    }
+  }
+
+  /**
+   * 填空/简答复核
+   * 系统判分使用 gradeAnswer，可能漏判合理表述或参考答案本身有误，
+   * 用户有疑问时由此再独立复判一次，必要时修正参考答案
+   */
+  const handleReviewTextAnswer = async (q: QuizQuestion) => {
+    setReview({ state: 'running', text: '', collapsed: false })
+    try {
+      const result = await adjudicateTextAnswer({
+        question: q.question,
+        userAnswer: textAnswer,
+        referenceAnswer: q.answer ?? '',
+        acceptableAnswers: q.acceptableAnswers,
+        explanation: q.explanation,
+      })
+
+      // 复核给出更准确的参考答案时同步修正题目（本地 + 课程存储）
+      const needsAnswerFix = !!result.correctedAnswer
+      const needsAcceptFix =
+        !!result.additionalAcceptableAnswers && result.additionalAcceptableAnswers.length > 0
+      if (needsAnswerFix || needsAcceptFix) {
+        patchQuizQuestion({
+          ...q,
+          ...(needsAnswerFix ? { answer: result.correctedAnswer } : {}),
+          ...(needsAcceptFix
+            ? {
+                acceptableAnswers: Array.from(
+                  new Set([...(q.acceptableAnswers ?? []), ...result.additionalAcceptableAnswers!]),
+                ),
+              }
+            : {}),
+        })
+      }
+
+      setReview({
+        state: 'done',
+        userCorrect: result.userCorrect,
+        text:
+          needsAnswerFix && result.userCorrect
+            ? `${t('lesson.keyFixedNote')}
+
+${result.feedback}`
+            : result.feedback,
+        collapsed: false,
+      })
+
+      if (result.userCorrect) {
         setPageSolved(prev => new Set(prev).add(quizPage))
         const wrongId = wrongEntryIdsRef.current.get(quizPage)
         if (wrongId) {
@@ -674,6 +745,16 @@ ${result.feedback}` : result.feedback,
                     const isSolved = pageSolved.has(quizPage)
                     const isLastPage = quizPage === quizQuestions.length - 1
                     const allSolved = pageSolved.size === quizQuestions.length
+                    // 本题是否答错（答错后展示「复核」按钮，由用户决定是否请 AI 复判）
+                    const answeredWrong =
+                      (qType === 'choice' && revealed && choiceSelected !== q.correctIndex) ||
+                      (qType === 'multi' &&
+                        multiSubmitted &&
+                        !(
+                          multiSelected.size === q.correctIndices?.length &&
+                          [...multiSelected].every(i => q.correctIndices?.includes(i))
+                        )) ||
+                      ((qType === 'fill' || qType === 'short') && feedback?.correct === false)
 
                     return (
                       <div className={`${styles.quizPageCard} liquid-glass`}>
@@ -856,13 +937,8 @@ ${result.feedback}` : result.feedback,
                               <SkipForward size={14} strokeWidth={2} />
                               <span>{t('lesson.skipCost')}</span>
                             </button>
-                            {/* 答错后的 AI 复核：用户有疑问时自主发起 */}
-                            {(qType === 'choice' || qType === 'multi') &&
-                              revealed &&
-                              !review &&
-                              (qType === 'multi'
-                                ? multiSubmitted && multiSelected.size > 0
-                                : choiceSelected !== q.correctIndex) && (
+                            {/* 答错后的 AI 复核（四种题型通用）：用户有疑问时自主发起 */}
+                            {!review && answeredWrong && (
                                 <button
                                   className={styles.reviewBtn}
                                   onClick={handleReview}

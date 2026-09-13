@@ -1,0 +1,4 @@
+{
+  "athena.imageDirectSend": { "zh": "图片将直接发送给多模态模型解析", "en": "The image will be sent straight to the multimodal model", "ru": "Изображение будет отправлено напрямую мультимодальной модели", "ja": "画像はマルチモーダルモデルに直接送信されます", "ko": "이미지가 멀티모달 모델로 바로 전송됩니다" },
+  "athena.visionUnsupported": { "zh": "当前模型 {model} 不支持图片理解，请在设置中切换到支持视觉的模型（如 deepseek-flash）", "en": "The current model {model} cannot read images — switch to a vision-capable model (e.g. deepseek-flash) in Settings", "ru": "Модель {model} не понимает изображения — переключитесь на модель со зрением (например, deepseek-flash) в настройках", "ja": "現在のモデル {model} は画像を理解できません。設定で視覚対応モデル（例：deepseek-flash）に切り替えてください", "ko": "현재 모델 {model}은(는) 이미지를 이해하지 못합니다. 설정에서 비전 지원 모델(예: deepseek-flash)로 전환하세요" }
+}

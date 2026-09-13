@@ -1,14 +1,16 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import type { KeyboardEvent as ReactKeyboardEvent, ChangeEvent as ReactChangeEvent, PointerEvent as ReactPointerEvent } from 'react'
 import { useLocation } from 'react-router-dom'
-import { Send, Trash2, Sparkles, ImageIcon, Loader, X, Brain, Zap, Download, Upload, Plus, FileText, BookOpen, Calendar, MessageCircle, Shield, Waves } from 'lucide-react'
+import { Send, Trash2, Sparkles, ImageIcon, X, Brain, Zap, Download, Upload, Plus, FileText, BookOpen, Calendar, MessageCircle, Shield, Waves } from 'lucide-react'
 import { useChatStore } from '@stores/chatStore'
 import { useCurrentBundle } from '@stores/courseStore'
 import { useAthenaStore } from '@stores/athenaStore'
 import { useT } from '../i18n'
 import type { TranslationKey } from '../i18n'
 import { chatWithAthena, executeTask, summarizeAthenaInsights } from '@services/deepseek'
-import { recognizeImageText, fileToDataURL } from '@services/imageService'
+import { fileToDataURL } from '@services/imageService'
+import { modelVisionSupport } from '@services/modelCatalog'
+import { useSettingsStore } from '@stores/settingsStore'
 import type { ChatMessage, AthenaAbility, AthenaMemory, AthenaTaskType } from '@types/index'
 import { renderMarkdown } from '../utils/markdown'
 import styles from './AIChatPage.module.css'
@@ -57,12 +59,25 @@ function MessageBubble({
   message: ChatMessage
   isTyping: boolean
 }) {
+  const t = useT()
   const isUser = message.role === 'user'
 
   if (isUser) {
     return (
       <div className={`${styles.messageRow} ${styles.messageRowUser} fade-in`}>
         <div className={`${styles.bubble} ${styles.bubbleUser}`}>
+          {message.images && message.images.length > 0 && (
+            <div className={styles.bubbleImages}>
+              {message.images.map((src, i) => (
+                <img
+                  key={i}
+                  src={src}
+                  alt={t('athena.attachedImage')}
+                  className={styles.bubbleImage}
+                />
+              ))}
+            </div>
+          )}
           <p className={styles.bubbleText}>{message.content}</p>
         </div>
       </div>
@@ -110,10 +125,8 @@ export default function AIChatPage() {
   const addAutoMemory = useAthenaStore(s => s.addAutoMemory)
 
   const [input, setInput] = useState('')
+  // 待发送的图片（data URL）：作为多模态内容直接交给模型读图，无需本地 OCR
   const [attachedImage, setAttachedImage] = useState<string | null>(null)
-  const [imageRecognizing, setImageRecognizing] = useState(false)
-  const [ocrProgress, setOcrProgress] = useState('')
-  const [recognizedText, setRecognizedText] = useState<string | null>(null)
   const messagesContainerRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -194,47 +207,20 @@ export default function AIChatPage() {
       }
 
       try {
-        // 先生成预览
-        if (file) {
-          const dataUrl = await fileToDataURL(file)
-          setAttachedImage(dataUrl)
-        } else if (imageBuffer) {
-          const dataUrl = await fileToDataURL(imageBuffer)
-          setAttachedImage(dataUrl)
-        }
-
-        setRecognizedText(null)
-        setImageRecognizing(true)
-        setOcrProgress(t('athena.ocrLoadingEngine'))
-
-        // OCR 识别：在渲染进程中使用 tesseract.js（CDN 加载资源）
-        const text = await recognizeImageText(imageBuffer ?? file!, (status, progress) => {
-          const statusMap: Record<string, string> = {
-            'loading tesseract core': t('athena.ocrLoadingCore'),
-            'initializing tesseract': t('athena.ocrInitializing'),
-            'loading language traineddata': t('athena.ocrLoadingLang'),
-            'initializing api': t('athena.ocrPreparing'),
-            'recognizing text': t('athena.ocrRecognizing').replace('{percent}', String(Math.round(progress * 100))),
-          }
-          setOcrProgress(statusMap[status] || status)
-        })
-        setRecognizedText(text)
+        // 仅生成预览：图片将作为多模态内容直接交给模型读图
+        const dataUrl = file ? await fileToDataURL(file) : await fileToDataURL(imageBuffer!)
+        setAttachedImage(dataUrl)
       } catch (err) {
-        console.error('图片识别失败', err)
-        setRecognizedText(null)
-        alert(err instanceof Error ? err.message : t('athena.ocrFailed'))
-      } finally {
-        setImageRecognizing(false)
+        console.error('图片读取失败', err)
+        alert(err instanceof Error ? err.message : t('img.apiUnavailable'))
       }
     },
-    []
+    [t]
   )
 
   // 移除已附加的图片
   const handleRemoveImage = useCallback(() => {
     setAttachedImage(null)
-    setRecognizedText(null)
-    setImageRecognizing(false)
   }, [])
 
   // 发送消息
@@ -243,14 +229,12 @@ export default function AIChatPage() {
       const rawContent = (text ?? input).trim()
       if (!rawContent || isStreaming) return
 
-      // 若有图片识别结果，将其拼接到消息前面
-      const content = recognizedText
-        ? `${t('athena.ocrPrefix')}\n${recognizedText}\n\n${rawContent}`
-        : rawContent
+      // 图片随消息一并发送给多模态模型
+      const content = rawContent
+      const images = attachedImage ? [attachedImage] : undefined
 
       setInput('')
       setAttachedImage(null)
-      setRecognizedText(null)
 
       // 构建对话历史（不包含当前消息，chatWithTutor 会自行追加）
       const history = messages.map(m => ({
@@ -261,7 +245,7 @@ export default function AIChatPage() {
       const courseId = currentCourse?.id
 
       // 添加用户消息
-      addMessage('user', content, courseId)
+      addMessage('user', content, courseId, images)
 
       // 添加空的 AI 消息，准备接收流式内容
       const assistantId = addMessage('assistant', '', courseId)
@@ -276,12 +260,12 @@ export default function AIChatPage() {
 
         // For task types other than 'qa', use executeTask
         if (activeTask !== 'qa') {
-          for await (const chunk of executeTask(activeTask, content, rawText, history, charterMemories)) {
+          for await (const chunk of executeTask(activeTask, content, rawText, history, charterMemories, images)) {
             accumulated += chunk
             updateMessage(assistantId, accumulated)
           }
         } else {
-          for await (const chunk of chatWithAthena(content, rawText, history, abilityList, charterMemories, flowMemories)) {
+          for await (const chunk of chatWithAthena(content, rawText, history, abilityList, charterMemories, flowMemories, images)) {
             accumulated += chunk
             updateMessage(assistantId, accumulated)
           }
@@ -307,7 +291,7 @@ export default function AIChatPage() {
         setAthenaStatus('idle')
       }
     },
-    [input, isStreaming, messages, rawText, currentCourse, recognizedText, activeTask, memories, abilities, addMessage, updateMessage, setStreaming, addAutoAbility, addAutoMemory]
+    [input, isStreaming, messages, rawText, currentCourse, attachedImage, activeTask, memories, abilities, addMessage, updateMessage, setStreaming, addAutoAbility, addAutoMemory, t]
   )
 
   // 键盘事件：Enter 发送，Shift+Enter 换行
@@ -352,9 +336,13 @@ export default function AIChatPage() {
     setHandleOffset(0)
   }
 
+  // 当前模型是否支持图片理解（未知则不提示，交给接口返回真实错误）
+  const currentModel = useSettingsStore(s => s.model)
+  const visionUnsupported = modelVisionSupport(currentModel) === 'no'
+
   const canSend = input.trim().length > 0 && !isStreaming
   const canClear = messages.length > 0 && !isStreaming
-  const canAttachImage = !isStreaming && !imageRecognizing
+  const canAttachImage = !isStreaming
 
   return (
     <div className={styles.container}>
@@ -493,20 +481,11 @@ export default function AIChatPage() {
                 className={styles.imageThumb}
               />
               <div className={styles.imagePreviewInfo}>
-                {imageRecognizing ? (
-                  <div className={styles.imageRecognizing}>
-                    <Loader size={14} className={styles.spin} />
-                    <span>{ocrProgress || t('athena.ocrFallback')}</span>
-                  </div>
-                ) : recognizedText ? (
-                  <div className={styles.imagePreviewHint}>
-                    {t('athena.ocrResult')}
-                  </div>
-                ) : (
-                  <div className={styles.imagePreviewHint}>
-                    {t('athena.ocrFailedRetry')}
-                  </div>
-                )}
+                <div className={styles.imagePreviewHint}>
+                  {visionUnsupported
+                    ? t('athena.visionUnsupported').replace('{model}', currentModel)
+                    : t('athena.imageDirectSend')}
+                </div>
               </div>
               <button
                 className={styles.removeImageBtn}

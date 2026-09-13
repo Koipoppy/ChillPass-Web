@@ -55,6 +55,25 @@ export function normalizeModelId(model: string): string {
   return RETIRED_MODEL_ALIASES[model] ?? model
 }
 
+/**
+ * 模型的视觉（图片理解）能力
+ * 仅标注已知不支持视觉的模型；未收录的模型返回 'unknown'，不做拦截
+ */
+const MODEL_VISION: Record<string, boolean> = {
+  'deepseek-flash': true,
+  'deepseek-v4-pro': false,
+  'deepseek-v4-flash': true,
+  'deepseek-v4-flash-vision-exp': true,
+  'deepseek-chat': false,
+  'deepseek-reasoner': false,
+}
+
+/** 该模型是否支持图片理解：'yes' / 'no' / 'unknown'（未收录） */
+export function modelVisionSupport(model: string): 'yes' | 'no' | 'unknown' {
+  const v = MODEL_VISION[model]
+  return v === undefined ? 'unknown' : v ? 'yes' : 'no'
+}
+
 /** 取模型说明文案（未收录的模型返回通用说明） */
 export function describeModel(model: string): string {
   const lang = useLanguageStore.getState().language
