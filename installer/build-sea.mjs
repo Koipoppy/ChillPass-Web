@@ -122,7 +122,7 @@ function setIconAndVersionInfo(exePath, icoPath, appVersion) {
       FileDescription: 'ChillPass Web',
       ProductName: 'ChillPass',
       OriginalFilename: 'chillpass.exe',
-      LegalCopyright: 'MIT License',
+      LegalCopyright: 'Apache License 2.0',
     })
     vi.setFileVersion(`${appVersion}.0`)
     vi.setProductVersion(`${appVersion}.0`)

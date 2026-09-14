@@ -5,7 +5,7 @@
   <img src="https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript" alt="TypeScript" />
   <img src="https://img.shields.io/badge/DeepSeek-AI-4D6BFE?style=flat-square" alt="DeepSeek" />
   <img src="https://img.shields.io/badge/플랫폼-Windows-0078D4?style=flat-square&logo=windows" alt="Windows" />
-  <img src="https://img.shields.io/badge/License-MIT-green?style=flat-square" alt="License" />
+  <img src="https://img.shields.io/badge/License-Apache--2.0-blue?style=flat-square" alt="License" />
 </p>
 
 <p align="center">
@@ -509,7 +509,7 @@ tray.ps1                     시스템 트레이 아이콘 (WinForms NotifyIcon)
 
 ## 라이선스
 
-이 프로젝트는 **MIT License**로 오픈소스화되어 있습니다.
+이 프로젝트는 **Apache License 2.0**으로 오픈소스화되어 있습니다. 전문은 [LICENSE](LICENSE), 저작자 표시는 [NOTICE](NOTICE)를 참고하세요.
 
 ## 감사의 말
 

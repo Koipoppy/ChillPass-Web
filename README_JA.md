@@ -5,7 +5,7 @@
   <img src="https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript" alt="TypeScript" />
   <img src="https://img.shields.io/badge/DeepSeek-AI-4D6BFE?style=flat-square" alt="DeepSeek" />
   <img src="https://img.shields.io/badge/プラットフォーム-Windows-0078D4?style=flat-square&logo=windows" alt="Windows" />
-  <img src="https://img.shields.io/badge/License-MIT-green?style=flat-square" alt="License" />
+  <img src="https://img.shields.io/badge/License-Apache--2.0-blue?style=flat-square" alt="License" />
 </p>
 
 <p align="center">
@@ -509,7 +509,7 @@ tray.ps1                     システムトレイアイコン（WinForms Notify
 
 ## ライセンス
 
-本プロジェクトは **MIT License** でオープンソース化されています。
+本プロジェクトは **Apache License 2.0** でオープンソース化されています。全文は [LICENSE](LICENSE)、帰属表示は [NOTICE](NOTICE) をご覧ください。
 
 ## 謝辞
 
