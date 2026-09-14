@@ -1,0 +1,43 @@
+name: CLA
+
+# 贡献者许可协议签署检查
+# 贡献者在 PR 里回复签署语句后，签名记录被写入 cla-signatures 分支。
+# 详见 CONTRIBUTING.md 与 CLA.md。
+
+on:
+  issue_comment:
+    types: [created]
+  pull_request_target:
+    types: [opened, closed, synchronize]
+
+# pull_request_target 会在「基仓库」上下文里运行（对 fork 来的 PR 也如此），
+# 因此这里拿到的是有写权限的 GITHUB_TOKEN。本工作流只读取 PR 元数据并提交一个
+# JSON 签名文件，**不会 checkout 或执行贡献者的代码**——请勿在此流程中加入 checkout，
+# 否则等于用写权限执行不受信任的代码。
+permissions:
+  actions: write
+  contents: write
+  pull-requests: write
+  statuses: write
+
+jobs:
+  CLAAssistant:
+    runs-on: ubuntu-latest
+    steps:
+      - name: CLA Assistant
+        # 两种触发：PR 事件本身，或贡献者回复了签署语句 / recheck
+        if: (github.event.comment.body == 'recheck' || github.event.comment.body == 'I have read the CLA Document and I hereby sign the CLA') || github.event_name == 'pull_request_target'
+        uses: contributor-license/cla-action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # 仅在「签名存到别的仓库」或「自动重跑失败工作流」时才需要配置，
+          # 本仓库把签名存在自己的 cla-signatures 分支，故无需此 secret。
+          # PERSONAL_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+        with:
+          path-to-document: 'https://github.com/Koipoppy/ChillPass-Web/blob/master/CLA.md'
+          path-to-signatures: 'signatures/version1/cla.json'
+          # 签名提交写进这个分支，避免污染 master 的发布历史。
+          # 该分支必须存在且**不能是受保护分支**。
+          branch: 'cla-signatures'
+          # 无需签署的账号：维护者本人 + 各类机器人
+          allowlist: 'Koipoppy,bot*'
