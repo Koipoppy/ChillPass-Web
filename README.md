@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://img.shields.io/badge/version-0.1.1-blue?style=flat-square" alt="版本" />
+  <img src="https://img.shields.io/badge/version-0.1.2-blue?style=flat-square" alt="版本" />
   <img src="https://img.shields.io/badge/Node.js-SEA-339933?style=flat-square&logo=node.js" alt="Node.js SEA" />
   <img src="https://img.shields.io/badge/React-18-61DAFB?style=flat-square&logo=react" alt="React" />
   <img src="https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript" alt="TypeScript" />
@@ -29,7 +29,7 @@
 
 <p align="center">
   <a href="https://github.com/Koipoppy/ChillPass-Web/releases/latest">
-    <img src="https://img.shields.io/badge/%E4%B8%8B%E8%BD%BD-ChillPass%20Setup%200.1.1.exe-blue?style=for-the-badge" alt="下载" />
+    <img src="https://img.shields.io/badge/%E4%B8%8B%E8%BD%BD-ChillPass%20Setup%200.1.2.exe-blue?style=for-the-badge" alt="下载" />
   </a>
 </p>
 
@@ -189,7 +189,7 @@ Athena 不只是聊天机器人，而是拥有**能力**、**记忆**和**任务
 
 ### 下载安装（推荐）
 
-前往 [Releases](https://github.com/Koipoppy/ChillPass-Web/releases) → 下载 `ChillPass-Setup-0.1.1.exe` → 安装。
+前往 [Releases](https://github.com/Koipoppy/ChillPass-Web/releases) → 下载 `ChillPass-Setup-0.1.2.exe` → 安装。
 
 > Windows 10/11（64 位）。按用户安装（无需管理员权限）。安装后自动在桌面创建快捷方式。更新时数据自动保留。
 
@@ -332,6 +332,17 @@ tray.ps1                     系统托盘图标（WinForms NotifyIcon）
 ---
 
 ## 更新日志
+
+<details>
+<summary><strong>v0.1.2</strong> — 2026-09-14</summary>
+
+- **新版界面（标题栏左上角可切换）**：在「旧版 / 新版」之间切换，旧版界面完整保留。新版把底部作为主控区——折叠侧边栏、页面、通知中心三栏并排，上方腾出来做课程关卡展示区（课程名以纯文字置于左上角，关卡地图待布置）
+- **卡片竖向展开**：折叠侧边栏向上长高铺开课程管理与进度；进入 Athena 时中间卡片自动展开并带收起开关。两者都只向上长高、宽度不变、不额外弹层，走带回弹的弹性曲线，收起后随时可以再展开
+- **底部高度可拖动**：拖住三栏上边界即可统一调整高度；窗口变矮自动收窄、变高自动还原为你的偏好高度
+- **通知中心悬停展开**：光标移到通知卡上即展开（带 120ms 意图延迟，鼠标扫过不误触），移开只是「瞄一眼」不标记已读
+- **导入课件以课程为对象**：新版下导入即导入当前课程，不再需要选择课程；选好文件自动开始导入
+- **页面适配矮容器**：各页面在新版下重新排布（卡片网格横向铺开、解除居中宽度上限、收紧间距），减少滚动
+</details>
 
 <details>
 <summary><strong>v0.1.1</strong> — 2026-09-13</summary>

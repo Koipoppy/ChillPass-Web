@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://img.shields.io/badge/version-0.1.1-blue?style=flat-square" alt="버전" />
+  <img src="https://img.shields.io/badge/version-0.1.2-blue?style=flat-square" alt="버전" />
   <img src="https://img.shields.io/badge/Node.js-SEA-339933?style=flat-square&logo=node.js" alt="Node.js SEA" />
   <img src="https://img.shields.io/badge/React-18-61DAFB?style=flat-square&logo=react" alt="React" />
   <img src="https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript" alt="TypeScript" />
@@ -37,7 +37,7 @@
 
 <p align="center">
   <a href="https://github.com/Koipoppy/ChillPass-Web/releases/latest">
-    <img src="https://img.shields.io/badge/다운로드-ChillPass%20Setup%200.1.1.exe-blue?style=for-the-badge" alt="다운로드" />
+    <img src="https://img.shields.io/badge/다운로드-ChillPass%20Setup%200.1.2.exe-blue?style=for-the-badge" alt="다운로드" />
   </a>
 </p>
 
@@ -189,7 +189,7 @@ Athena는 단순한 챗봇이 아니라 **능력**, **기억**, **태스크 워�
 
 ### 다운로드 후 설치 (권장)
 
-[Releases](https://github.com/Koipoppy/ChillPass-Web/releases)로 이동 → `ChillPass-Setup-0.1.1.exe` 다운로드 → 설치.
+[Releases](https://github.com/Koipoppy/ChillPass-Web/releases)로 이동 → `ChillPass-Setup-0.1.2.exe` 다운로드 → 설치.
 
 > Windows 10/11 (64비트). 사용자 단위 설치(관리자 권한 불필요). 설치 후 바탕화면 바로가기가 자동 생성됩니다. 업데이트 시에도 데이터는 자동으로 보존됩니다.
 
@@ -332,6 +332,17 @@ tray.ps1                     시스템 트레이 아이콘 (WinForms NotifyIcon)
 ---
 
 ## 변경 로그
+
+<details>
+<summary><strong>v0.1.2</strong> — 2026-09-14</summary>
+
+- **새 인터페이스(타이틀바 왼쪽 위 전환 스위치)**: 「클래식 / 신규」를 전환할 수 있고 클래식 화면은 그대로 유지됩니다. 신규는 하단이 메인 조작 영역이 되어 접힌 사이드바·페이지·알림 센터가 나란히 놓이고, 위쪽은 코스 레벨 표시 영역이 됩니다(코스 이름은 왼쪽 위에 텍스트로만 표시, 레벨 자체는 추후 배치)
+- **카드가 세로로 확장**: 접힌 사이드바가 위로 늘어나며 코스 관리와 진행 상황을 펼칩니다. Athena를 열면 가운데 카드가 자동으로 확장되고 접기 버튼이 생깁니다. 둘 다 위로만 늘어나고 너비는 그대로이며 별도 레이어를 만들지 않고, 탄성 곡선으로 움직이며 언제든 다시 펼칠 수 있습니다
+- **하단 패널 높이 드래그**: 세 패널의 위쪽 경계를 끌어 높이를 함께 조절합니다. 창이 낮아지면 자동으로 줄고, 높아지면 지정한 높이로 돌아옵니다
+- **알림 센터 호버 확장**: 알림 카드에 커서를 올리면 확장됩니다(120ms 의도 지연으로 스쳐 지나갈 때는 반응하지 않음). 벗어나면 '잠깐 본 것'으로 보고 읽음 처리하지 않습니다
+- **교안 가져오기는 코스 단위**: 신규에서는 항상 현재 코스로 가져옵니다. 코스 선택이 필요 없고, 파일을 고르면 자동으로 가져오기가 시작됩니다
+- **낮은 컨테이너에 맞춘 페이지 재배치**: 각 페이지를 신규 레이아웃에 맞게 다시 배치했습니다(카드 그리드를 가로로 펼치고, 가운데 정렬 폭 제한을 해제하고, 여백을 압축). 스크롤이 줄어듭니다
+</details>
 
 <details>
 <summary><strong>v0.1.1</strong> — 2026-09-13</summary>

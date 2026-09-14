@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://img.shields.io/badge/version-0.1.1-blue?style=flat-square" alt="バージョン" />
+  <img src="https://img.shields.io/badge/version-0.1.2-blue?style=flat-square" alt="バージョン" />
   <img src="https://img.shields.io/badge/Node.js-SEA-339933?style=flat-square&logo=node.js" alt="Node.js SEA" />
   <img src="https://img.shields.io/badge/React-18-61DAFB?style=flat-square&logo=react" alt="React" />
   <img src="https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript" alt="TypeScript" />
@@ -37,7 +37,7 @@
 
 <p align="center">
   <a href="https://github.com/Koipoppy/ChillPass-Web/releases/latest">
-    <img src="https://img.shields.io/badge/ダウンロード-ChillPass%20Setup%200.1.1.exe-blue?style=for-the-badge" alt="ダウンロード" />
+    <img src="https://img.shields.io/badge/ダウンロード-ChillPass%20Setup%200.1.2.exe-blue?style=for-the-badge" alt="ダウンロード" />
   </a>
 </p>
 
@@ -189,7 +189,7 @@ Athena は単なるチャットボットではなく、**能力**・**記憶**�
 
 ### ダウンロードしてインストール（推奨）
 
-[Releases](https://github.com/Koipoppy/ChillPass-Web/releases) にアクセス → `ChillPass-Setup-0.1.1.exe` をダウンロード → インストール。
+[Releases](https://github.com/Koipoppy/ChillPass-Web/releases) にアクセス → `ChillPass-Setup-0.1.2.exe` をダウンロード → インストール。
 
 > Windows 10/11（64 ビット）。ユーザーごとのインストール（管理者権限不要）。インストール後にデスクトップショートカットを自動作成。更新時もデータは保持されます。
 
@@ -332,6 +332,17 @@ tray.ps1                     システムトレイアイコン（WinForms Notify
 ---
 
 ## 変更履歴
+
+<details>
+<summary><strong>v0.1.2</strong> — 2026-09-14</summary>
+
+- **新インターフェース（タイトルバー左上のスイッチ）**：「旧版 / 新版」を切り替えられます。旧版の画面はそのまま残しています。新版では下部がメイン操作エリアになり、折りたたみサイドバー・ページ・通知センターが横並びになり、上部はコースのステージ表示エリアになります（コース名は左上に文字だけで表示、ステージ本体はこれから）
+- **カードが縦に伸びる**：折りたたみサイドバーが上に伸びてコース管理と進捗を表示します。Athena を開くと中央のカードが自動で展開し、折りたたみボタンが付きます。どちらも上方向にだけ伸び、幅は変わらず、追加のレイヤーも作らず、弾む曲線で動き、いつでも再展開できます
+- **下部パネルの高さをドラッグで調整**：3 つのパネルの上辺をドラッグすると高さをまとめて変更できます。ウィンドウが低くなると自動で縮み、高くなると好みの高さに戻ります
+- **通知センターはホバーで展開**：通知カードにカーソルを乗せると展開します（120ms の意図判定付きで、通り過ぎただけでは反応しません）。離れた場合は「覗いただけ」とみなし、既読にはしません
+- **教材の取り込みはコース単位**：新版では常に現在のコースへ取り込みます。コース選択は不要で、ファイルを選ぶと自動で取り込みが始まります
+- **低いコンテナへのページ最適化**：各ページを新版向けに再配置しました（カードのグリッドを横に展開、中央寄せの幅制限を解除、余白を圧縮）。スクロールが減ります
+</details>
 
 <details>
 <summary><strong>v0.1.1</strong> — 2026-09-13</summary>

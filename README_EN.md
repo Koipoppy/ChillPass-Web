@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://img.shields.io/badge/version-0.1.1-blue?style=flat-square" alt="Version" />
+  <img src="https://img.shields.io/badge/version-0.1.2-blue?style=flat-square" alt="Version" />
   <img src="https://img.shields.io/badge/Node.js-SEA-339933?style=flat-square&logo=node.js" alt="Node.js SEA" />
   <img src="https://img.shields.io/badge/React-18-61DAFB?style=flat-square&logo=react" alt="React" />
   <img src="https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript" alt="TypeScript" />
@@ -37,7 +37,7 @@
 
 <p align="center">
   <a href="https://github.com/Koipoppy/ChillPass-Web/releases/latest">
-    <img src="https://img.shields.io/badge/Download-ChillPass%20Setup%200.1.1.exe-blue?style=for-the-badge" alt="Download" />
+    <img src="https://img.shields.io/badge/Download-ChillPass%20Setup%200.1.2.exe-blue?style=for-the-badge" alt="Download" />
   </a>
 </p>
 
@@ -189,7 +189,7 @@ The round help button next to the focus-mode button opens a help dialog with:
 
 ### Download & install (recommended)
 
-Head to [Releases](https://github.com/Koipoppy/ChillPass-Web/releases) → download `ChillPass-Setup-0.1.1.exe` → install.
+Head to [Releases](https://github.com/Koipoppy/ChillPass-Web/releases) → download `ChillPass-Setup-0.1.2.exe` → install.
 
 > Windows 10/11 (64-bit). Per-user install (no admin rights required). A desktop shortcut is created automatically after install. Your data is preserved when updating.
 
@@ -332,6 +332,17 @@ tray.ps1                     System tray icon (WinForms NotifyIcon)
 ---
 
 ## Changelog
+
+<details>
+<summary><strong>v0.1.2</strong> — 2026-09-14</summary>
+
+- **New interface (switch at the top-left of the title bar)**: toggle between Classic and New; the classic layout is fully preserved. The new one turns the bottom into the main control area — collapsed sidebar, page and notification centre side by side — leaving the space above for the course level map (the course name sits as plain text at its top-left; the map itself is still to be built)
+- **Cards grow vertically**: the collapsed sidebar stretches upward to reveal course management and progress; opening Athena auto-expands the middle card and gives it a collapse toggle. Both only grow upward, keep their width, add no extra layer, use a springy curve, and can be re-expanded any time
+- **Draggable panel height**: drag the top edge of the three panels to resize them together; the height tightens on a shorter window and restores your preferred value when the window grows again
+- **Notification centre expands on hover**: moving the cursor onto the card opens it (with a 120 ms intent delay so a passing cursor does not trigger it); moving away is only a peek and does not mark notifications read
+- **Courseware import is course-scoped**: in the new layout importing always targets the current course — no course picker, and choosing files starts the import automatically
+- **Pages adapted to the short container**: every page is re-laid-out for the new layout (card grids spread horizontally, centred width caps lifted, spacing tightened) so there is less scrolling
+</details>
 
 <details>
 <summary><strong>v0.1.1</strong> — 2026-09-13</summary>
