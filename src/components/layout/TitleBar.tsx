@@ -223,7 +223,7 @@ export default function TitleBar() {
                   </div>
                   <div className={styles.helpContactRow}>
                     <span className={styles.helpContactLabel}>{t('titlebar.helpVersionLabel')}</span>
-                    <span className={styles.helpContactValue}>v0.1.2</span>
+                    <span className={styles.helpContactValue}>v0.1.3</span>
                   </div>
                 </div>
                 <div className={styles.helpQr}>

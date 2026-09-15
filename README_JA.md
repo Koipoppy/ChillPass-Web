@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://img.shields.io/badge/version-0.1.2-blue?style=flat-square" alt="バージョン" />
+  <img src="https://img.shields.io/badge/version-0.1.3-blue?style=flat-square" alt="バージョン" />
   <img src="https://img.shields.io/badge/Node.js-SEA-339933?style=flat-square&logo=node.js" alt="Node.js SEA" />
   <img src="https://img.shields.io/badge/React-18-61DAFB?style=flat-square&logo=react" alt="React" />
   <img src="https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript" alt="TypeScript" />
@@ -37,7 +37,7 @@
 
 <p align="center">
   <a href="https://github.com/Koipoppy/ChillPass-Web/releases/latest">
-    <img src="https://img.shields.io/badge/ダウンロード-ChillPass%20Setup%200.1.2.exe-blue?style=for-the-badge" alt="ダウンロード" />
+    <img src="https://img.shields.io/badge/ダウンロード-ChillPass%20Setup%200.1.3.exe-blue?style=for-the-badge" alt="ダウンロード" />
   </a>
 </p>
 
@@ -189,7 +189,7 @@ Athena は単なるチャットボットではなく、**能力**・**記憶**�
 
 ### ダウンロードしてインストール（推奨）
 
-[Releases](https://github.com/Koipoppy/ChillPass-Web/releases) にアクセス → `ChillPass-Setup-0.1.2.exe` をダウンロード → インストール。
+[Releases](https://github.com/Koipoppy/ChillPass-Web/releases) にアクセス → `ChillPass-Setup-0.1.3.exe` をダウンロード → インストール。
 
 > Windows 10/11（64 ビット）。ユーザーごとのインストール（管理者権限不要）。インストール後にデスクトップショートカットを自動作成。更新時もデータは保持されます。
 
@@ -332,6 +332,17 @@ tray.ps1                     システムトレイアイコン（WinForms Notify
 ---
 
 ## 変更履歴
+
+<details>
+<summary><strong>v0.1.3</strong> — 2026-09-16</summary>
+
+- **vista / codex テーマを削除**：両テーマとそのすべてのスタイル上書きを削除し、ライトとダークのみになりました。以前これらのテーマを選んでいた場合は自動的にライトへ戻ります
+- **通知センターは 1 枚のカードが変形して開く形に**：別のカードを重ねるのではなく、通知カード自身が 68px から 298px へ伸び（右端を固定して左へ広がる）、パネルの中身がそれに合わせてスライドインします
+- **展開時に左側のカードがまとめて移動**：サイドバーとページが同時に左へ移動し、通知パネルがページを覆わなくなります。ページ幅は変わりません
+- **通知ベルが見えなくなっていた不具合を修正**：折りたたみ時にベルがカードの不透明な背景の後ろに描画されていました（重なり順）
+- **カードの影が親カードの縁で切られる不具合を修正**：ページコンテナはスクロールコンテナで必ず切り取られるため、切り取り範囲をカードの縁まで広げ、内容は余白で内側に寄せました。下部カードの影もウィンドウ端で切れなくなります
+- 折りたたみ時はパネルの中身がまとめてスライドアウトし（カード自身の切り取りがマスクになります）、その場で切り刻まれることがなくなりました
+</details>
 
 <details>
 <summary><strong>v0.1.2</strong> — 2026-09-14</summary>

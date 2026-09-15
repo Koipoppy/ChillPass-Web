@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://img.shields.io/badge/version-0.1.2-blue?style=flat-square" alt="版本" />
+  <img src="https://img.shields.io/badge/version-0.1.3-blue?style=flat-square" alt="版本" />
   <img src="https://img.shields.io/badge/Node.js-SEA-339933?style=flat-square&logo=node.js" alt="Node.js SEA" />
   <img src="https://img.shields.io/badge/React-18-61DAFB?style=flat-square&logo=react" alt="React" />
   <img src="https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript" alt="TypeScript" />
@@ -29,7 +29,7 @@
 
 <p align="center">
   <a href="https://github.com/Koipoppy/ChillPass-Web/releases/latest">
-    <img src="https://img.shields.io/badge/%E4%B8%8B%E8%BD%BD-ChillPass%20Setup%200.1.2.exe-blue?style=for-the-badge" alt="下载" />
+    <img src="https://img.shields.io/badge/%E4%B8%8B%E8%BD%BD-ChillPass%20Setup%200.1.3.exe-blue?style=for-the-badge" alt="下载" />
   </a>
 </p>
 
@@ -189,7 +189,7 @@ Athena 不只是聊天机器人，而是拥有**能力**、**记忆**和**任务
 
 ### 下载安装（推荐）
 
-前往 [Releases](https://github.com/Koipoppy/ChillPass-Web/releases) → 下载 `ChillPass-Setup-0.1.2.exe` → 安装。
+前往 [Releases](https://github.com/Koipoppy/ChillPass-Web/releases) → 下载 `ChillPass-Setup-0.1.3.exe` → 安装。
 
 > Windows 10/11（64 位）。按用户安装（无需管理员权限）。安装后自动在桌面创建快捷方式。更新时数据自动保留。
 
@@ -332,6 +332,17 @@ tray.ps1                     系统托盘图标（WinForms NotifyIcon）
 ---
 
 ## 更新日志
+
+<details>
+<summary><strong>v0.1.3</strong> — 2026-09-16</summary>
+
+- **移除 vista / codex 主题**：两套主题及其全部样式覆盖已删除，只保留浅色与深色；历史上选过这两个主题的浏览器会自动回落到浅色
+- **通知中心改为同一张卡片变形展开**：不再是「另加一张卡片盖上去」，而是通知栏卡片自己从 68px 长到 298px（右缘锚定、向左伸展），面板内容随之平移滑入
+- **展开时左侧卡片整体平移**：侧边栏与页面同时左移，通知面板不再遮挡页面，页面宽度全程不变
+- **修复通知铃铛看不见**：收起态的铃铛被卡片的不透明背景盖住（层级倒置），已修正
+- **修复卡片阴影被上级卡片边缘切平**：页面容器是滚动容器、必然裁剪，改为把裁剪盒推到卡片边缘、内容用内边距内缩；底栏卡片的阴影也不再被窗口边缘切掉
+- 通知面板收起时改为整体平移滑出（由卡片自身裁剪充当遮罩），不再让里面的元素原地被切碎
+</details>
 
 <details>
 <summary><strong>v0.1.2</strong> — 2026-09-14</summary>

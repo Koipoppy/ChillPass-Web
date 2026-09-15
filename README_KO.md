@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://img.shields.io/badge/version-0.1.2-blue?style=flat-square" alt="버전" />
+  <img src="https://img.shields.io/badge/version-0.1.3-blue?style=flat-square" alt="버전" />
   <img src="https://img.shields.io/badge/Node.js-SEA-339933?style=flat-square&logo=node.js" alt="Node.js SEA" />
   <img src="https://img.shields.io/badge/React-18-61DAFB?style=flat-square&logo=react" alt="React" />
   <img src="https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript" alt="TypeScript" />
@@ -37,7 +37,7 @@
 
 <p align="center">
   <a href="https://github.com/Koipoppy/ChillPass-Web/releases/latest">
-    <img src="https://img.shields.io/badge/다운로드-ChillPass%20Setup%200.1.2.exe-blue?style=for-the-badge" alt="다운로드" />
+    <img src="https://img.shields.io/badge/다운로드-ChillPass%20Setup%200.1.3.exe-blue?style=for-the-badge" alt="다운로드" />
   </a>
 </p>
 
@@ -189,7 +189,7 @@ Athena는 단순한 챗봇이 아니라 **능력**, **기억**, **태스크 워�
 
 ### 다운로드 후 설치 (권장)
 
-[Releases](https://github.com/Koipoppy/ChillPass-Web/releases)로 이동 → `ChillPass-Setup-0.1.2.exe` 다운로드 → 설치.
+[Releases](https://github.com/Koipoppy/ChillPass-Web/releases)로 이동 → `ChillPass-Setup-0.1.3.exe` 다운로드 → 설치.
 
 > Windows 10/11 (64비트). 사용자 단위 설치(관리자 권한 불필요). 설치 후 바탕화면 바로가기가 자동 생성됩니다. 업데이트 시에도 데이터는 자동으로 보존됩니다.
 
@@ -332,6 +332,17 @@ tray.ps1                     시스템 트레이 아이콘 (WinForms NotifyIcon)
 ---
 
 ## 변경 로그
+
+<details>
+<summary><strong>v0.1.3</strong> — 2026-09-16</summary>
+
+- **vista / codex 테마 제거**: 두 테마와 모든 스타일 재정의를 삭제했고 라이트와 다크만 남았습니다. 이전에 이 테마를 선택했던 경우 자동으로 라이트로 돌아갑니다
+- **알림 센터가 하나의 카드가 변형되어 열리는 방식으로**: 다른 카드를 덮는 대신 알림 카드 자체가 68px에서 298px로 늘어나고(오른쪽 가장자리 고정, 왼쪽으로 확장) 패널 내용이 함께 밀려 들어옵니다
+- **펼칠 때 왼쪽 카드들이 함께 이동**: 사이드바와 페이지가 같이 왼쪽으로 이동해 알림 패널이 페이지를 가리지 않으며, 페이지 너비는 변하지 않습니다
+- **알림 종 아이콘이 보이지 않던 문제 수정**: 접힌 상태에서 종이 카드의 불투명 배경 뒤에 그려지고 있었습니다(쌓임 순서)
+- **카드 그림자가 상위 카드 가장자리에서 잘리던 문제 수정**: 페이지 컨테이너는 스크롤 컨테이너라 반드시 잘리므로, 잘림 경계를 카드 가장자리로 옮기고 내용은 안쪽 여백으로 들였습니다. 하단 카드 그림자도 창 가장자리에서 잘리지 않습니다
+- 접을 때 패널 내용이 통째로 밀려 나가며(카드 자체의 잘림이 마스크 역할), 제자리에서 잘게 잘리지 않습니다
+</details>
 
 <details>
 <summary><strong>v0.1.2</strong> — 2026-09-14</summary>

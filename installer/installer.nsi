@@ -13,7 +13,7 @@
 ; ── App Info ────────────────────────────────────────────────────
 !define APP_NAME         "ChillPass"
 !define APP_NAME_FULL    "ChillPass 期末冲刺助手"
-!define APP_VERSION      "0.1.2"
+!define APP_VERSION      "0.1.3"
 !define APP_PUBLISHER    "ChillPass"
 !define APP_URL          "https://github.com/Koipoppy/ChillPass-Web"
 !define APP_EXE          "chillpass.exe"
@@ -41,8 +41,8 @@ VIAddVersionKey "CompanyName"      "${APP_PUBLISHER}"
 VIAddVersionKey "LegalCopyright"   "Apache License 2.0"
 VIAddVersionKey "FileVersion"      "${APP_VERSION}"
 VIAddVersionKey "ProductVersion"   "${APP_VERSION}"
-VIProductVersion "0.1.2.0"
-VIFileVersion    "0.1.2.0"
+VIProductVersion "0.1.3.0"
+VIFileVersion    "0.1.3.0"
 
 ; ── Modern UI 2 Settings ────────────────────────────────────────
 !define MUI_ABORTWARNING

@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://img.shields.io/badge/version-0.1.2-blue?style=flat-square" alt="Версия" />
+  <img src="https://img.shields.io/badge/version-0.1.3-blue?style=flat-square" alt="Версия" />
   <img src="https://img.shields.io/badge/Node.js-SEA-339933?style=flat-square&logo=node.js" alt="Node.js SEA" />
   <img src="https://img.shields.io/badge/React-18-61DAFB?style=flat-square&logo=react" alt="React" />
   <img src="https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript" alt="TypeScript" />
@@ -37,7 +37,7 @@
 
 <p align="center">
   <a href="https://github.com/Koipoppy/ChillPass-Web/releases/latest">
-    <img src="https://img.shields.io/badge/Скачать-ChillPass%20Setup%200.1.2.exe-blue?style=for-the-badge" alt="Скачать" />
+    <img src="https://img.shields.io/badge/Скачать-ChillPass%20Setup%200.1.3.exe-blue?style=for-the-badge" alt="Скачать" />
   </a>
 </p>
 
@@ -189,7 +189,7 @@ Athena — не просто чат-бот, а полноценный агент
 
 ### Скачать и установить (рекомендуется)
 
-Перейдите в [Releases](https://github.com/Koipoppy/ChillPass-Web/releases) → скачайте `ChillPass-Setup-0.1.2.exe` → установите.
+Перейдите в [Releases](https://github.com/Koipoppy/ChillPass-Web/releases) → скачайте `ChillPass-Setup-0.1.3.exe` → установите.
 
 > Windows 10/11 (64 бит). Установка для текущего пользователя (без прав администратора). Ярлык на рабочем столе создаётся автоматически. При обновлении данные сохраняются.
 
@@ -332,6 +332,17 @@ tray.ps1                     Иконка системного трея (WinForm
 ---
 
 ## История изменений
+
+<details>
+<summary><strong>v0.1.3</strong> — 2026-09-16</summary>
+
+- **Темы vista / codex удалены**: обе темы и все их переопределения стилей убраны, остались только светлая и тёмная; у тех, кто выбирал vista или codex, автоматически вернётся светлая
+- **Центр уведомлений теперь одна карточка, меняющая форму**: вместо второй карточки поверх первой сама карточка уведомлений растёт с 68 до 298 px (правый край закреплён, растёт влево), а содержимое панели въезжает вместе с ней
+- **При раскрытии левые карточки сдвигаются**: боковая панель и страница уезжают влево, панель уведомлений больше не перекрывает страницу, ширина страницы не меняется
+- **Исправлена невидимая иконка уведомлений**: в свёрнутом состоянии колокольчик рисовался за непрозрачным фоном карточки (порядок наложения)
+- **Исправлены тени карточек, обрезаемые краем родительской карточки**: контейнер страницы — это скролл-контейнер и всегда обрезает; теперь граница обрезки совпадает с краем карточки, а содержимое смещено внутренними отступами; тени нижних карточек также не режутся краем окна
+- При сворачивании содержимое панели уезжает целиком (маской служит обрезка самой карточки), а не режется на месте
+</details>
 
 <details>
 <summary><strong>v0.1.2</strong> — 2026-09-14</summary>

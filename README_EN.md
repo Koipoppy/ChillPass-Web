@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://img.shields.io/badge/version-0.1.2-blue?style=flat-square" alt="Version" />
+  <img src="https://img.shields.io/badge/version-0.1.3-blue?style=flat-square" alt="Version" />
   <img src="https://img.shields.io/badge/Node.js-SEA-339933?style=flat-square&logo=node.js" alt="Node.js SEA" />
   <img src="https://img.shields.io/badge/React-18-61DAFB?style=flat-square&logo=react" alt="React" />
   <img src="https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript" alt="TypeScript" />
@@ -37,7 +37,7 @@
 
 <p align="center">
   <a href="https://github.com/Koipoppy/ChillPass-Web/releases/latest">
-    <img src="https://img.shields.io/badge/Download-ChillPass%20Setup%200.1.2.exe-blue?style=for-the-badge" alt="Download" />
+    <img src="https://img.shields.io/badge/Download-ChillPass%20Setup%200.1.3.exe-blue?style=for-the-badge" alt="Download" />
   </a>
 </p>
 
@@ -189,7 +189,7 @@ The round help button next to the focus-mode button opens a help dialog with:
 
 ### Download & install (recommended)
 
-Head to [Releases](https://github.com/Koipoppy/ChillPass-Web/releases) → download `ChillPass-Setup-0.1.2.exe` → install.
+Head to [Releases](https://github.com/Koipoppy/ChillPass-Web/releases) → download `ChillPass-Setup-0.1.3.exe` → install.
 
 > Windows 10/11 (64-bit). Per-user install (no admin rights required). A desktop shortcut is created automatically after install. Your data is preserved when updating.
 
@@ -332,6 +332,17 @@ tray.ps1                     System tray icon (WinForms NotifyIcon)
 ---
 
 ## Changelog
+
+<details>
+<summary><strong>v0.1.3</strong> — 2026-09-16</summary>
+
+- **vista / codex themes removed**: both themes and every style override for them are gone; only light and dark remain, and anyone who had selected one falls back to light automatically
+- **The notification centre is now one card changing shape**: instead of a second card laid on top, the notification card itself grows from 68px to 298px (right edge anchored, extending leftwards) with the panel content sliding in alongside it
+- **The left cards now shift when it expands**: the sidebar and the page move left together, so the panel never covers the page, and the page keeps its full width throughout
+- **Fixed the invisible notification bell**: the collapsed bell was being painted behind the card's opaque background (stacking order)
+- **Fixed card shadows sliced by the parent card's edge**: the page container is a scroll container and therefore always clips; the clipping box now sits at the card's edge with the content inset by padding, and the dock cards' shadows are no longer cut by the window edge either
+- The panel content now slides out as a whole when collapsing — the card's own clip acts as the mask — instead of being cut up in place
+</details>
 
 <details>
 <summary><strong>v0.1.2</strong> — 2026-09-14</summary>
