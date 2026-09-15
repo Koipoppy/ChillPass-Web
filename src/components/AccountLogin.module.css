@@ -11,7 +11,10 @@
   animation: fadeIn 0.2s ease-out;
 }
 
-.modal {
+/* 用 :global(.liquid-glass) 提升特异性：global.css 在 CSS Modules 之后注入，
+   否则这里的背景 / 40px 模糊 / 阴影会被 .liquid-glass 的默认值顶掉
+   （结果是登录弹窗比欢迎弹窗更透明、模糊更弱，两个弹窗观感不一致） */
+.modal:global(.liquid-glass) {
   width: 90%;
   max-width: 520px;
   max-height: 90vh;

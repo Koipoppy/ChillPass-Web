@@ -78,3 +78,29 @@
   pointer-events: none;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
+
+/* ===== 深色主题 =====
+ * 上面两组光斑是给浅色底设计的：暗光斑（黑 3-6%）在深色底上等于看不见，
+ * 而两块亮光斑（白 0.8 / 0.6）在深色底上会过曝成一大片白雾。
+ * 深色下统一换成低透明度的白光斑。
+ * 注意：这些类名由 CSS Modules 哈希生成，写进 global.css 的 .bg-blob-* 选择器
+ * 是匹配不到的（历史遗留），主题覆盖必须写在这里。
+ */
+[data-theme="dark"] .blob1 {
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.08), transparent 70%);
+}
+[data-theme="dark"] .blob2 {
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.05), transparent 70%);
+}
+[data-theme="dark"] .blob3 {
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.06), transparent 70%);
+}
+[data-theme="dark"] .blob4 {
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.04), transparent 70%);
+}
+[data-theme="dark"] .blobLight1 {
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.06), transparent 60%);
+}
+[data-theme="dark"] .blobLight2 {
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.04), transparent 60%);
+}

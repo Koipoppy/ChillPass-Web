@@ -26,6 +26,9 @@
   --warning-text: #ff9f0a;
   --danger-text: #ff3b30;
 
+  /* 描边色：WrongBookPage 的「复核」按钮等在使用 */
+  --border-color: rgba(0, 0, 0, 0.1);
+
   /* 按钮主色（用于 primary 按钮 background） */
   --btn-primary-bg: #1d1d1f;
   --btn-primary-fg: #ffffff;
@@ -61,6 +64,7 @@
   --success-text: #30d158;
   --warning-text: #ffd60a;
   --danger-text: #ff453a;
+  --border-color: rgba(255, 255, 255, 0.12);
   --btn-primary-bg: #f0f0f2;
   --btn-primary-fg: #0d0d0f;
   --shadow-ambient: 0 1px 3px rgba(0,0,0,0.4), 0 8px 24px rgba(0,0,0,0.5);
@@ -106,86 +110,6 @@ input, textarea, select {
   border-radius: 12px;
 }
 
-/* ===== 灰度波动背景 ===== */
-.bg-layer {
-  position: fixed;
-  inset: 0;
-  z-index: -3;
-  background: var(--bg-base);
-  overflow: hidden;
-}
-
-.bg-blob {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(100px);
-  will-change: transform, opacity;
-}
-.bg-blob-1 {
-  width: 800px; height: 800px;
-  background: radial-gradient(circle, rgba(0,0,0,0.06), transparent 70%);
-  top: -20%; left: -15%;
-  animation: drift1 22s ease-in-out infinite;
-}
-.bg-blob-2 {
-  width: 700px; height: 700px;
-  background: radial-gradient(circle, rgba(0,0,0,0.04), transparent 70%);
-  top: 25%; right: -20%;
-  animation: drift2 28s ease-in-out infinite;
-}
-.bg-blob-3 {
-  width: 750px; height: 750px;
-  background: radial-gradient(circle, rgba(0,0,0,0.05), transparent 70%);
-  bottom: -20%; left: 20%;
-  animation: drift3 32s ease-in-out infinite;
-}
-.bg-blob-4 {
-  width: 600px; height: 600px;
-  background: radial-gradient(circle, rgba(0,0,0,0.03), transparent 70%);
-  top: 50%; left: 45%;
-  animation: drift4 24s ease-in-out infinite;
-}
-.bg-blob-light-1 {
-  width: 900px; height: 900px;
-  background: radial-gradient(circle, rgba(255,255,255,0.8), transparent 60%);
-  top: 10%; right: 10%;
-  animation: drift1 30s ease-in-out infinite reverse;
-}
-.bg-blob-light-2 {
-  width: 700px; height: 700px;
-  background: radial-gradient(circle, rgba(255,255,255,0.6), transparent 60%);
-  bottom: 5%; left: 5%;
-  animation: drift3 26s ease-in-out infinite reverse;
-}
-
-@keyframes drift1 {
-  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.7; }
-  33% { transform: translate(80px, -60px) scale(1.15); opacity: 1; }
-  66% { transform: translate(-50px, 70px) scale(0.9); opacity: 0.5; }
-}
-@keyframes drift2 {
-  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.6; }
-  50% { transform: translate(-100px, 80px) scale(1.2); opacity: 0.9; }
-}
-@keyframes drift3 {
-  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.5; }
-  40% { transform: translate(70px, -50px) scale(1.1); opacity: 0.8; }
-  80% { transform: translate(-60px, 40px) scale(0.95); opacity: 0.4; }
-}
-@keyframes drift4 {
-  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.6; }
-  25% { transform: translate(-70px, -40px) scale(1.1); opacity: 0.9; }
-  75% { transform: translate(60px, 50px) scale(0.9); opacity: 0.4; }
-}
-
-.bg-noise {
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  opacity: 0.025;
-  pointer-events: none;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-}
 
 /* ===== 液态玻璃核心类 ===== */
 .liquid-glass {
@@ -227,10 +151,10 @@ input, textarea, select {
   pointer-events: none;
   z-index: 0;
 }
-.liquid-glass:hover {
-  background: var(--glass-bg-hover);
-  box-shadow: var(--shadow-hover);
-}
+/* 注意：这里刻意不给 .liquid-glass 加 hover 效果。
+   .liquid-glass 也用在整块大面板（侧边栏、页面卡片、聊天输入区、气泡）上，
+   悬停时整块变透明 + 换阴影看起来像故障，而不是"可交互"的提示。
+   需要悬停反馈的小控件（帮助/专注等按钮）各自定义。 */
 .liquid-glass > * {
   position: relative;
   z-index: 2;
@@ -296,25 +220,6 @@ input, textarea, select {
   animation: shimmer 1.5s infinite;
 }
 
-/* ===== 暗色模式覆盖 ===== */
-[data-theme="dark"] .bg-blob-1 {
-  background: radial-gradient(circle, rgba(255,255,255,0.08), transparent 70%);
-}
-[data-theme="dark"] .bg-blob-2 {
-  background: radial-gradient(circle, rgba(255,255,255,0.05), transparent 70%);
-}
-[data-theme="dark"] .bg-blob-3 {
-  background: radial-gradient(circle, rgba(255,255,255,0.06), transparent 70%);
-}
-[data-theme="dark"] .bg-blob-4 {
-  background: radial-gradient(circle, rgba(255,255,255,0.04), transparent 70%);
-}
-[data-theme="dark"] .bg-blob-light-1 {
-  background: radial-gradient(circle, rgba(255,255,255,0.06), transparent 60%);
-}
-[data-theme="dark"] .bg-blob-light-2 {
-  background: radial-gradient(circle, rgba(255,255,255,0.04), transparent 60%);
-}
 
 [data-theme="dark"] .liquid-glass::before {
   background: linear-gradient(135deg,
