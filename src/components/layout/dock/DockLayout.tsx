@@ -9,10 +9,14 @@ import { NAV_ITEMS, WORKSPACE_ITEM } from '../navItems'
 import { useT } from '../../../i18n'
 import styles from './DockLayout.module.css'
 
-/** dock 高度下限 */
-const MIN_DOCK_H = 220
-/** 顶部为标题栏、底部为外边距，再给关卡区留出的最小高度 */
-const ABOVE_DOCK_H = 38 + 12 + 10 + 120
+/** dock 高度下限（窗口很矮时按可用空间再收，见下面的 clamp） */
+const MIN_DOCK_H = 160
+/**
+ * 上方必须让出的高度：标题栏 38 + root 底部内边距 20 + 间距 10 + 关卡区最小 64。
+ * 这个值决定 dock 能被拖多高——写太大会让矮窗口下的可拖范围被压没。
+ * 与 CSS 里的 --dock-above-h（38 + 20）和 .stage 的 min-height 保持一致。
+ */
+const ABOVE_DOCK_H = 38 + 20 + 10 + 64
 
 /**
  * 新版布局（dock）
@@ -48,8 +52,12 @@ export default function DockLayout({ children }: { children: ReactNode }) {
   }, [])
 
   const clamp = useCallback(
-    (h: number) =>
-      Math.round(Math.min(Math.max(h, MIN_DOCK_H), Math.max(MIN_DOCK_H, viewportH - ABOVE_DOCK_H))),
+    (h: number) => {
+      const max = Math.max(MIN_DOCK_H, viewportH - ABOVE_DOCK_H)
+      // 窗口矮到连下限都放不下时，下限跟着降到可用空间，避免可拖范围退化成 0
+      const min = Math.min(MIN_DOCK_H, max)
+      return Math.round(Math.min(Math.max(h, min), max))
+    },
     [viewportH]
   )
 
