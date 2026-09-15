@@ -14,6 +14,7 @@ export function useUpdateInfo() {
   const t = useT()
   const [updateInfo, setUpdateInfo] = useState<UpdateInfo | null>(null)
   const [downloading, setDownloading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     let cancelled = false
@@ -43,19 +44,35 @@ export function useUpdateInfo() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  /** 一键下载：安装版走自动更新，失败时回退到系统浏览器下载 */
+  /** 手动下载地址：自动更新走不通时的兜底入口，界面上始终可点 */
+  const manualUrl =
+    updateInfo?.downloadUrl || 'https://github.com/Koipoppy/ChillPass-Web/releases/latest'
+
+  /**
+   * 一键下载
+   * 自动更新可能起不来（网页预览模式没有后端、接口不存在、网络连不上 GitHub），
+   * 失败时必须把原因显示出来并提供手动下载入口，不能像以前那样静默什么都不发生。
+   */
   const download = async () => {
     if (!updateInfo) return
     setDownloading(true)
+    setError(null)
     try {
       if (!window.electronAPI?.startUpdate) throw new Error('unavailable')
       await window.electronAPI.startUpdate()
-    } catch {
-      window.electronAPI?.openExternalUrl(updateInfo.downloadUrl)
+    } catch (err) {
+      const detail = err instanceof Error ? err.message : String(err)
+      setError(detail === 'network' ? t('upd.reasonNetwork') : detail)
+      try {
+        // 顺手试着打开下载页；被弹窗拦截也没关系，界面上有可点的手动链接
+        await window.electronAPI?.openExternalUrl(manualUrl)
+      } catch {
+        // 弹窗被拦截：忽略，交给界面上的手动下载链接
+      }
     } finally {
       setDownloading(false)
     }
   }
 
-  return { updateInfo, downloading, download }
+  return { updateInfo, downloading, error, download, manualUrl }
 }

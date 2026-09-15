@@ -560,3 +560,30 @@
 .updateBtn:active {
   transform: translateY(0) scale(1);
 }
+
+/* 手动下载兜底入口（自动更新被拦截时用） */
+.updateManual {
+  flex-shrink: 0;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  text-decoration: none;
+  border-bottom: 1px dashed currentColor;
+  transition: color 0.18s ease;
+}
+
+.updateManual:hover {
+  color: var(--accent-text);
+}
+
+/* 自动更新失败原因：不静默，明确区分网络问题还是其他问题 */
+.updateError {
+  flex-basis: 100%;
+  margin-top: 8px;
+  padding: 8px 10px;
+  border-radius: var(--radius-md);
+  background: rgba(255, 59, 48, 0.1);
+  color: var(--danger-text);
+  font-size: 11.5px;
+  line-height: 1.45;
+}

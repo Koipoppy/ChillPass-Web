@@ -628,6 +628,9 @@ export type TranslationKey =
   | 'upd.availableBody'
   | 'upd.downloadNow'
   | 'upd.downloading'
+  | 'upd.autoFailed'
+  | 'upd.reasonNetwork'
+  | 'upd.manualDownloadTip'
 
   | 'model.deepseekFlash'
   | 'model.deepseekV4Pro'
@@ -685,6 +688,8 @@ export type TranslationKey =
   | 'dock.collapseSidebar'
   | 'dock.resizeTip'
   | 'dock.expandPanel'
+  | 'dock.unread'
+  | 'dock.history'
 
 const zh: Record<TranslationKey, string> = {
   'nav.dashboard': '首页',
@@ -1013,6 +1018,9 @@ const zh: Record<TranslationKey, string> = {
   'upd.availableBody': "当前 v{current}，展开任务卡可一键下载更新。",
   'upd.downloadNow': "一键下载",
   'upd.downloading': "正在下载更新，请稍候...",
+  'upd.autoFailed': "自动更新未能启动（{reason}），请手动下载",
+  'upd.reasonNetwork': "网络无法连接 GitHub",
+  'upd.manualDownloadTip': "手动下载",
   'storage.migrateFailedRetry': "迁移失败，请重试",
   'storage.cardDesc': "配置资源存储位置，迁移课件文件以释放 C 盘空间",
   'storage.dirHint': "课件解析后的文本、生成的关卡内容等资源将存储在此目录。建议选择非系统盘以节省 C 盘空间。",
@@ -1347,6 +1355,8 @@ const zh: Record<TranslationKey, string> = {
   'dock.markAllRead': "全部已读",
   'dock.expandSidebar': "展开侧边栏",
   'dock.collapseSidebar': "收起侧边栏",
+  'dock.unread': "未读",
+  'dock.history': "历史消息",
   'dock.expandPanel': "展开",
   'dock.resizeTip': "上下拖动可调整底部三栏高度",
 }
@@ -1678,6 +1688,9 @@ const en: Record<TranslationKey, string> = {
   'upd.availableBody': "Current v{current} — open the task card to update in one click.",
   'upd.downloadNow': "Download now",
   'upd.downloading': "Downloading update...",
+  'upd.autoFailed': "Automatic update could not start ({reason}) — please download manually",
+  'upd.reasonNetwork': "GitHub is unreachable",
+  'upd.manualDownloadTip': "Download manually",
   'storage.migrateFailedRetry': "Migration failed, please retry",
   'storage.cardDesc': "Configure where resources are stored and move courseware files to free up the C: drive",
   'storage.dirHint': "Extracted text, generated lesson content and other resources are stored in this directory. Pick a non-system drive to save C: space.",
@@ -2012,6 +2025,8 @@ const en: Record<TranslationKey, string> = {
   'dock.markAllRead': "Mark all read",
   'dock.expandSidebar': "Expand sidebar",
   'dock.collapseSidebar': "Collapse sidebar",
+  'dock.unread': "Unread",
+  'dock.history': "Earlier",
   'dock.expandPanel': "Expand",
   'dock.resizeTip': "Drag up or down to resize the bottom panels",
 }
@@ -2343,6 +2358,9 @@ const ru: Record<TranslationKey, string> = {
   'upd.availableBody': "Текущая v{current} — откройте карточку задач для обновления в один клик.",
   'upd.downloadNow': "Скачать",
   'upd.downloading': "Загрузка обновления...",
+  'upd.autoFailed': "Не удалось запустить автообновление ({reason}) — скачайте вручную",
+  'upd.reasonNetwork': "GitHub недоступен",
+  'upd.manualDownloadTip': "Скачать вручную",
   'storage.migrateFailedRetry': "Ошибка миграции, попробуйте снова",
   'storage.cardDesc': "Настройте расположение ресурсов и перенесите файлы, чтобы освободить диск C:",
   'storage.dirHint': "Извлечённый текст, созданные уровни и другие ресурсы хранятся здесь. Рекомендуется не системный диск.",
@@ -2677,6 +2695,8 @@ const ru: Record<TranslationKey, string> = {
   'dock.markAllRead': "Прочитать все",
   'dock.expandSidebar': "Развернуть панель",
   'dock.collapseSidebar': "Свернуть панель",
+  'dock.unread': "Непрочитанные",
+  'dock.history': "Ранее",
   'dock.expandPanel': "Развернуть",
   'dock.resizeTip': "Потяните вверх или вниз, чтобы изменить высоту нижних панелей",
 }
@@ -3008,6 +3028,9 @@ const ja: Record<TranslationKey, string> = {
   'upd.availableBody': "現在 v{current}。タスクカードを開いてワンクリックで更新できます。",
   'upd.downloadNow': "ワンクリックでダウンロード",
   'upd.downloading': "更新をダウンロード中...",
+  'upd.autoFailed': "自動更新を開始できませんでした（{reason}）。手動でダウンロードしてください",
+  'upd.reasonNetwork': "GitHub に接続できません",
+  'upd.manualDownloadTip': "手動でダウンロード",
   'storage.migrateFailedRetry': "移行に失敗しました。再試行してください",
   'storage.cardDesc': "リソースの保存先を設定し、資料ファイルを移動してCドライブを解放します",
   'storage.dirHint': "抽出テキストや生成レベルなどのリソースはこのディレクトリに保存されます。Cドライブ以外を推奨します。",
@@ -3342,6 +3365,8 @@ const ja: Record<TranslationKey, string> = {
   'dock.markAllRead': "すべて既読",
   'dock.expandSidebar': "サイドバーを展開",
   'dock.collapseSidebar': "サイドバーを畳む",
+  'dock.unread': "未読",
+  'dock.history': "履歴",
   'dock.expandPanel': "展開",
   'dock.resizeTip': "上下にドラッグして下部パネルの高さを調整",
 }
@@ -3673,6 +3698,9 @@ const ko: Record<TranslationKey, string> = {
   'upd.availableBody': "현재 v{current}. 작업 카드를 열어 한 번에 업데이트하세요.",
   'upd.downloadNow': "원클릭 다운로드",
   'upd.downloading': "업데이트 다운로드 중...",
+  'upd.autoFailed': "자동 업데이트를 시작하지 못했습니다({reason}). 수동으로 다운로드하세요",
+  'upd.reasonNetwork': "GitHub에 연결할 수 없음",
+  'upd.manualDownloadTip': "수동 다운로드",
   'storage.migrateFailedRetry': "마이그레이션 실패, 다시 시도하세요",
   'storage.cardDesc': "리소스 저장 위치를 설정하고 자료 파일을 이동해 C 드라이브를 확보합니다",
   'storage.dirHint': "추출 텍스트, 생성된 레벨 등의 리소스가 이 디렉터리에 저장됩니다. 시스템 드라이브 외를 권장합니다.",
@@ -4007,6 +4035,8 @@ const ko: Record<TranslationKey, string> = {
   'dock.markAllRead': "모두 읽음",
   'dock.expandSidebar': "사이드바 펼치기",
   'dock.collapseSidebar': "사이드바 접기",
+  'dock.unread': "읽지 않음",
+  'dock.history': "지난 알림",
   'dock.expandPanel': "펼치기",
   'dock.resizeTip': "위아래로 드래그하여 하단 패널 높이 조절",
 }

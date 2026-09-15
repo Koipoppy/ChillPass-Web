@@ -41,7 +41,7 @@ export default function NotificationCenter() {
 
   const notifications = useNotificationStore(s => s.notifications)
   const markAllRead = useNotificationStore(s => s.markAllRead)
-  const { updateInfo, downloading, download } = useUpdateInfo()
+  const { updateInfo, downloading, error: updateError, download, manualUrl } = useUpdateInfo()
 
   const stage = useOnboardingStore(s => s.stage)
   const completeGuide = useOnboardingStore(s => s.completeGuide)
@@ -59,7 +59,10 @@ export default function NotificationCenter() {
   const currentStep = stepDone.findIndex(done => !done)
   const generatingBundle = courses.find(b => b.generatingLessons)
 
-  const unreadCount = notifications.filter(n => !n.read).length
+  // 未读与历史分开渲染：标记已读后消息落到「历史消息」区，而不是留在原处
+  const unreadNotifications = notifications.filter(n => !n.read)
+  const readNotifications = notifications.filter(n => n.read)
+  const unreadCount = unreadNotifications.length
 
   // ── 悬停自动展开 ──
   // 轻微延迟，避免鼠标扫过右边缘时误触发；离开卡片即收起（面板本身在卡片内，
@@ -169,6 +172,20 @@ export default function NotificationCenter() {
                     <span>{t('upd.downloadNow')}</span>
                   </button>
                 )}
+                {/* 自动更新走不通（网页预览模式 / 弹窗被拦截 / 网络受限）时的兜底入口，始终可点 */}
+                <a
+                  className={styles.updateManual}
+                  href={manualUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  {t('upd.manualDownloadTip')}
+                </a>
+              </div>
+            )}
+            {updateError && (
+              <div className={styles.updateError}>
+                {t('upd.autoFailed').replace('{reason}', updateError)}
               </div>
             )}
 
@@ -233,29 +250,51 @@ export default function NotificationCenter() {
               </button>
             )}
 
-            {/* 通知列表 */}
+            {/* 通知列表：未读在上，已读的归入历史消息 */}
             <div className={styles.block}>
               <div className={styles.blockHead}>
                 <Bell size={14} strokeWidth={2} />
                 <span>{t('dock.notifications')}</span>
+                {unreadCount > 0 && <span className={styles.blockCount}>{unreadCount}</span>}
               </div>
               {notifications.length === 0 ? (
                 <div className={styles.empty}>{t('dock.noNotifications')}</div>
               ) : (
-                <div className={styles.notifList}>
-                  {notifications.map(n => (
-                    <div
-                      key={n.id}
-                      className={`${styles.notifItem} ${!n.read ? styles.notifItemUnread : ''}`}
-                    >
-                      <AlertTriangle size={13} strokeWidth={2} className={styles.notifIcon} />
-                      <div className={styles.notifText}>
-                        <span className={styles.notifTitle}>{n.title}</span>
-                        <span className={styles.notifBody}>{n.body}</span>
+                <>
+                  {unreadNotifications.length > 0 && (
+                    <>
+                      <div className={styles.notifGroupLabel}>{t('dock.unread')}</div>
+                      <div className={styles.notifList}>
+                        {unreadNotifications.map(n => (
+                          <div key={n.id} className={`${styles.notifItem} ${styles.notifItemUnread}`}>
+                            <AlertTriangle size={13} strokeWidth={2} className={styles.notifIcon} />
+                            <div className={styles.notifText}>
+                              <span className={styles.notifTitle}>{n.title}</span>
+                              <span className={styles.notifBody}>{n.body}</span>
+                            </div>
+                          </div>
+                        ))}
                       </div>
-                    </div>
-                  ))}
-                </div>
+                    </>
+                  )}
+
+                  {readNotifications.length > 0 && (
+                    <>
+                      <div className={styles.notifGroupLabel}>{t('dock.history')}</div>
+                      <div className={`${styles.notifList} ${styles.notifListHistory}`}>
+                        {readNotifications.map(n => (
+                          <div key={n.id} className={styles.notifItem}>
+                            <AlertTriangle size={13} strokeWidth={2} className={styles.notifIcon} />
+                            <div className={styles.notifText}>
+                              <span className={styles.notifTitle}>{n.title}</span>
+                              <span className={styles.notifBody}>{n.body}</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </>
+                  )}
+                </>
               )}
             </div>
           </div>

@@ -267,11 +267,23 @@ export function setupElectronMock() {
     // ===== 自动更新：下载安装包并启动更新程序 =====
     startUpdate: async () => {
       const res = await fetch('/api/startUpdate', { method: 'POST' })
-      if (!res.ok) throw new Error(`HTTP ${res.status}`)
+      if (!res.ok) {
+        // 后端会带上具体原因（如网络不可达），透传出去让界面能说清楚
+        const data = await res.json().catch(() => null)
+        throw new Error(data?.error || `HTTP ${res.status}`)
+      }
+      // 开发服务器对未知接口会回退成 200 的 HTML——必须校验响应体，
+      // 否则会被当成「更新已启动」而实际什么都没发生
+      const data = await res.json().catch(() => null)
+      if (!data || data.ok !== true) {
+        throw new Error(data?.error || 'unavailable')
+      }
     },
 
     openExternalUrl: async (url: string) => {
-      window.open(url, '_blank')
+      // 返回 null 表示被弹窗拦截，调用方据此回退到界面上的手动下载链接
+      const win = window.open(url, '_blank')
+      if (!win) throw new Error('popup-blocked')
     },
 
     // ===== 资源迁移（浏览器中为空操作） =====

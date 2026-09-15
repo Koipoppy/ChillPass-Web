@@ -221,6 +221,14 @@ async function handleApi(req, res, urlPath) {
       sendJson(res, { error: '未找到更新程序（updater.ps1）' }, 500);
       return true;
     }
+    // 预检：先确认 GitHub 连得上。updater.ps1 是 detached 运行的，
+    // 它自己失败时用户什么都看不到——所以这里先探一次，把「网络不通」
+    // 这个最常见的原因明确回给前端，而不是静默地什么都不发生。
+    const probe = await fetchLatestRelease();
+    if (!probe) {
+      sendJson(res, { error: 'network' }, 502);
+      return true;
+    }
     const psArgs = [
       '-ExecutionPolicy', 'Bypass',
       '-NoProfile',

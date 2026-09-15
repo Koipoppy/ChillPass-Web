@@ -42,7 +42,13 @@ export default function GuideCard() {
   const markAllRead = useNotificationStore(s => s.markAllRead)
 
   // ── 新版本检测：启动时检查一次，发现新版本常驻提示并支持一键下载 ──
-  const { updateInfo, downloading: updateDownloading, download: handleUpdateDownload } = useUpdateInfo()
+  const {
+    updateInfo,
+    downloading: updateDownloading,
+    error: updateError,
+    download: handleUpdateDownload,
+    manualUrl,
+  } = useUpdateInfo()
 
   // ── 步骤完成状态：全部从真实状态推导，任何页面的操作都能实时打勾 ──
   const stepDone = [
@@ -354,6 +360,20 @@ export default function GuideCard() {
               <Download size={13} strokeWidth={2.2} />
               <span>{t('upd.downloadNow')}</span>
             </button>
+          )}
+          {/* 自动更新走不通时的兜底入口，始终可点 */}
+          <a
+            className={styles.updateManual}
+            href={manualUrl}
+            target="_blank"
+            rel="noreferrer"
+          >
+            {t('upd.manualDownloadTip')}
+          </a>
+          {updateError && (
+            <div className={styles.updateError}>
+              {t('upd.autoFailed').replace('{reason}', updateError)}
+            </div>
           )}
         </motion.div>
       )}

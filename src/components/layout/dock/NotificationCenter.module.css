@@ -223,6 +223,31 @@
   color: var(--accent-text);
 }
 
+/* 手动下载：兜底入口，始终可点（自动更新被拦截时用它） */
+.updateManual {
+  flex-shrink: 0;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  text-decoration: none;
+  border-bottom: 1px dashed currentColor;
+  transition: color 0.18s ease;
+}
+
+.updateManual:hover {
+  color: var(--accent-text);
+}
+
+/* 自动更新失败的原因：不静默，明确告诉用户是网络还是别的问题 */
+.updateError {
+  padding: 8px 10px;
+  border-radius: var(--radius-md);
+  background: rgba(255, 59, 48, 0.1);
+  color: var(--danger-text);
+  font-size: 11.5px;
+  line-height: 1.45;
+}
+
 /* ===== 新手引导 ===== */
 .guideTrack {
   height: 3px;
@@ -352,6 +377,28 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
+}
+
+/* 分区小标题：未读 / 历史消息 */
+.notifGroupLabel {
+  margin-top: 2px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--text-quaternary);
+}
+
+.notifGroupLabel:first-child {
+  margin-top: 0;
+}
+
+/* 历史消息整体压暗，与未读拉开层次 */
+.notifListHistory .notifItem {
+  opacity: 0.62;
+}
+
+.notifListHistory .notifItem:hover {
+  opacity: 1;
 }
 
 .notifItem {
