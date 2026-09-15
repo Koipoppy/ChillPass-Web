@@ -1,9 +1,9 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
-export type Theme = 'light' | 'dark' | 'vista' | 'codex'
+export type Theme = 'light' | 'dark'
 
-const VALID_THEMES: Theme[] = ['light', 'dark', 'vista', 'codex']
+const VALID_THEMES: Theme[] = ['light', 'dark']
 
 interface ThemeState {
   theme: Theme
@@ -29,8 +29,8 @@ export const useThemeStore = create<ThemeState>()(
     }),
     {
       name: 'chillpass-theme',
-      version: 1,
-      // v0 → v1：win95 主题已移除，迁移到浅色
+      // v1 → v2：vista / codex 主题已移除，历史选择回落到浅色
+      version: 2,
       migrate: (persisted) => {
         const state = (persisted ?? {}) as Partial<ThemeState>
         if (!state.theme || !VALID_THEMES.includes(state.theme as Theme)) {
@@ -47,16 +47,9 @@ export const useThemeStore = create<ThemeState>()(
 
 function applyTheme(theme: Theme) {
   const root = document.documentElement
-  // Remove all theme attributes first
+  // Remove the attribute first, then set it for dark; light is the default (no attribute)
   root.removeAttribute('data-theme')
-  root.removeAttribute('data-theme-vista')
-
   if (theme === 'dark') {
     root.setAttribute('data-theme', 'dark')
-  } else if (theme === 'vista') {
-    root.setAttribute('data-theme', 'vista')
-  } else if (theme === 'codex') {
-    root.setAttribute('data-theme', 'codex')
   }
-  // light = no attribute (default)
 }

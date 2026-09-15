@@ -163,7 +163,7 @@
    同一张卡片，宽度固定，展开时只向上长高
    ============================================================ */
 .rail {
-  width: 208px;
+  width: var(--dock-rail-w, 208px);
   padding: 0; /* 间距由 dock 的 gap 提供 */
   /* 贴住 dock 底部：高度增长时向上溢出，而不是把布局撑开 */
   align-self: flex-end;
@@ -175,7 +175,7 @@
 
 .railExpanded {
   /* 一直长到标题栏下方 */
-  height: calc(100vh - 50px);
+  height: calc(100vh - var(--dock-above-h, 58px));
   /* 展开：带回弹的弹性曲线
      峰值约 +4%，绝对量随窗口高度增长，仍留在标题栏 38px 的留白内不被裁切 */
   transition: height 0.62s cubic-bezier(0.34, 1.38, 0.64, 1);
@@ -307,15 +307,6 @@
 [data-theme="dark"] .rail .progressCard {
   background: rgba(255, 255, 255, 0.06);
   border-color: rgba(255, 255, 255, 0.08);
-}
-
-[data-theme="codex"] .railToggle {
-  background: rgba(240, 246, 252, 0.08);
-}
-
-[data-theme="codex"] .rail .progressCard {
-  background: rgba(240, 246, 252, 0.04);
-  border-color: rgba(240, 246, 252, 0.08);
 }
 
 .courseRow {

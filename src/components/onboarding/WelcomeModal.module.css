@@ -62,10 +62,6 @@
   background: rgba(28, 28, 30, 0.94);
 }
 
-[data-theme="vista"] .modal {
-  background: rgba(255, 255, 255, 0.8);
-}
-
 /* ===== 关闭按钮：卡片左上角，与内容边距对齐 ===== */
 /* .modal > 提高特异性，压过全局 .liquid-glass > * 的 position: relative */
 .modal > .closeBtn {
@@ -102,11 +98,6 @@
 
 [data-theme="dark"] .modal > .closeBtn:hover {
   background: rgba(255, 255, 255, 0.18);
-}
-
-[data-theme="vista"] .modal > .closeBtn {
-  background: rgba(255, 255, 255, 0.3);
-  border: 1px solid rgba(255, 255, 255, 0.5);
 }
 
 /* ===== 主体内容 ===== */
@@ -247,11 +238,6 @@
   background: rgba(0, 113, 227, 0.2);
 }
 
-[data-theme="vista"] .langChip {
-  background: rgba(255, 255, 255, 0.35);
-  border-color: rgba(255, 255, 255, 0.5);
-}
-
 /* ===== 三步概览 ===== */
 .steps {
   display: flex;
@@ -276,11 +262,6 @@
 [data-theme="dark"] .stepRow {
   background: rgba(255, 255, 255, 0.06);
   border-color: rgba(255, 255, 255, 0.08);
-}
-
-[data-theme="vista"] .stepRow {
-  background: rgba(255, 255, 255, 0.35);
-  border-color: rgba(255, 255, 255, 0.5);
 }
 
 .stepNum {

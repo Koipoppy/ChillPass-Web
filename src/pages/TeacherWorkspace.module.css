@@ -746,32 +746,6 @@ select.textInput {
   color: var(--text-primary);
 }
 
-/* ===== Codex 主题 ===== */
-[data-theme="codex"] .questionGroup {
-  border-color: rgba(240, 246, 252, 0.1);
-}
-
-[data-theme="codex"] .groupHeader {
-  background: rgba(240, 246, 252, 0.03);
-}
-
-[data-theme="codex"] .questionCard {
-  border-color: rgba(240, 246, 252, 0.08);
-  background: rgba(240, 246, 252, 0.02);
-}
-
-[data-theme="codex"] .optionItem {
-  background: rgba(240, 246, 252, 0.04);
-}
-
-[data-theme="codex"] .stepsList {
-  background: rgba(240, 246, 252, 0.04);
-}
-
-[data-theme="codex"] .exportSummary {
-  background: rgba(240, 246, 252, 0.03);
-}
-
 /* ============================================================
    dock 版布局：放开宽度上限，卡片与字段区压扁
    ============================================================ */

@@ -954,15 +954,6 @@
   border-top-color: rgba(255, 255, 255, 0.08);
 }
 
-[data-theme="vista"] .tokenStat {
-  background: rgba(255, 255, 255, 0.3);
-  border-color: rgba(255, 255, 255, 0.45);
-}
-
-[data-theme="vista"] .tokenBar {
-  background: rgba(0, 0, 0, 0.04);
-}
-
 /* ===== 接口提供商切换 ===== */
 .providerGroup {
   display: flex;
@@ -1007,11 +998,6 @@
 
 [data-theme="dark"] .providerOptionActive {
   background: rgba(0, 113, 227, 0.18);
-}
-
-[data-theme="vista"] .providerOption {
-  background: rgba(255, 255, 255, 0.35);
-  border-color: rgba(255, 255, 255, 0.5);
 }
 
 /* ===== 模型选择：标签行 + 拉取按钮 ===== */

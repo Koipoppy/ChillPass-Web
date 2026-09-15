@@ -2,12 +2,25 @@
 .root {
   /* dock 高度：折叠侧边栏与通知中心都以此为准 */
   --dock-h: clamp(300px, 42vh, 520px);
+  /* 内容区上方占用：标题栏 38px + 底边距 20px。
+     展开的卡片高度 = 100vh - 这个值，改标题栏或内边距时只需改这一处 */
+  --dock-above-h: 58px;
+  /* 底栏水平内边距 */
+  --dock-pad-x: 12px;
+  /* 折叠侧边栏宽度（Sidebar 的 rail 变体以此为准） */
+  --dock-rail-w: 208px;
+  /* 通知面板宽度。受几何约束：面板展开时左侧两卡整体左移，
+     只有 面板宽 ≤ 栏内可用宽 - 平移后页面宽 才既不遮挡页面、也不把页面挤出窗口。
+     按当前参数这个上限是 298px，改大就会开始遮挡页面。 */
+  --dock-panel-w: 298px;
+  --dock-zone-w: 68px;
   display: flex;
   flex-direction: column;
   width: 100vw;
   height: 100vh;
   overflow: hidden;
-  padding: 38px 12px 12px; /* 顶部让出标题栏 */
+  /* 顶部让出标题栏；底部留够，否则三张卡的下缘阴影会被窗口边切平 */
+  padding: 38px var(--dock-pad-x) 20px;
   box-sizing: border-box;
   gap: 10px;
 }
@@ -111,6 +124,24 @@
   user-select: none;
 }
 
+/* ===== 左侧两卡（侧边栏 + 页面） ===== */
+.pushGroup {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  align-items: stretch;
+  gap: 10px;
+  transition: transform 0.34s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+/* 通知面板展开：左侧两卡整体左移，
+   移动量 = 侧边栏左偏移（dock 左内边距）+ 侧边栏宽度 —— 正好让它移出视口，
+   页面卡则停在原位、右缘刚好贴着面板左缘：既不遮挡也不被挤出窗口 */
+.pushGroupPushed {
+  transform: translateX(calc(-1 * (var(--dock-pad-x) + var(--dock-rail-w))));
+  transition: transform 0.5s cubic-bezier(0.34, 1.3, 0.64, 1);
+}
+
 /* ===== 页面区：承载导航栏对应的页面 ===== */
 .pageArea {
   flex: 1 1 auto;
@@ -130,7 +161,7 @@
 
 /* 启用 Athena 时自动展开，用与侧边栏一致的回弹曲线 */
 .pageAreaExpanded {
-  height: calc(100vh - 50px);
+  height: calc(100vh - var(--dock-above-h, 58px));
   transition: height 0.62s cubic-bezier(0.34, 1.38, 0.64, 1);
 }
 
@@ -219,35 +250,4 @@
 [data-theme="dark"] .pageCollapse:hover {
   background: rgba(255, 255, 255, 0.14);
   border-color: rgba(255, 255, 255, 0.2);
-}
-
-[data-theme="vista"] .pageArea {
-  background: rgba(255, 255, 255, 0.82);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-}
-
-[data-theme="vista"] .pageBar {
-  background: rgba(255, 255, 255, 0.9);
-}
-
-[data-theme="codex"] .pageArea {
-  background: #161b22;
-  border-color: rgba(240, 246, 252, 0.1);
-  box-shadow: none;
-}
-
-[data-theme="codex"] .pageBar {
-  background: #161b22;
-  border-bottom-color: rgba(240, 246, 252, 0.1);
-}
-
-[data-theme="codex"] .pageCollapse {
-  background: rgba(240, 246, 252, 0.08);
-  border-color: rgba(240, 246, 252, 0.12);
-}
-
-[data-theme="codex"] .stagePlaceholder {
-  border-color: rgba(240, 246, 252, 0.14);
-  color: rgba(230, 237, 243, 0.3);
 }

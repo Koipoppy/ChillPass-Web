@@ -70,19 +70,3 @@
   background: rgba(255, 255, 255, 0.2);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
 }
-
-[data-theme="codex"] .switch {
-  background: #161b22;
-  border-color: rgba(240, 246, 252, 0.12);
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-}
-
-[data-theme="codex"] .thumb {
-  background: rgba(0, 212, 255, 0.16);
-  box-shadow: none;
-}
-
-[data-theme="codex"] .optionActive {
-  color: #00d4ff;
-}

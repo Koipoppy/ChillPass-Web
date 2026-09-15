@@ -64,6 +64,8 @@ export default function DockLayout({ children }: { children: ReactNode }) {
   const [pageExpanded, setPageExpanded] = useState(false)
   // 左侧栏的展开态提到这里，便于判断「有没有卡片长到 dock 上边界之上」
   const [railExpanded, setRailExpanded] = useState(false)
+  // 通知面板的开合（由 NotificationCenter 上报）：展开时左侧两卡整体左移
+  const [panelOpen, setPanelOpen] = useState(false)
 
   useEffect(() => {
     setPageExpanded(isChat)
@@ -152,39 +154,44 @@ export default function DockLayout({ children }: { children: ReactNode }) {
           <span className={styles.resizerGrip} />
         </div>
 
-        <Sidebar
-          variant="rail"
-          expanded={railExpanded}
-          onToggleExpand={() => setRailExpanded(v => !v)}
-        />
-        <main
-          className={`${styles.pageArea} ${pageExpanded ? styles.pageAreaExpanded : ''}`}
-          data-page-bar={canExpandPage ? '' : undefined}
+        {/* 左侧两卡（侧边栏 + 页面）：通知面板展开时整体左移，避免被面板遮挡 */}
+        <div
+          className={`${styles.pushGroup} ${panelOpen ? styles.pushGroupPushed : ''}`}
         >
-          {/* 可展开的页面（Athena）常驻一条头部栏：既是页面名，也是展开/收起的开关本身，
-              收起后仍留在这里，避免「收起就再也展不开」 */}
-          {canExpandPage && (
-            <div className={styles.pageBar}>
-              <span className={styles.pageBarTitle}>{pageLabel}</span>
-              <button
-                type="button"
-                className={styles.pageCollapse}
-                onClick={() => setPageExpanded(v => !v)}
-                title={pageExpanded ? t('guide.collapse') : t('dock.expandPanel')}
-                aria-label={pageExpanded ? t('guide.collapse') : t('dock.expandPanel')}
-                aria-expanded={pageExpanded}
-              >
-                {pageExpanded ? (
-                  <ChevronDown size={14} strokeWidth={2.2} />
-                ) : (
-                  <ChevronUp size={14} strokeWidth={2.2} />
-                )}
-              </button>
-            </div>
-          )}
-          {children}
-        </main>
-        <NotificationCenter />
+          <Sidebar
+            variant="rail"
+            expanded={railExpanded}
+            onToggleExpand={() => setRailExpanded(v => !v)}
+          />
+          <main
+            className={`${styles.pageArea} ${pageExpanded ? styles.pageAreaExpanded : ''}`}
+            data-page-bar={canExpandPage ? '' : undefined}
+          >
+            {/* 可展开的页面（Athena）常驻一条头部栏：既是页面名，也是展开/收起的开关本身，
+                收起后仍留在这里，避免「收起就再也展不开」 */}
+            {canExpandPage && (
+              <div className={styles.pageBar}>
+                <span className={styles.pageBarTitle}>{pageLabel}</span>
+                <button
+                  type="button"
+                  className={styles.pageCollapse}
+                  onClick={() => setPageExpanded(v => !v)}
+                  title={pageExpanded ? t('guide.collapse') : t('dock.expandPanel')}
+                  aria-label={pageExpanded ? t('guide.collapse') : t('dock.expandPanel')}
+                  aria-expanded={pageExpanded}
+                >
+                  {pageExpanded ? (
+                    <ChevronDown size={14} strokeWidth={2.2} />
+                  ) : (
+                    <ChevronUp size={14} strokeWidth={2.2} />
+                  )}
+                </button>
+              </div>
+            )}
+            {children}
+          </main>
+        </div>
+        <NotificationCenter onOpenChange={setPanelOpen} />
       </div>
     </div>
   )

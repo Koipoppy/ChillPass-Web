@@ -1,30 +1,71 @@
-/* ===== 底部 dock 右区：通知中心 ===== */
+/* ===== 底部 dock 右区：通知中心 =====
+ * 折叠与展开是【同一张卡片在变形】：卡片宽度从 68px 长到 340px（右边缘锚定、向左伸展），
+ * 面板内容固定 340px 宽并右对齐，随卡片变宽被逐步揭开——不是另加一张卡覆盖上去。
+ * 卡片绝对定位，所以整个过程不改变底部三栏的布局宽度。
+ */
 .zone {
-  flex: 0 0 auto;
-  width: 68px;
-  padding: 12px;
+  flex: 0 0 var(--dock-zone-w);
+  width: var(--dock-zone-w);
+  position: relative;
+  overflow: visible;
+}
+
+/* 卡片本体：宽度就是折叠↔展开的形变 */
+.card {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: var(--dock-zone-w);
   border-radius: var(--radius-lg);
   background: var(--bg-surface);
   border: 1px solid rgba(0, 0, 0, 0.06);
   box-shadow: var(--shadow-ambient);
   overflow: hidden;
-  /* 折叠态下铃铛居中 */
+  /* 压过页面容器的 z-index: 1（.pageArea > *），否则会被页面内容盖住 */
+  z-index: 3;
+  transition: width 0.34s cubic-bezier(0.32, 0.72, 0, 1), box-shadow 0.34s ease;
+}
+
+.cardOpen {
+  width: var(--dock-panel-w);
+  box-shadow: var(--shadow-float);
+  transition: width 0.5s cubic-bezier(0.34, 1.3, 0.64, 1), box-shadow 0.5s ease;
+}
+
+/* 面板内容：定宽右对齐，收起时整体右移滑出卡片（由卡片 overflow 充当遮罩），
+   而不是被卡片边缘原地裁切——原地裁切会让里面的元素显得"突然消失" */
+.content {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: var(--dock-panel-w);
   display: flex;
-  align-items: center;
-  justify-content: center;
-  /* 收起：平滑回落 */
-  transition: width 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+  flex-direction: column;
+  padding: 12px;
+  transform: translateX(100%);
+  /* visibility 延迟到滑出动画结束后再隐藏：既不可点也不在 Tab 顺序里 */
+  visibility: hidden;
+  transition: transform 0.34s cubic-bezier(0.32, 0.72, 0, 1),
+    visibility 0s linear 0.34s;
 }
 
-.zoneOpen {
-  width: 340px;
-  /* 展开：与侧边栏同族的回弹曲线 */
-  transition: width 0.5s cubic-bezier(0.34, 1.3, 0.64, 1);
+.contentOpen {
+  transform: translateX(0);
+  visibility: visible;
+  transition: transform 0.5s cubic-bezier(0.34, 1.3, 0.64, 1),
+    visibility 0s linear 0s;
 }
 
-/* 折叠态：顶部铃铛（与左侧栏标题行对齐） */
+/* 折叠态铃铛：居中在 68px 的通知栏里；展开时淡出让位给面板。
+   z-index 必须高于卡片（3），否则会被卡片的不透明背景盖住而看不见 */
 .bell {
-  position: relative;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 4;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -36,7 +77,12 @@
   background: rgba(0, 0, 0, 0.04);
   color: var(--text-secondary);
   cursor: pointer;
-  transition: background 0.18s ease, color 0.18s ease;
+  transition: background 0.18s ease, color 0.18s ease, opacity 0.2s ease;
+}
+
+.bellHidden {
+  opacity: 0;
+  pointer-events: none;
 }
 
 .bell:hover {
@@ -58,27 +104,6 @@
   font-weight: 700;
   line-height: 16px;
   text-align: center;
-}
-
-/* ===== 展开面板 ===== */
-.panel {
-  width: 316px; /* 340 - 2*12 padding */
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  /* 内容比宽度慢半步浮现，和外面的回弹宽度衔接 */
-  animation: panelIn 0.42s cubic-bezier(0.32, 0.72, 0, 1);
-}
-
-@keyframes panelIn {
-  from {
-    opacity: 0;
-    transform: translateX(14px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
 }
 
 .panelHeader {
@@ -499,25 +524,4 @@
 
 [data-theme="dark"] .markReadBtn:hover {
   background: rgba(255, 255, 255, 0.07);
-}
-
-[data-theme="vista"] .zone {
-  background: rgba(255, 255, 255, 0.82);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-}
-
-[data-theme="codex"] .zone {
-  background: #161b22;
-  border-color: rgba(240, 246, 252, 0.1);
-  box-shadow: none;
-}
-
-[data-theme="codex"] .bell,
-[data-theme="codex"] .closeBtn {
-  background: rgba(240, 246, 252, 0.08);
-}
-
-[data-theme="codex"] .block {
-  background: rgba(240, 246, 252, 0.04);
 }

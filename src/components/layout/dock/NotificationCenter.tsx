@@ -29,12 +29,17 @@ interface GuideStep {
   action: () => void
 }
 
+interface NotificationCenterProps {
+  /** 上报面板开合：DockLayout 据此把左侧两卡整体左移，避免被面板遮挡 */
+  onOpenChange?: (open: boolean) => void
+}
+
 /**
  * 底部 dock 右区：通知中心
  * 折叠态是一枚铃铛按钮，展开后承载新版本提示、新手引导与通知列表
  * （原右下角悬浮任务卡的角色迁移到这里）
  */
-export default function NotificationCenter() {
+export default function NotificationCenter({ onOpenChange }: NotificationCenterProps = {}) {
   const t = useT()
   const navigate = useNavigate()
   const [open, setOpen] = useState(false)
@@ -75,6 +80,11 @@ export default function NotificationCenter() {
     }
   }
   useEffect(() => clearHoverTimer, [])
+
+  // 把开合状态上报给 DockLayout（用来平移左侧两卡）
+  useEffect(() => {
+    onOpenChange?.(open)
+  }, [open, onOpenChange])
 
   const handleMouseEnter = () => {
     if (open || hoverTimerRef.current) return
@@ -131,15 +141,22 @@ export default function NotificationCenter() {
 
   return (
     <aside
-      className={`${styles.zone} ${open ? styles.zoneOpen : ''}`}
+      className={styles.zone}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
       {/* 点击面板外区域收起 */}
       {open && <div className={styles.clickAway} onClick={close} aria-hidden="true" />}
 
-      {open ? (
-        <div className={styles.panel}>
+      {/*
+        同一张卡片变形展开：卡片宽度 68px → 340px（右锚定、向左伸展），
+        内容定宽右对齐被逐步揭开。收起时不改变左侧布局宽度。
+      */}
+      <div className={`${styles.card} ${open ? styles.cardOpen : ''}`}>
+        <div
+          className={`${styles.content} ${open ? styles.contentOpen : ''}`}
+          aria-hidden={!open}
+        >
           <div className={styles.panelHeader}>
             <Bell size={15} strokeWidth={2} />
             <span className={styles.panelTitle}>{t('dock.notifications')}</span>
@@ -149,6 +166,7 @@ export default function NotificationCenter() {
               onClick={close}
               title={t('guide.collapse')}
               aria-label={t('guide.collapse')}
+              tabIndex={open ? 0 : -1}
             >
               <X size={14} strokeWidth={2.2} />
             </button>
@@ -299,26 +317,34 @@ export default function NotificationCenter() {
             </div>
           </div>
 
-          {notifications.length > 0 && (
-            <button type="button" className={styles.markReadBtn} onClick={markAllRead}>
-              {t('dock.markAllRead')}
-            </button>
-          )}
+        {notifications.length > 0 && (
+          <button
+            type="button"
+            className={styles.markReadBtn}
+            onClick={markAllRead}
+            tabIndex={open ? 0 : -1}
+          >
+            {t('dock.markAllRead')}
+          </button>
+        )}
         </div>
-      ) : (
-        <button
-          type="button"
-          className={styles.bell}
-          onClick={() => setOpen(true)}
-          title={t('dock.notifications')}
-          aria-label={t('dock.notifications')}
-        >
-          <Bell size={18} strokeWidth={1.9} />
-          {unreadCount > 0 && (
-            <span className={styles.badge}>{unreadCount > 9 ? '9+' : unreadCount}</span>
-          )}
-        </button>
-      )}
+      </div>
+
+      {/* 铃铛常驻（展开时淡出），让卡片变形的过程连贯 */}
+      <button
+        type="button"
+        className={`${styles.bell} ${open ? styles.bellHidden : ''}`}
+        onClick={() => setOpen(true)}
+        title={t('dock.notifications')}
+        aria-label={t('dock.notifications')}
+        aria-hidden={open}
+        tabIndex={open ? -1 : 0}
+      >
+        <Bell size={18} strokeWidth={1.9} />
+        {unreadCount > 0 && (
+          <span className={styles.badge}>{unreadCount > 9 ? '9+' : unreadCount}</span>
+        )}
+      </button>
     </aside>
   )
 }

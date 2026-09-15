@@ -44,14 +44,6 @@
   background: rgba(255, 255, 255, 0.06);
 }
 
-[data-theme="codex"] .groupHeader {
-  background: rgba(240, 246, 252, 0.03);
-}
-
-[data-theme="codex"] .groupHeader:hover {
-  background: rgba(240, 246, 252, 0.05);
-}
-
 /* ===== 头部 ===== */
 .header {
   margin-bottom: 24px;

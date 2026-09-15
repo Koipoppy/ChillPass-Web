@@ -435,7 +435,6 @@
   line-height: 1.4;
 }
 
-
 .spin {
   animation: spin 1s linear infinite;
 }
@@ -746,8 +745,6 @@
   background: rgba(255, 255, 255, 0.08);
 }
 
-
-
 .taskIcon {
   display: flex;
   align-items: center;
@@ -865,13 +862,6 @@
   box-shadow: 0 24px 80px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.08) inset;
 }
 
-[data-theme="vista"] .modal {
-  background: rgba(255, 255, 255, 0.55);
-  border-radius: 8px;
-}
-
-
-
 .modalHeader {
   display: flex;
   align-items: center;
@@ -885,8 +875,6 @@
   border-bottom-color: rgba(255, 255, 255, 0.08);
   background: rgba(255, 255, 255, 0.03);
 }
-
-
 
 .modalTitle {
   display: flex;
@@ -923,8 +911,6 @@
 [data-theme="dark"] .modalClose:hover {
   background: rgba(255, 255, 255, 0.1);
 }
-
-
 
 .modalBody {
   flex: 1;
@@ -975,8 +961,6 @@
   background: rgba(255, 255, 255, 0.08);
 }
 
-
-
 .panelTextarea {
   padding: 10px 14px;
   border: 1.5px solid rgba(0, 0, 0, 0.08);
@@ -1000,8 +984,6 @@
   background: rgba(255, 255, 255, 0.05);
 }
 
-
-
 .panelAddBtn {
   display: flex;
   align-items: center;
@@ -1023,8 +1005,6 @@
   opacity: 0.85;
   transform: translateY(-1px);
 }
-
-
 
 .itemList {
   display: flex;
@@ -1061,8 +1041,6 @@
 [data-theme="dark"] .abilityItem:hover {
   background: rgba(255, 255, 255, 0.08);
 }
-
-
 
 .abilityInfo {
   display: flex;
@@ -1183,8 +1161,6 @@
   background: rgba(255, 255, 255, 0.08);
 }
 
-
-
 .memoryCategory {
   font-size: 11px;
   font-weight: 600;
@@ -1287,8 +1263,6 @@
   border-color: rgba(255, 255, 255, 0.15);
   background: rgba(255, 255, 255, 0.05);
 }
-
-
 
 /* ===== Athena: Status indicator ===== */
 .statusIndicator {

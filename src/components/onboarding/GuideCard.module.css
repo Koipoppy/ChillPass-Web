@@ -54,10 +54,6 @@
   background: rgba(28, 28, 30, 0.94);
 }
 
-[data-theme="vista"] .card {
-  background: rgba(255, 255, 255, 0.85);
-}
-
 /* ===== 折叠徽章：圆形悬浮按钮 + 进度角标 ===== */
 /* 徽章动画包装层：作为 collapsedCount 的绝对定位参照 */
 .badgeWrap {
@@ -123,10 +119,6 @@
 /* 折叠徽章主题覆盖 */
 [data-theme="dark"] .collapsedCard {
   background: rgba(28, 28, 30, 0.92);
-}
-
-[data-theme="vista"] .collapsedCard {
-  background: rgba(255, 255, 255, 0.72);
 }
 
 /* ===== 头部 ===== */

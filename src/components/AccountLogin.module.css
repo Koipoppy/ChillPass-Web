@@ -44,12 +44,6 @@
   background: rgba(28, 28, 30, 0.85);
 }
 
-
-
-[data-theme="vista"] .modal {
-  background: rgba(255, 255, 255, 0.55);
-}
-
 .modalHeader {
   display: flex;
   align-items: flex-start;
@@ -122,13 +116,6 @@
   background: rgba(255, 255, 255, 0.18);
 }
 
-
-
-[data-theme="vista"] .closeBtn {
-  background: rgba(255, 255, 255, 0.3);
-  border: 1px solid rgba(255, 255, 255, 0.5);
-}
-
 .form {
   display: flex;
   flex-direction: column;
@@ -158,13 +145,6 @@
 [data-theme="dark"] .hint {
   background: rgba(0, 113, 227, 0.12);
   border-color: rgba(0, 113, 227, 0.25);
-}
-
-
-
-[data-theme="vista"] .hint {
-  background: rgba(255, 255, 255, 0.25);
-  border-color: rgba(255, 255, 255, 0.4);
 }
 
 .fieldRow {
@@ -218,13 +198,6 @@
   background: rgba(255, 255, 255, 0.12);
 }
 
-
-
-[data-theme="vista"] .input {
-  background: rgba(255, 255, 255, 0.5);
-  border-color: rgba(255, 255, 255, 0.6);
-}
-
 .error {
   font-size: 13px;
   color: var(--danger-text);
@@ -236,12 +209,6 @@
 /* 错误提示主题覆盖 */
 [data-theme="dark"] .error {
   background: rgba(255, 69, 58, 0.15);
-}
-
-
-
-[data-theme="vista"] .error {
-  background: rgba(255, 59, 48, 0.1);
 }
 
 .actions {
@@ -307,17 +274,6 @@
   background: rgba(255, 255, 255, 0.16);
 }
 
-
-
-[data-theme="vista"] .cancelBtn {
-  background: rgba(255, 255, 255, 0.35);
-  border-color: rgba(255, 255, 255, 0.5);
-}
-
-[data-theme="vista"] .cancelBtn:hover {
-  background: rgba(255, 255, 255, 0.6);
-}
-
 /* ===== 头像 emoji 选择器 ===== */
 .avatarPicker {
   display: flex;
@@ -368,13 +324,6 @@
 
 [data-theme="dark"] .avatarOptionActive {
   background: rgba(0, 113, 227, 0.2);
-}
-
-
-
-[data-theme="vista"] .avatarOption {
-  background: rgba(255, 255, 255, 0.35);
-  border-color: rgba(255, 255, 255, 0.5);
 }
 
 /* textarea 复用 input 样式时的微调 */

@@ -30,14 +30,18 @@
   display: none;
 }
 
-/* dock 版布局：页面收在底部 dock 卡片内，四周内边距收紧 */
+/* dock 版布局：页面收在底部 dock 卡片内
+ * 裁剪盒贴到卡片边缘、内容用内边距内缩（净位置仍是 18px / 16px）：
+ * pageWrapper 是滚动容器、必然裁剪，贴边的话页面里卡片/输入框的阴影
+ * 会被沿容器边缘切平，看起来像被卡片边缘削掉一块。
+ */
 .pageWrapperDock {
   top: 0;
-  left: 18px;
-  right: 18px;
-  bottom: 16px;
+  left: 2px;
+  right: 2px;
+  bottom: 2px;
+  padding: 0 16px 14px;
   /* 中部卡片带头部栏时（Athena）顶部让出 34px 给展开/收起开关 */
-  padding-top: 0;
   transition: padding-top 0.34s cubic-bezier(0.32, 0.72, 0, 1);
 }
 
