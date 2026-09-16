@@ -83,6 +83,9 @@ html {
   -moz-osx-font-smoothing: grayscale;
   border-radius: 12px;
   overflow: hidden;
+  /* 安卓 WebView 默认会在点按位置盖一个半透明蓝框（tap highlight）。
+     这是系统行为、不是应用样式，只能从这里关掉。 */
+  -webkit-tap-highlight-color: transparent;
 }
 
 body {
@@ -345,4 +348,45 @@ button[class*="courseMenuItemMain"] {
 
 [data-theme="dark"] .svgBlockSource {
   border-top-color: rgba(255, 255, 255, 0.1);
+}
+
+/* ===== 触屏设备：不画点按产生的默认焦点框 =====
+ * 点完按钮/链接后浏览器会补一圈焦点描边，在手机上看就是多余的蓝框。
+ * 只对「没有悬停能力」的输入设备生效：桌面端保留键盘焦点圈，不影响可访问性。
+ */
+@media (hover: none) {
+  button:focus,
+  a:focus,
+  summary:focus,
+  [role="button"]:focus,
+  [tabindex]:focus {
+    outline: none;
+  }
+}
+
+/* ============================================================
+   移动端性能
+   瓶颈是实时模糊：背景层有 6 个 600~900px、带 blur(100px) 的光斑在持续动画，
+   背景每帧都在变，于是每一个玻璃面板的背景模糊也必须每帧重算，
+   表现为整体卡顿 + 画面闪动（模糊采样的是一个不断变化的背景）。
+   移动端整体停用 backdrop-filter，改用不透明度更高的纯色面板保证可读性；
+   桌面端保留完整的玻璃效果。
+   ============================================================ */
+@media (max-width: 768px) {
+  /* backdrop-filter 会迫使合成器每帧重新采样背景，移动端全部关闭 */
+  *,
+  *::before,
+  *::after {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  /* 失去模糊后需要提高不透明度，否则卡片会和背景糊在一起 */
+  .liquid-glass {
+    background: rgba(255, 255, 255, 0.88);
+  }
+
+  [data-theme="dark"] .liquid-glass {
+    background: rgba(44, 44, 46, 0.92);
+  }
 }
