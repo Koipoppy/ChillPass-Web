@@ -1605,3 +1605,79 @@
 :global([data-ui-style='dock']) .title {
   display: none;
 }
+
+/* ============================================================
+   移动端：任务选择区压缩
+   桌面的留白是按大屏给的，搬到 360px 上很占地方：
+   .emptyState 的 20px 加上 .welcomeCard 的 40/32 内边距，横向一共吃掉 104px，
+   五张任务卡只剩 225px 宽、两侧各空 53px；而每张卡又是「图标在上、文字在下」
+   的纵向排布，一张 113px，五张就 567px。
+   ============================================================ */
+@media (max-width: 768px) {
+  .emptyState {
+    padding: 10px;
+  }
+
+  .welcomeCard {
+    max-width: none;
+    padding: 20px 16px;
+  }
+
+  /* 页头已经有大图标和「Athena / 你的智能学伴」，卡里再来一遍是重复信息 */
+  .welcomeIcon {
+    width: 52px;
+    height: 52px;
+    margin: 0 auto 12px;
+  }
+
+  .welcomeIcon svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .welcomeTitle {
+    font-size: 20px;
+    margin-bottom: 4px;
+  }
+
+  .welcomeSubtitle {
+    font-size: 13.5px;
+    margin-bottom: 16px;
+  }
+
+  /*
+   * 任务卡改为单列横向紧凑排布：图标在左、标题与说明在右，高度减半。
+   * 不用两列网格——5 个任务会排成 2+2+1，最后一行只剩一个看着像没排好；
+   * 单列也留出了足够宽度，说明文字不会折行。
+   */
+  .taskGrid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 8px;
+  }
+
+  .taskCard {
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    /*
+     * 桌面为了视觉重量给了 min-height: 100px；改成横向排布后一行文字
+     * 只有约 40px 高，这个下限会把每张卡强行撑到 100px，压缩就白做了。
+     */
+    min-height: 0;
+  }
+
+  .taskDesc {
+    font-size: 11px;
+  }
+
+  /*
+   * 输入行给浮动徽章让位。
+   * 收起的引导徽章固定在右下角（导航栏上方），而聊天页的发送按钮正好也在
+   * 那个位置——实测 elementFromPoint 命中的是徽章，也就是发送按钮根本点不到。
+   * 这里留出徽章的宽度，把发送按钮移到它左侧；徽章正好落在留出的空位里。
+   */
+  .inputWrapper {
+    padding-right: 72px;
+  }
+}
