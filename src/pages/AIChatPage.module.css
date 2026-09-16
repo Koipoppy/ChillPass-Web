@@ -1620,29 +1620,18 @@
 
   .welcomeCard {
     max-width: none;
-    padding: 20px 16px;
+    padding: 14px;
   }
 
-  /* 页头已经有大图标和「Athena / 你的智能学伴」，卡里再来一遍是重复信息 */
-  .welcomeIcon {
-    width: 52px;
-    height: 52px;
-    margin: 0 auto 12px;
-  }
-
-  .welcomeIcon svg {
-    width: 24px;
-    height: 24px;
-  }
-
-  .welcomeTitle {
-    font-size: 20px;
-    margin-bottom: 4px;
-  }
-
+  /*
+   * 卡内这一整块头部（圆形图标 + 「Athena」+ 说明）手机上直接去掉：
+   * 页头已经有「Athena / 你的智能学伴」，卡里再重复一遍只是白占一屏里的
+   * 一大块高度。去掉后任务列表紧接在页头之下。
+   */
+  .welcomeIcon,
+  .welcomeTitle,
   .welcomeSubtitle {
-    font-size: 13.5px;
-    margin-bottom: 16px;
+    display: none;
   }
 
   /*
@@ -1651,6 +1640,8 @@
    * 单列也留出了足够宽度，说明文字不会折行。
    */
   .taskGrid {
+    /* 头部去掉后不需要再让出顶部间距 */
+    margin-top: 0;
     grid-template-columns: minmax(0, 1fr);
     gap: 8px;
   }
