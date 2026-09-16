@@ -69,6 +69,33 @@
   box-shadow: var(--shadow-hover);
 }
 
+/*
+ * 次要操作（导入课程）：与主按钮并排，靠描边区分层级。
+ * 样式原先内联写在 JSX 里，手机上 CSS 完全够不着——宽度不够时 flex 会把
+ * 左右内边距压掉，两个药丸贴在一起，看起来像一组分段控件而不是两个按钮。
+ * 提到类名里才能做移动端适配。属性值与原来的内联样式逐项一致。
+ */
+.secondaryBtn {
+  margin-top: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 27px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.secondaryBtn:hover {
+  color: var(--text-primary);
+  border-color: rgba(0, 0, 0, 0.2);
+}
+
 .heroSteps {
   margin-top: 24px;
   display: flex;
@@ -994,10 +1021,56 @@
    也不要在一个标签内部折行。
    ============================================================ */
 @media (max-width: 768px) {
+  /*
+   * 桌面尺寸直接搬到手机上会把整张欢迎卡撑满屏：
+   * 56px 的标题 + 56px 的左右内边距，360px 屏上一行只放得下 3 个字，
+   * 8 个字的标题折成三行；徽章文案也因此挤到第二行。
+   * 改用随视口缩放的尺寸，桌面端（≥768px）数值与原来一致。
+   * 注意：这台设备还会再乘 1.12 的系统字体缩放，所以按 360px 留了余量。
+   */
+  .hero {
+    padding: clamp(26px, 8vw, 64px) clamp(18px, 5vw, 56px);
+    gap: 14px;
+  }
+
+  .heroTitle {
+    font-size: clamp(24px, 8.6vw, 56px);
+    line-height: 1.15;
+    margin-top: 4px;
+  }
+
+  .heroSubtitle {
+    font-size: clamp(14px, 4.2vw, 18px);
+  }
+
+  .heroBadge {
+    font-size: clamp(11px, 3.4vw, 13px);
+    padding: 6px 12px;
+    gap: 6px;
+  }
+
+  /*
+   * 两个操作按钮并排时宽度不够，flex 会先把左右内边距压掉，
+   * 结果两个药丸贴在一起、看着像一组分段控件。
+   * 收一档字号与内边距，让它们留出正常间距（实测 360px 下共需约 258px，
+   * 可用约 300px，留有余量）。
+   */
+  .primaryBtn,
+  .secondaryBtn {
+    font-size: 14px;
+    padding: 11px 18px;
+    gap: 6px;
+  }
+
   .heroSteps {
-    margin-top: 18px;
-    gap: 10px 14px;
-    flex-wrap: wrap;
+    margin-top: 14px;
+    /*
+     * 必须强制单行。这一条是 flex 子项、宽度由内容决定（实测仅 223px），
+     * 而三项并排需要约 257px，一旦允许换行就会断成「上排两个、下排一个」，
+     * 看起来像没排好。这里靠 nowrap + 缩小间距把它压进一行。
+     */
+    flex-wrap: nowrap;
+    gap: 6px 10px;
   }
 
   .heroStep {

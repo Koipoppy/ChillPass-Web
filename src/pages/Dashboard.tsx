@@ -155,21 +155,7 @@ export default function Dashboard() {
             </button>
             <button
               onClick={() => handleImportClick(welcomeFileInputRef)}
-              style={{
-                marginTop: 0,
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 8,
-                padding: '13px 27px',
-                border: '1px solid rgba(0, 0, 0, 0.12)',
-                borderRadius: 'var(--radius-pill)',
-                background: 'transparent',
-                color: 'var(--text-secondary)',
-                fontSize: 16,
-                fontWeight: 600,
-                cursor: 'pointer',
-                transition: 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-              }}
+              className={styles.secondaryBtn}
               title={t('dashboard.importCourseTip')}
             >
               <Download size={18} strokeWidth={2} />
