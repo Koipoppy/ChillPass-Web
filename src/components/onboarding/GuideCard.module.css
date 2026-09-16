@@ -54,6 +54,25 @@
   background: rgba(28, 28, 30, 0.94);
 }
 
+/* ============================================================
+   移动端
+   卡片原来写死 320px 宽，在 360px 视口上几乎贴边；
+   同时改为不透明，避免半透明 + 背景模糊削弱正文对比度。
+   ============================================================ */
+@media (max-width: 768px) {
+  .card:global(.liquid-glass) {
+    width: min(320px, calc(100vw - 24px));
+    max-height: 62vh;
+    background: #ffffff;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  [data-theme="dark"] .card {
+    background: #1c1c1e;
+  }
+}
+
 /* ===== 折叠徽章：圆形悬浮按钮 + 进度角标 ===== */
 /* 徽章动画包装层：作为 collapsedCount 的绝对定位参照 */
 .badgeWrap {

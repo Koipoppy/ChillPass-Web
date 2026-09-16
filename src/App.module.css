@@ -67,3 +67,44 @@
   -webkit-backdrop-filter: blur(18px) saturate(150%);
   transition: opacity 0.25s ease;
 }
+
+/* ============================================================
+   移动端（安卓 WebView / 窄屏）
+   桌面布局是「左侧固定栏 + 全高内容」，在手机上竖向空间被导航吃掉大半，
+   这里改为「内容占满 + 导航落到屏幕底部」。媒体查询不命中时桌面样式完全不变。
+   ============================================================ */
+@media (max-width: 768px) {
+  .app {
+    flex-direction: column;
+    /* WebView 里没有地址栏，100dvh 与 100vh 等价；浏览器调试时更稳 */
+    height: 100dvh;
+    padding-top: 34px;
+  }
+
+  /* 导航在 DOM 里排在内容之前，手机上要挪到底部 */
+  .main {
+    order: 1;
+    flex: 1;
+    min-height: 0;
+  }
+
+  .pageWrapper {
+    top: 8px;
+    left: 12px;
+    right: 12px;
+    bottom: 8px;
+  }
+
+  /* dock 版布局的小屏退化：取消贴边内缩，避免可拖拽面板在小屏上互相挤压 */
+  .pageWrapperDock {
+    top: 8px;
+    left: 12px;
+    right: 12px;
+    bottom: 8px;
+    padding: 0;
+  }
+
+  :global([data-page-bar]) .pageWrapperDock {
+    padding-top: 30px;
+  }
+}

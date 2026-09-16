@@ -550,3 +550,72 @@
   background: rgba(255, 255, 255, 0.08);
   border-color: rgba(0, 113, 227, 0.5);
 }
+
+/* ============================================================
+   移动端：左侧固定栏改造为底部标签栏
+   手机屏幕宽度放不下 260px 的竖向导航（会占掉六成宽度、内容只剩一条缝），
+   这里把同一份导航横过来贴在底部：图标在上、文字在下。
+   classic 与 rail（新版 dock 左区）两种变体都适用。
+   ============================================================ */
+@media (max-width: 768px) {
+  .sidebar,
+  .rail {
+    order: 2;
+    width: 100%;
+    height: auto;
+    align-self: auto;
+    /* 底部为手势条留出安全距离 */
+    padding: 6px 8px calc(6px + env(safe-area-inset-bottom, 0px));
+    /* 底部栏不是窗口拖拽区 */
+    -webkit-app-region: no-drag;
+  }
+
+  .sidebarInner,
+  .railInner {
+    flex-direction: row;
+    align-items: center;
+    padding: 5px 8px;
+    overflow: visible;
+  }
+
+  /* 品牌名与进度卡在底部栏里没有位置，进度信息由首页承担 */
+  .logo,
+  .progressCard {
+    display: none;
+  }
+
+  .nav,
+  .rail .nav {
+    flex-direction: row;
+    flex: 1;
+    justify-content: space-between;
+    gap: 2px;
+    min-height: auto;
+    overflow: visible;
+  }
+
+  .navItem,
+  .rail .navItem {
+    flex: 1;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    padding: 7px 2px;
+    font-size: 10.5px;
+    line-height: 1.1;
+    white-space: nowrap;
+  }
+
+  /* lucide 图标用属性指定了尺寸，这里按标签栏比例收紧 */
+  .navItem svg,
+  .rail .navItem svg {
+    width: 19px;
+    height: 19px;
+  }
+
+  /* rail 的「向上展开成大面板」在小屏上会把内容顶掉，改为固定高度 */
+  .railExpanded {
+    height: auto;
+  }
+}

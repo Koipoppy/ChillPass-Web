@@ -250,6 +250,36 @@ button[class*="quizNavBtn"]:not([class*="Disabled"]) {
   color: var(--btn-primary-fg);
 }
 
+/* ===== 按钮文字不换行 =====
+ * 手机视口只有 360px 左右，叠加系统字体放大后容器很容易变窄，
+ * 中文标签会被逐字竖向排布，把药丸按钮撑成圆形或长条。
+ * 按钮标签本身都很短，折行从来不是想要的效果，统一禁止。
+ */
+button {
+  white-space: nowrap;
+}
+
+/* ===== 例外：承载长文本的按钮仍可换行 =====
+ * 上面禁止换行后，这些按钮里的「标题 + 说明」「答题选项」会被压成一行而溢出被裁掉。
+ * 它们都不是会被挤压的窄按钮，允许换行不会退回竖排文字的老问题。
+ * 类名分散在各 CSS Module 里（CSS Modules 会保留原类名做前缀，故可用子串匹配），
+ * 集中列在此处便于和上面的规则对照维护。
+ */
+button[class*="navCard"],
+button[class*="taskCard"],
+button[class*="quizOption"],
+button[class*="quickBtn"],
+button[class*="reviewHeader"],
+button[class*="courseChip"],
+button[class*="modelOption"],
+button[class*="convTrigger"],
+button[class*="convItemMain"],
+button[class*="langChip"],
+button[class*="courseTrigger"],
+button[class*="courseMenuItemMain"] {
+  white-space: normal;
+}
+
 /* ===== Markdown 中渲染出的 SVG 图形 =====
  * 注意：这些 class 由 markdown 渲染器生成原始 HTML（未经 CSS Modules 哈希），
  * 因此必须定义在全局样式表中。

@@ -460,3 +460,57 @@
 [data-theme="dark"] .navBtn:hover {
   background: rgba(255, 255, 255, 0.16);
 }
+
+/* ============================================================
+   移动端
+   手机视口通常只有 360px（1080px 物理宽 / 密度 3），再叠加系统的
+   字体放大，原来挤在一行的「跳过引导 + 进度点 + 两个按钮」宽度严重不足，
+   中文标签会被逐字竖排、把药丸按钮撑成圆形。
+   这里把底部导航拆成两行，并让两个按钮等宽铺满，点按目标也更大。
+   ============================================================ */
+@media (max-width: 768px) {
+  .modal:global(.liquid-glass) {
+    width: calc(100% - 20px);
+    max-height: 92vh;
+    padding: 20px 18px;
+    /* 教程卡片改为不透明：半透明 + 背景模糊会削弱正文对比度 */
+    background: #ffffff;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  [data-theme="dark"] .modal {
+    background: #1c1c1e;
+  }
+
+  /* 桌面上的固定最小高度在矮屏上会把弹窗顶出可视区 */
+  .body {
+    min-height: 0;
+  }
+
+  .steps {
+    max-width: none;
+  }
+
+  /* 上行「跳过引导」+ 进度点，下行两个按钮 —— 靠 flex-wrap 自动换行 */
+  .footer {
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 18px;
+  }
+
+  .navBtns {
+    width: 100%;
+    min-width: 0;
+  }
+
+  /* 两个按钮等宽平分一行。
+     注意「下一步」用的是 navBtnPrimary、不带 navBtn 类，漏掉它就会一宽一窄。 */
+  .navBtn,
+  .navBtnPrimary {
+    flex: 1;
+    justify-content: center;
+    min-width: 0;
+    padding: 11px 14px;
+  }
+}
