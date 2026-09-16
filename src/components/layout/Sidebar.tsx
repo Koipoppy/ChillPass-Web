@@ -1,5 +1,5 @@
-import { NavLink, useNavigate } from 'react-router-dom'
-import { useEffect, useRef, useState } from 'react'
+import { NavLink, useLocation, useNavigate } from 'react-router-dom'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import {
   ChevronDown,
   ChevronUp,
@@ -159,6 +159,93 @@ export default function Sidebar({
     ...(isTeacher ? [WORKSPACE_ITEM] : []),
   ]
 
+  const location = useLocation()
+  /**
+   * 当前页在导航里的序号；-1 表示不在导航中。
+   * 用 startsWith 而非全等：设置子页（/settings/api 等）应当继续高亮「设置」，
+   * 关卡详情（/lessons/:id）同理。
+   */
+  const activeIndex = navItems.findIndex(item =>
+    item.path === '/' ? location.pathname === '/' : location.pathname.startsWith(item.path),
+  )
+
+  const navRef = useRef<HTMLElement>(null)
+  const indicatorRef = useRef<HTMLSpanElement>(null)
+  /** 指示器上一次的落点，作为下一次位移的起点 */
+  const indicatorPosRef = useRef<{ x: number; y: number } | null>(null)
+  const indicatorAnimRef = useRef<Animation | null>(null)
+
+  /*
+   * 当前页高亮的滑动指示器。
+   *
+   * 切换时不是从一格瞬移到另一格，而是分三段：
+   *   1) 原地鼓起（带回弹，快）
+   *   2) 保持鼓起状态滑向目标（平滑的加速—减速）
+   *   3) 到位后回落（收尾）
+   * 三段各自有曲线，整段 460ms 左右——比"到位后再抖一下"更像一个实体在移动。
+   *
+   * 每次只改 transform，走合成器，不触发布局。
+   */
+  useLayoutEffect(() => {
+    const nav = navRef.current
+    const indicator = indicatorRef.current
+    if (!nav || !indicator) return
+
+    const place = (animate: boolean) => {
+      const items = nav.querySelectorAll<HTMLElement>('[data-nav-item]')
+      const item = items[activeIndex]
+      if (!item) return
+
+      // 条目尺寸可能随变体（classic / rail / 手机底栏）变化，每次都重新量
+      const navRect = nav.getBoundingClientRect()
+      const itemRect = item.getBoundingClientRect()
+      const to = { x: itemRect.left - navRect.left, y: itemRect.top - navRect.top }
+      indicator.style.width = `${itemRect.width}px`
+      indicator.style.height = `${itemRect.height}px`
+
+      const from = indicatorPosRef.current
+      indicatorPosRef.current = to
+
+      // 把终点先写进内联样式：动画被取消或尚未结束时，元素也停在正确位置
+      indicator.style.transform = `translate(${to.x}px, ${to.y}px)`
+
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      if (!animate || !from || reduceMotion) return
+      if (from.x === to.x && from.y === to.y) return
+
+      indicatorAnimRef.current?.cancel()
+      indicatorAnimRef.current = indicator.animate(
+        [
+          {
+            transform: `translate(${from.x}px, ${from.y}px) scale(1)`,
+            offset: 0,
+            easing: 'cubic-bezier(0.34, 1.38, 0.64, 1)',
+          },
+          {
+            transform: `translate(${from.x}px, ${from.y}px) scale(1.16)`,
+            offset: 0.26,
+            easing: 'cubic-bezier(0.32, 0.72, 0, 1)',
+          },
+          {
+            transform: `translate(${to.x}px, ${to.y}px) scale(1.16)`,
+            offset: 0.78,
+            easing: 'cubic-bezier(0.32, 0.72, 0, 1)',
+          },
+          { transform: `translate(${to.x}px, ${to.y}px) scale(1)`, offset: 1 },
+        ],
+        { duration: 460, fill: 'forwards' },
+      )
+    }
+
+    place(true)
+
+    // 窗口尺寸变化后条目位置会变，重新量取并直接落位（不做动画）
+    const onResize = () => place(false)
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+    // expanded 影响 rail 变体的条目布局，也要重新量
+  }, [activeIndex, expanded])
+
   return (
     <aside
       /* 手机端这里是底部标签栏，高度需要被浮动元素量取（见 GuideCard） */
@@ -199,7 +286,9 @@ export default function Sidebar({
         </div>
 
         {/* 导航 */}
-        <nav className={styles.nav}>
+        <nav className={styles.nav} ref={navRef}>
+          {/* 当前页高亮的滑动指示器；位置与尺寸由上面的 layout effect 量取 */}
+          <span className={styles.navIndicator} ref={indicatorRef} aria-hidden="true" />
           {navItems.map(item => {
             const Icon = item.icon
             return (
@@ -207,6 +296,7 @@ export default function Sidebar({
                 key={item.path}
                 to={item.path}
                 end={item.path === '/'}
+                data-nav-item=""
                 className={({ isActive }) =>
                   `${styles.navItem} ${isActive ? styles.navItemActive : ''}`
                 }

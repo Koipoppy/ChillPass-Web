@@ -32,13 +32,39 @@
 }
 
 .nav {
+  /* 滑动指示器的定位参照 */
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 4px;
   flex: 1;
 }
 
+/*
+ * 当前页的滑动指示器
+ * 挂在 .nav 下、用 transform 平移，尺寸由 JS 按目标条目量取。
+ * 高亮不再由 .navItemActive 自己画背景，否则切换瞬间旧格子的背景会消失、
+ * 而指示器还在路上，看起来像"高亮断了一拍"。
+ */
+.navIndicator {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  border-radius: var(--radius-md);
+  background: rgba(0, 0, 0, 0.06);
+  pointer-events: none;
+  will-change: transform;
+}
+
+[data-theme="dark"] .navIndicator {
+  background: rgba(255, 255, 255, 0.1);
+}
+
 .navItem {
+  /* 压在指示器之上，指示器才能从条目下面滑过去 */
+  position: relative;
+  z-index: 1;
   display: flex;
   align-items: center;
   gap: 12px;
@@ -48,7 +74,7 @@
   color: var(--text-secondary);
   font-size: 15px;
   font-weight: 500;
-  transition: all 0.3s ease;
+  transition: color 0.3s ease;
   -webkit-app-region: no-drag;
 }
 
@@ -59,7 +85,6 @@
 
 .navItemActive {
   color: var(--text-primary);
-  background: rgba(0, 0, 0, 0.06);
   font-weight: 600;
 }
 
