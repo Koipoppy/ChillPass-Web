@@ -161,6 +161,8 @@ export default function Sidebar({
 
   return (
     <aside
+      /* 手机端这里是底部标签栏，高度需要被浮动元素量取（见 GuideCard） */
+      data-mobile-tabbar=""
       className={[
         styles.sidebar,
         isRail ? styles.rail : '',

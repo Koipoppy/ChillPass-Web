@@ -25,6 +25,23 @@ import { useT } from '../../i18n'
 import styles from './GuideCard.module.css'
 
 /**
+ * 手机端底部标签栏的高度；桌面端返回 0。
+ *
+ * 手机端导航栏落在屏幕底部，而这张卡片默认也停在右下角，
+ * 两者会重叠——卡片 z-index 更高，会直接把最后一个导航入口的点击抢走。
+ * 所以卡片的下边界必须避开标签栏。
+ *
+ * 高度从 DOM 实测而不是写死常量：标签栏高度含安全区（env(safe-area-inset-bottom)），
+ * 各机型不同，写死必然对不上。桌面端侧边栏是整列而非底栏，量出来的高度没有意义，
+ * 因此先用媒体查询挡掉。
+ */
+function mobileTabBarHeight(): number {
+  if (!window.matchMedia('(max-width: 768px)').matches) return 0
+  const el = document.querySelector<HTMLElement>('[data-mobile-tabbar]')
+  return el ? Math.round(el.getBoundingClientRect().height) : 0
+}
+
+/**
  * 悬浮任务卡（常驻通知中心）
  * - 引导未完成时展示引导步骤，完成后常驻为通知入口
  * - 有未读通知时，收起态图标变为黄色感叹号
@@ -92,10 +109,21 @@ export default function GuideCard() {
     const h = el?.offsetHeight ?? 60
     const maxRight = Math.max(margin, window.innerWidth - w - margin)
     const maxBottom = Math.max(margin, window.innerHeight - h - margin)
+    // 手机端下边界还要高于底部标签栏，否则拖过去会盖住最后一个导航入口
+    const bottomFloor = margin + mobileTabBarHeight()
     return {
       right: Math.min(Math.max(next.right, margin), maxRight),
-      bottom: Math.min(Math.max(next.bottom, margin), maxBottom),
+      bottom: Math.min(Math.max(next.bottom, bottomFloor), maxBottom),
     }
+  }, [])
+
+  // 手机端首次进入时把卡片抬到底部标签栏之上。
+  // 用户手动拖过位置就尊重用户的选择，不再干预。
+  useEffect(() => {
+    if (localStorage.getItem(POS_KEY)) return
+    const barH = mobileTabBarHeight()
+    if (barH > 0) setPos(p => ({ ...p, bottom: barH + 16 }))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   // 窗口尺寸变化时重新钳制，防止卡片留在可视区之外
