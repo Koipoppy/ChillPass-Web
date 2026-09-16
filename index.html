@@ -2,8 +2,14 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; img-src 'self' data: blob:; font-src 'self' data: https://cdn.jsdelivr.net; connect-src 'self' https://api.deepseek.com https://open.bigmodel.cn https://cdn.jsdelivr.net https://tessdata.projectnaptha.com; worker-src 'self' blob: https://cdn.jsdelivr.net;" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0b0b10" />
+  <meta name="color-scheme" content="dark light" />
+  <!--
+    capacitor://localhost 供 iOS 容器使用；Android 容器页面源是 https://localhost，
+    已被 'self' 覆盖；api.github.com 是更新检查接口，缺了它安卓端检查更新会被 CSP 拦掉。
+  -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' capacitor://localhost; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; img-src 'self' data: blob: capacitor://localhost; font-src 'self' data: https://cdn.jsdelivr.net; connect-src 'self' capacitor://localhost https://api.deepseek.com https://open.bigmodel.cn https://cdn.jsdelivr.net https://tessdata.projectnaptha.com https://api.github.com https://github.com https://objects.githubusercontent.com https://release-assets.githubusercontent.com; worker-src 'self' blob: https://cdn.jsdelivr.net; media-src 'self' data: blob:;" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV" crossorigin="anonymous">
   <title>ChillPass — 期末冲刺助手</title>
 </head>

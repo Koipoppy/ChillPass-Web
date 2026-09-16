@@ -7,9 +7,17 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "android:sync": "vite build && cap sync android",
+    "android:apk": "cd android && gradlew.bat assembleRelease",
+    "android:bundle": "node installer/build-android-bundle.mjs",
+    "android:release": "npm run android:sync && npm run android:apk && npm run android:bundle"
   },
   "dependencies": {
+    "@capacitor/android": "^8.5.2",
+    "@capacitor/browser": "^8.0.4",
+    "@capacitor/core": "^8.5.2",
+    "@capawesome/capacitor-live-update": "^8.4.2",
     "@types/katex": "^0.16.8",
     "dompurify": "^3.1.6",
     "framer-motion": "^12.40.0",
@@ -25,6 +33,7 @@
     "zustand": "^4.5.4"
   },
   "devDependencies": {
+    "@capacitor/cli": "^8.5.2",
     "@types/dompurify": "^3.0.5",
     "@types/node": "^22.5.0",
     "@types/react": "^18.3.3",

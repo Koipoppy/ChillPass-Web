@@ -630,6 +630,7 @@ export type TranslationKey =
   | 'upd.downloading'
   | 'upd.autoFailed'
   | 'upd.reasonNetwork'
+  | 'upd.reasonNoBundle'
   | 'upd.manualDownloadTip'
 
   | 'model.deepseekFlash'
@@ -1020,6 +1021,7 @@ const zh: Record<TranslationKey, string> = {
   'upd.downloading': "正在下载更新，请稍候...",
   'upd.autoFailed': "自动更新未能启动（{reason}），请手动下载",
   'upd.reasonNetwork': "网络无法连接 GitHub",
+  'upd.reasonNoBundle': "这个版本没有提供安卓更新包",
   'upd.manualDownloadTip': "手动下载",
   'storage.migrateFailedRetry': "迁移失败，请重试",
   'storage.cardDesc': "配置资源存储位置，迁移课件文件以释放 C 盘空间",
@@ -1690,6 +1692,7 @@ const en: Record<TranslationKey, string> = {
   'upd.downloading': "Downloading update...",
   'upd.autoFailed': "Automatic update could not start ({reason}) — please download manually",
   'upd.reasonNetwork': "GitHub is unreachable",
+  'upd.reasonNoBundle': "No Android update bundle in this release",
   'upd.manualDownloadTip': "Download manually",
   'storage.migrateFailedRetry': "Migration failed, please retry",
   'storage.cardDesc': "Configure where resources are stored and move courseware files to free up the C: drive",
@@ -2360,6 +2363,7 @@ const ru: Record<TranslationKey, string> = {
   'upd.downloading': "Загрузка обновления...",
   'upd.autoFailed': "Не удалось запустить автообновление ({reason}) — скачайте вручную",
   'upd.reasonNetwork': "GitHub недоступен",
+  'upd.reasonNoBundle': "В этом релизе нет пакета обновления для Android",
   'upd.manualDownloadTip': "Скачать вручную",
   'storage.migrateFailedRetry': "Ошибка миграции, попробуйте снова",
   'storage.cardDesc': "Настройте расположение ресурсов и перенесите файлы, чтобы освободить диск C:",
@@ -3030,6 +3034,7 @@ const ja: Record<TranslationKey, string> = {
   'upd.downloading': "更新をダウンロード中...",
   'upd.autoFailed': "自動更新を開始できませんでした（{reason}）。手動でダウンロードしてください",
   'upd.reasonNetwork': "GitHub に接続できません",
+  'upd.reasonNoBundle': "このリリースには Android 用の更新パッケージが含まれていません",
   'upd.manualDownloadTip': "手動でダウンロード",
   'storage.migrateFailedRetry': "移行に失敗しました。再試行してください",
   'storage.cardDesc': "リソースの保存先を設定し、資料ファイルを移動してCドライブを解放します",
@@ -3700,6 +3705,7 @@ const ko: Record<TranslationKey, string> = {
   'upd.downloading': "업데이트 다운로드 중...",
   'upd.autoFailed': "자동 업데이트를 시작하지 못했습니다({reason}). 수동으로 다운로드하세요",
   'upd.reasonNetwork': "GitHub에 연결할 수 없음",
+  'upd.reasonNoBundle': "이 릴리스에는 Android 업데이트 패키지가 없습니다",
   'upd.manualDownloadTip': "수동 다운로드",
   'storage.migrateFailedRetry': "마이그레이션 실패, 다시 시도하세요",
   'storage.cardDesc': "리소스 저장 위치를 설정하고 자료 파일을 이동해 C 드라이브를 확보합니다",

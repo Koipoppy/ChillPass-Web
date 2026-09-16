@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">ChillPass</string>
+    <string name="title_activity_main">ChillPass</string>
+    <string name="package_name">com.koipoppy.chillpass</string>
+    <string name="custom_url_scheme">com.koipoppy.chillpass</string>
+</resources>

@@ -3,6 +3,7 @@ import { Clock, Maximize2, Minimize2, HelpCircle } from 'lucide-react'
 import { useStudyTimeStore, formatStudyTime } from '@stores/studyTimeStore'
 import UiStyleToggle from './UiStyleToggle'
 import { useT } from '../../i18n'
+import { hasControllableWindow } from '@utils/nativeLayer'
 import styles from './TitleBar.module.css'
 
 /**
@@ -17,8 +18,9 @@ export default function TitleBar() {
   const [, setTick] = useState(0)
   const t = useT()
 
-  // 浏览器模式下隐藏窗口控制按钮
-  const isBrowser = window.electronAPI?.platform === 'browser'
+  // 只有存在可被应用控制的原生窗口时才显示红黄绿按钮
+  // （SEA 安装版跑在系统浏览器里、安卓版跑在 WebView 里，都拿不到窗口装饰）
+  const showWindowControls = hasControllableWindow()
 
   const totalSeconds = useStudyTimeStore(s => s.totalSeconds)
   const sessionStart = useStudyTimeStore(s => s.sessionStart)
@@ -97,7 +99,7 @@ export default function TitleBar() {
     <div className={styles.titleBar}>
       {/* 左上角：窗口控制按钮 + 界面风格开关 */}
       <div className={styles.leftArea}>
-        {!isBrowser && (
+        {showWindowControls && (
           <div className={styles.trafficLights}>
             <button
               className={styles.light}

@@ -1,7 +1,7 @@
 /**
- * 浏览器环境下的 Electron API 替代实现
+ * 非桌面壳环境下的 Electron API 替代实现
  * 使用 IndexedDB 存储文件，Fullscreen API 实现专注模式
- * 直接 fetch GitHub API 检查更新
+ * 平台判定与更新策略交给 nativeLayer：安卓走热更新，其余走本地服务端或 GitHub
  */
 import {
   storeFile,
@@ -13,6 +13,17 @@ import {
 } from '@services/browserFileStore'
 import { translate, type TranslationKey } from '../i18n'
 import { useLanguageStore } from '@stores/languageStore'
+import {
+  APP_VERSION,
+  RELEASE_API_URL,
+  applyPendingWebUpdate,
+  checkNativeUpdate,
+  compareVersions,
+  extractSemver,
+  isNativeShell,
+  openExternal,
+  platform,
+} from './nativeLayer'
 
 /** 浏览器 Mock 提示文案（当前语言） */
 function mockText(key: TranslationKey, map?: Record<string, string>): string {
@@ -25,29 +36,6 @@ function mockText(key: TranslationKey, map?: Record<string, string>): string {
 function generateFileId(): string {
   return 'file_' + Date.now() + '_' + Math.random().toString(36).slice(2, 10)
 }
-
-/** 从 tag 字符串中提取语义化版本号 */
-function extractSemver(tag: string): string {
-  const match = tag.match(/(\d+\.\d+\.\d+)/)
-  return match ? match[1] : '0.0.0'
-}
-
-/** 比较语义化版本号 */
-function compareVersions(v1: string, v2: string): number {
-  const parts1 = extractSemver(v1).split('.').map(Number)
-  const parts2 = extractSemver(v2).split('.').map(Number)
-  for (let i = 0; i < Math.max(parts1.length, parts2.length); i++) {
-    const a = parts1[i] || 0
-    const b = parts2[i] || 0
-    if (a > b) return 1
-    if (a < b) return -1
-  }
-  return 0
-}
-
-const APP_VERSION = '0.1.3'
-const UPDATE_CHECK_URL =
-  'https://api.github.com/repos/Koipoppy/ChillPass-Web/releases/latest'
 
 export function setupElectronMock() {
   if (window.electronAPI) return
@@ -166,7 +154,7 @@ export function setupElectronMock() {
     },
 
     // ===== 平台信息 =====
-    platform: 'browser',
+    platform: platform(),
 
     // ===== 应用版本 =====
     getAppVersion: async () => APP_VERSION,
@@ -208,6 +196,9 @@ export function setupElectronMock() {
 
     // ===== 更新检查（优先走后端 API，避免浏览器直连 GitHub 被限制） =====
     checkForUpdates: async () => {
+      // 安卓/iOS：没有本地服务端，直接读 Release，更新对象是 dist.zip
+      if (isNativeShell()) return checkNativeUpdate()
+
       // 安装版：由 app.cjs 后端请求 GitHub API（带代理 fallback）
       try {
         const res = await fetch('/api/checkForUpdates')
@@ -226,7 +217,7 @@ export function setupElectronMock() {
       } catch {
         // 回退：直接请求 GitHub API（网页预览模式）
         try {
-          const response = await fetch(UPDATE_CHECK_URL, {
+          const response = await fetch(RELEASE_API_URL, {
             headers: {
               'User-Agent': 'ChillPass-Update-Checker',
               Accept: 'application/vnd.github+json',
@@ -235,7 +226,7 @@ export function setupElectronMock() {
           if (!response.ok) throw new Error(`HTTP ${response.status}`)
           const release = await response.json()
 
-          const latestVersion = release.tag_name || '0.0.0'
+          const latestVersion = extractSemver(release.tag_name || '0.0.0')
           const exeAsset = release.assets?.find(
             (a: any) => a.name.endsWith('.exe') && !a.name.endsWith('.blockmap'),
           )
@@ -264,8 +255,22 @@ export function setupElectronMock() {
       }
     },
 
-    // ===== 自动更新：下载安装包并启动更新程序 =====
+    // ===== 自动更新：下载新资源并应用 =====
     startUpdate: async () => {
+      // 安卓/iOS：热替换 WebView 里的 Web 资源，不需要重新打包或重装 APK
+      if (isNativeShell()) {
+        try {
+          await applyPendingWebUpdate()
+          return
+        } catch (err) {
+          const detail = err instanceof Error ? err.message : String(err)
+          // no-bundle 说明这个 Release 没带安卓更新包，翻译成可读原因
+          throw new Error(
+            detail === 'no-bundle' ? mockText('upd.reasonNoBundle') : detail,
+          )
+        }
+      }
+
       const res = await fetch('/api/startUpdate', { method: 'POST' })
       if (!res.ok) {
         // 后端会带上具体原因（如网络不可达），透传出去让界面能说清楚
@@ -281,9 +286,7 @@ export function setupElectronMock() {
     },
 
     openExternalUrl: async (url: string) => {
-      // 返回 null 表示被弹窗拦截，调用方据此回退到界面上的手动下载链接
-      const win = window.open(url, '_blank')
-      if (!win) throw new Error('popup-blocked')
+      await openExternal(url)
     },
 
     // ===== 资源迁移（浏览器中为空操作） =====
