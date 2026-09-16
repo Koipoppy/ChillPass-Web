@@ -984,3 +984,32 @@
 :global([data-ui-style='dock']) .wrongList {
   max-height: 180px;
 }
+
+/* ============================================================
+   移动端：首页三步提示条
+   桌面用 gap: 32px 横向排开；手机只有 360px 宽，三个 4 字标签
+   （导入课件 / 提炼考点 / 闯关冲刺）放不下，被 flex 压缩后
+   每个标签内部折成「3 字 + 1 字」两行，观感很碎。
+   这里缩小间距与字号，并禁止条目标签被压缩——宁可换行到下一排，
+   也不要在一个标签内部折行。
+   ============================================================ */
+@media (max-width: 768px) {
+  .heroSteps {
+    margin-top: 18px;
+    gap: 10px 14px;
+    flex-wrap: wrap;
+  }
+
+  .heroStep {
+    flex-shrink: 0;
+    gap: 6px;
+    font-size: 13px;
+    white-space: nowrap;
+  }
+
+  .heroStepNum {
+    width: 22px;
+    height: 22px;
+    font-size: 12px;
+  }
+}

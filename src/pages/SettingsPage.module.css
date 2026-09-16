@@ -823,3 +823,28 @@
     width: 34px;
   }
 }
+
+/* ============================================================
+   移动端：本地信息卡
+   桌面是一行「图标 + 说明文字 + 数据管理按钮」；手机上按钮很宽，
+   三者挤在一行会把说明文字压成每行四五个字的窄列，撑得卡片很高。
+   改为按钮独占一行铺满，说明文字拿到整行宽度。
+   ============================================================ */
+@media (max-width: 768px) {
+  .localInfoContent {
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .localInfoText {
+    flex: 1;
+    min-width: 0;
+  }
+
+  /* flex-basis:100% 保证按钮必定换到下一行并占满整行 */
+  .localInfoBtn {
+    flex-basis: 100%;
+    justify-content: center;
+  }
+}
