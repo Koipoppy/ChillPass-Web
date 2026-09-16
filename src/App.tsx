@@ -11,6 +11,7 @@ import GuideCard from './components/onboarding/GuideCard'
 import { useAuthStore } from './stores/authStore'
 import { useUiStyleStore } from './stores/uiStyleStore'
 import { useGlobalBlurActive } from './utils/useGlobalBlur'
+import { useIsMobileLayout } from './utils/useMobileLayout'
 import Dashboard from './pages/Dashboard'
 import UploadPage from './pages/UploadPage'
 import LessonPathPage from './pages/LessonPathPage'
@@ -80,7 +81,21 @@ export default function App() {
   const t = useT()
   // 弹窗打开时显示全局高斯模糊层（内联样式，行为确定）
   const blurActive = useGlobalBlurActive()
-  const dock = uiStyle === 'dock'
+  const isMobile = useIsMobileLayout()
+
+  /*
+   * 手机端只有旧版布局（左侧栏收成底部标签栏）。
+   * 新版 dock 布局没针对小屏适配，而且切换按钮在手机上已隐藏——
+   * 一旦停在 dock 用户就没有入口切回来，所以这里直接兜底为旧版。
+   * 存储里的用户偏好不改动，回到桌面端仍是他们原来选的那个。
+   */
+  const dock = uiStyle === 'dock' && !isMobile
+
+  // 根元素上的 data-ui-style 有一批 CSS 覆盖挂在上面（如设置页导航卡的紧凑排版），
+  // 必须与实际渲染的布局保持一致，否则会套用另一套样式
+  useEffect(() => {
+    document.documentElement.setAttribute('data-ui-style', dock ? 'dock' : 'classic')
+  }, [dock])
 
   useEffect(() => {
     document.title = t('app.docTitle')

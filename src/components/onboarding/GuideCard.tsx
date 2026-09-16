@@ -21,6 +21,7 @@ import { useSettingsStore } from '@stores/settingsStore'
 import { useCourseStore } from '@stores/courseStore'
 import { useNotificationStore } from '@stores/notificationStore'
 import { useUpdateInfo } from '../../utils/useUpdateInfo'
+import { isMobileLayout, useIsMobileLayout } from '../../utils/useMobileLayout'
 import { useT } from '../../i18n'
 import styles from './GuideCard.module.css'
 
@@ -36,7 +37,7 @@ import styles from './GuideCard.module.css'
  * 因此先用媒体查询挡掉。
  */
 function mobileTabBarHeight(): number {
-  if (!window.matchMedia('(max-width: 768px)').matches) return 0
+  if (!isMobileLayout()) return 0
   const el = document.querySelector<HTMLElement>('[data-mobile-tabbar]')
   return el ? Math.round(el.getBoundingClientRect().height) : 0
 }
@@ -75,8 +76,19 @@ export default function GuideCard() {
   ]
   const allDone = stepDone.every(Boolean)
 
-  // 引导完成后默认收起为小徽章（未读通知会以黄色感叹号提示）；引导中默认展开
-  const [collapsed, setCollapsed] = useState(allDone)
+  /*
+   * 用户是否手动切换过展开/收起；null 表示还没干预，按默认策略走。
+   * 默认策略：引导未完成时展开，完成后收起为小徽章（未读通知显示黄色感叹号）；
+   * 手机例外——展开的引导卡实测盖住约四成屏高，而它每页都在，
+   * 首页标题、导入页上传区、聊天输入区都会被压在下面，小屏一律先收起。
+   *
+   * 不直接用 useState 初始值判定：WebView 首帧渲染时视口可能尚未确定为手机宽度，
+   * 那一刻 matchMedia 会给出 false。用 useIsMobileLayout 订阅，
+   * 视口确定后会自行纠正。
+   */
+  const isMobile = useIsMobileLayout()
+  const [collapsedOverride, setCollapsedOverride] = useState<boolean | null>(null)
+  const collapsed = collapsedOverride ?? (isMobile ? true : allDone)
 
   // ── 可拖动定位：默认右下角，位置以「距右边/下边的距离」保存，随窗口自适应 ──
   const POS_KEY = 'chillpass-guidecard-pos'
@@ -195,7 +207,7 @@ export default function GuideCard() {
 
   // 收起动作即视为已读：黄色感叹号提示随之消失
   const handleCollapse = () => {
-    setCollapsed(true)
+    setCollapsedOverride(true)
     if (unreadCount > 0) markAllRead()
   }
 
@@ -282,7 +294,7 @@ export default function GuideCard() {
               className={`liquid-glass ${styles.collapsedCard}`}
               onClick={() => {
                 if (movedRef.current) return
-                setCollapsed(false)
+                setCollapsedOverride(false)
               }}
               aria-label={unreadCount > 0 ? t('notify.newNotice') : t('guide.expand')}
               title={unreadCount > 0 ? t('notify.newNotice') : t('guide.expand')}
